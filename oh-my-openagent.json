@@ -18,7 +18,7 @@
       "enabled": true
     },
     "multimodal-looker": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "siliconflow-cn/Qwen/Qwen3-VL-32B-Instruct",
       "enabled": true
     },
     "prometheus": {
@@ -38,7 +38,7 @@
       "enabled": true
     },
     "sisyphus": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "deepseek/deepseek-v4-pro",
       "enabled": true
     }
   },
@@ -65,7 +65,7 @@
       "model": "opencode/deepseek-v4-flash-free"
     },
     "writing": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "siliconflow-cn/deepseek-ai/DeepSeek-V3.2"
     }
   }
 }
