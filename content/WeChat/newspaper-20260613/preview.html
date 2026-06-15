@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>当AI比人还贵：OpenAI降价背后的Token经济学悖论 - 微信排版预览</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: #f0f0f0;
+    min-height: 100vh;
+}
+.toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid #e0e0e0;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.toolbar-info {
+    font-size: 13px;
+    color: #666;
+}
+.toolbar-info span {
+    margin-right: 12px;
+}
+.toolbar-info .theme-name {
+    background: #f5f5f5;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    color: #333;
+}
+.copy-btn {
+    padding: 10px 24px;
+    background: #07c160;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+.copy-btn:hover { background: #06ae56; transform: translateY(-1px); }
+.copy-btn:active { transform: translateY(0); }
+.copy-btn.copied {
+    background: #34c759;
+}
+.phone-frame {
+    max-width: 415px;
+    margin: 76px auto 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.phone-header {
+    background: #ededed;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #999;
+    border-bottom: 1px solid #e0e0e0;
+}
+.article-content {
+    padding: 20px;
+    font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+/* 隐藏的纯微信 HTML，用于复制 */
+#wechatHtml {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+/* ── Font Size Selector ── */
+.font-size-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px auto;
+    padding: 8px 0;
+    max-width: 415px;
+}
+.fs-label {
+    font-size: 13px;
+    color: #999;
+}
+.fs-btn {
+    padding: 4px 12px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+}
+.fs-btn:hover {
+    border-color: #07C160;
+    color: #07C160;
+}
+.fs-btn.active {
+    background: #07C160;
+    border-color: #07C160;
+    color: #fff;
+}
+@media (max-width: 480px) {
+    .phone-frame {
+        margin: 60px 0 20px;
+        border-radius: 0;
+        box-shadow: none;
+    }
+    .toolbar {
+        padding: 8px 12px;
+    }
+    .copy-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <div class="toolbar-left">
+        <div class="toolbar-info">
+            <span class="theme-name">报纸</span>
+            <span>2,278 字</span>
+        </div>
+    </div>
+    <button class="copy-btn" onclick="copyToWechat()">复制到微信</button>
+</div>
+
+<div class="font-size-selector">
+    <span class="fs-label">字号</span>
+    <button class="fs-btn active" data-size="15" onclick="switchFontSize(15)">15px</button>
+    <button class="fs-btn" data-size="16" onclick="switchFontSize(16)">16px</button>
+</div>
+
+<div class="phone-frame">
+    <div class="phone-header">微信公众号预览</div>
+    <div class="article-content" id="articleContent">
+<section style="background-color:#ffffff;padding:16px" data-darkmode-bgcolor="#1a1712"><h1 style="font-size:29px;font-weight:700;color:#111111;line-height:1.3;letter-spacing:-0.015em;padding:10px 0 9px;border-top:2px solid #111111;border-bottom:1px solid #111111;text-align:left;margin-top:38px;margin-bottom:16px" data-darkmode-color="#e0dcd4">当AI比人还贵：OpenAI降价背后的Token经济学悖论</h1>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">发布日期：2026年6月12日 | 字数：约4000字</p>
+</blockquote>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">你有没有想过一个问题：AI正在越来越强、越来越便宜，但为什么企业的AI账单反而在失控？</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">2026年6月1日，微软做了一个决定。GitHub Copilot——全球最流行的AI编程工具——全面转向基于Token用量计费。原来的月费$19变成了等额Token额度。一些用户发现，他们的账单直接涨了<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">25倍</strong>。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">同一天，Uber的高管在投资者电话会上说出了一句话，后来在硅谷被反复引用：公司2026年前四个月，已经把全年的AI预算烧完了。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这不是个例。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🚀 一、从月包到Token：AI商业化的三级跳</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">回看过去三年，AI行业的商业模式像坐过山车。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2023年，月包时代。</strong> 那年2月，OpenAI推出ChatGPT Plus，月费$20。这个模式简单粗暴——你付钱，我用算力，不管用多用少都是这个价。百度、阿里、腾讯紧随其后，固定订阅成了标配。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2024到2025年，补贴时代。</strong> 为了拉ARR做高估值，各家开始疯狂烧钱。谷歌给学生送了15个月免费Gemini Advanced，字节跳动的豆包喊出"比行业价低99.3%"，百度直接把核心模型免费。微软后来被曝出，GitHub Copilot订阅模式下，平均每个用户每月亏超过$20，重度用户甚至亏$80。</p>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">补贴的本质是用亏损换增长。但在那个阶段，所有人都觉得值。</p>
+</blockquote>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2026年6月，Token时代。</strong> 账终于摊到了桌面上。GitHub Copilot转向Token计费后，那种"先用着，反正不贵"的幻觉被打破了。每次代码补全、每次智能体对话，都在烧真金白银。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Salesforce的财务部门算出，今年预计要给Anthropic付大约<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">3亿美元</strong>。一个10人开发团队，一年光Token费用就可能超过<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">7.5万美元</strong>。这些数字放在两三年前，没人会当真。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">💸 二、账单失控：谁在为AI打工？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">企业账单失控背后，藏着一个扎心的数字。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">企业数据平台Entelligence.AI调研了2444家公司的AI使用情况，发现了一个让人坐不住的结果：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">每投入$1的AI Token费用，只有$0.18产生了触达用户的实际价值。</strong> 剩下$0.44花在了修复AI自己引入的Bug上，$0.27流向了返工，$0.11消耗在审查摩擦上。</p>
+<section style="background:rgba(139,92,246,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#8b5cf6;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚡ 核心洞察</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">换句话说，AI省下的那点时间，大部分又被AI搞出来的问题吃掉了。</p></section>
+
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Uber的COO Andrew Macdonald甚至为此造了一个新词：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">tokenmaxxing</strong>（Token极大化）。字面意思是"把Token用到极致"，实际意思是员工为了刷使用量而执行毫无价值的AI任务。他说，Token消耗的增长和产品实质改善之间，"这条线还不存在"。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">亚马逊的反应更直接。管理层叫停了内部AI使用排行榜，明确告诉员工"不要为了用AI而用AI"。微软也开始逐步停用部分产品部门的Claude Code订阅。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">高盛的分析指向一个更大的风险：部分企业的AI Token支出，已经占到员工总人力成本的<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">10%</strong>。未来几个季度，这个比例可能继续攀升。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这并非需求消失了，而是AI花的钱不再被视为理所当然。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">⚔️ 三、囚徒困境：OpenAI为什么必须降价？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">在这种背景下，OpenAI选择了一条看起来反直觉的路——降价。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">6月8日前后，OpenAI秘密向美国证券交易委员会提交了S-1文件，据称目标估值达<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">1万亿美元</strong>。几乎同时，据华尔街日报6月11日报道，OpenAI正在考虑大幅削减Token收费标准，抢回被Anthropic带走的企业客户。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">选择这个时机降价，很微妙。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">根据The Information披露的数据，OpenAI 2026年第一季度的营收接近<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">60亿美元</strong>，比Anthropic高出约10亿美元。但两家公司都在巨额亏损，因为算力太贵了。OpenAI的S-1文件预计，要到2030年才能实现盈利，期间计划在计算上支出6000亿美元——这比此前1.4万亿的计划已经砍了一半多。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">更尴尬的是竞争格局。Anthropic的Claude Code在开发者群体中迅速走红，帮助这家人工智能公司在Pre-IPO市场的估值冲到了<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">1.2万亿美元</strong>，首次超过OpenAI。OpenAI的应对是把自家编程工具Codex提升为最高优先级——目前Codex的周活跃开发者已达400万，相比年初的60万增长了近7倍。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">但问题是，投资者的担忧有理可循：两家公司的产品具有高度可替代性。客户可以轻易地从一家转向另一家。降价能短期留住客户，却无法真正构建护城河。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">神经科学家Gary Marcus说得更直："一旦OpenAI走下坡路，很可能会拖垮英伟达、甲骨文、Coreweave等公司。局势正在迅速恶化。"</p>
+<section style="background:rgba(245,158,11,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#f59e0b;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚠️ 连锁反应</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">价格战的代价将通过一条传导链向外扩散：降价压缩利润率，进而冲击云厂商2万亿美元的未来合同积压——其中AI实验室占了一半，英伟达的GPU订单、数据中心的投资——整个链条都会跟着晃。</p></section>
+
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">📊 四、华尔街分裂：泡沫前夜还是新起点？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">华尔街对此的看法完全撕裂。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">摩根大通TMT分析师Mark Schilsky认为，眼前的失控只是"通往更高支出的最小减速带"。他的逻辑很直接：Token单价下降，但AI的渗透率在上升，智能体AI会使单次任务的Token消耗达到传统问答模式的<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">3.5倍</strong>。总支出在数学上必然继续扩大。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">高盛半导体分析师Jim Covello不同意。他认为当前产业链的繁荣几乎把全部价值集中到了半导体公司，这个现象"历史上前所未有且不可持续"。一旦企业直面Token计费的真实价格，支撑GPU采购和模型训练的资本流动将面临逆转。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">两边都说得通。这才是真正让人不安的地方。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🇨🇳 五、中国玩家：这场价格战的最大变量</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">在这场OpenAI和Anthropic的双雄对决中，最容易被忽视的角色来自中国。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Ramp是美国企业支出管理平台，它6月的数据显示：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">DeepSeek已经登顶美国企业软件订阅增速榜首。</strong> 首席经济学家Ara Kharazian特别强调，这不是开源模型的本地部署——"美国公司直接通过DeepSeek收发数据"。他坦言"没料到"。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">原因不难理解。DeepSeek V4-Pro的API均价大约是GPT-5.5的十分之一，接近Claude Opus 4.7的十一分之一。当OpenAI和Anthropic需要在价格战中向IPO投资者交代利润率时，DeepSeek不需要。它可以继续保持低价，持续渗透。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这并不是唯一发力降价的中国玩家。5月22日，DeepSeek宣布V4-Pro API在5月31日结束2.5折优惠后，正式调整为原定价的25%。小米的MiMo-V2.5也宣布调价，最高降幅达到99%，Token套餐加量不加价，用量提升到原来的5到8倍。</p>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">这场价格战的最终赢家，可能不在舞台中央。</p>
+</blockquote>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🔮 六、Token经济学的下一章</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">价格战之后，AI行业的商业化故事该怎么写？</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Nebius的首席营收官Marc Boroditsky提出了一个新词：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">valuemaxxing</strong>（价值最大化）。他主张行业从追求Token消耗最大化，转向让每个Token真正产生价值。这个方向正在成为行业共识，但真正的落地还需要一套既能反映真实成本、又能被企业接受的定价体系。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">另一个可能的方向是<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">分层定价</strong>。前沿模型继续服务高价值、复杂任务；日常任务、批量任务转向廉价模型或本地模型。AI的使用将从"一刀切"走向分层。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">还有<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">Agent时代</strong>——智能体AI的执行模式让单次任务的Token消耗成倍增加。但企业是否愿意为此买单，取决于这些Agent能否证明自己值那个价。</p>
+<section style="background:rgba(139,92,246,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#8b5cf6;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚡ 核心观点</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">三个方向指向同一个核心问题：AI行业"烧钱换增长"的时代正在终结。当Token也可以像水电一样按量计费时，整个AI商业化的估值逻辑都需要重写。</p></section>
+
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">没人知道下一章的样子——但所有人都知道，上一页已经翻过去了。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><em style="font-style:italic;color:#666666" data-darkmode-color="#a0a0a0">文章数据和信息截至2026年6月12日。部分数据和引述来自华尔街日报、彭博、The Information、Ramp、Entelligence.AI、36氪、新智元、硬AI等来源。</em></p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">如果觉得有收获，欢迎关注本公众号，第一时间获取深度科技商业分析 📖</strong></p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">转发、在看、点赞，让更多人看到AI商业化的真相 👇</strong></p></section>
+    </div>
+</div>
+
+<!-- 隐藏区域：存放纯微信 HTML（不含预览壳样式），复制时用这个 -->
+<div id="wechatHtml">
+<section style="background-color:#ffffff;padding:16px" data-darkmode-bgcolor="#1a1712"><h1 style="font-size:29px;font-weight:700;color:#111111;line-height:1.3;letter-spacing:-0.015em;padding:10px 0 9px;border-top:2px solid #111111;border-bottom:1px solid #111111;text-align:left;margin-top:38px;margin-bottom:16px" data-darkmode-color="#e0dcd4">当AI比人还贵：OpenAI降价背后的Token经济学悖论</h1>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">发布日期：2026年6月12日 | 字数：约4000字</p>
+</blockquote>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">你有没有想过一个问题：AI正在越来越强、越来越便宜，但为什么企业的AI账单反而在失控？</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">2026年6月1日，微软做了一个决定。GitHub Copilot——全球最流行的AI编程工具——全面转向基于Token用量计费。原来的月费$19变成了等额Token额度。一些用户发现，他们的账单直接涨了<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">25倍</strong>。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">同一天，Uber的高管在投资者电话会上说出了一句话，后来在硅谷被反复引用：公司2026年前四个月，已经把全年的AI预算烧完了。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这不是个例。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🚀 一、从月包到Token：AI商业化的三级跳</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">回看过去三年，AI行业的商业模式像坐过山车。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2023年，月包时代。</strong> 那年2月，OpenAI推出ChatGPT Plus，月费$20。这个模式简单粗暴——你付钱，我用算力，不管用多用少都是这个价。百度、阿里、腾讯紧随其后，固定订阅成了标配。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2024到2025年，补贴时代。</strong> 为了拉ARR做高估值，各家开始疯狂烧钱。谷歌给学生送了15个月免费Gemini Advanced，字节跳动的豆包喊出"比行业价低99.3%"，百度直接把核心模型免费。微软后来被曝出，GitHub Copilot订阅模式下，平均每个用户每月亏超过$20，重度用户甚至亏$80。</p>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">补贴的本质是用亏损换增长。但在那个阶段，所有人都觉得值。</p>
+</blockquote>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">📅 2026年6月，Token时代。</strong> 账终于摊到了桌面上。GitHub Copilot转向Token计费后，那种"先用着，反正不贵"的幻觉被打破了。每次代码补全、每次智能体对话，都在烧真金白银。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Salesforce的财务部门算出，今年预计要给Anthropic付大约<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">3亿美元</strong>。一个10人开发团队，一年光Token费用就可能超过<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">7.5万美元</strong>。这些数字放在两三年前，没人会当真。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">💸 二、账单失控：谁在为AI打工？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">企业账单失控背后，藏着一个扎心的数字。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">企业数据平台Entelligence.AI调研了2444家公司的AI使用情况，发现了一个让人坐不住的结果：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">每投入$1的AI Token费用，只有$0.18产生了触达用户的实际价值。</strong> 剩下$0.44花在了修复AI自己引入的Bug上，$0.27流向了返工，$0.11消耗在审查摩擦上。</p>
+<section style="background:rgba(139,92,246,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#8b5cf6;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚡ 核心洞察</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">换句话说，AI省下的那点时间，大部分又被AI搞出来的问题吃掉了。</p></section>
+
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Uber的COO Andrew Macdonald甚至为此造了一个新词：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">tokenmaxxing</strong>（Token极大化）。字面意思是"把Token用到极致"，实际意思是员工为了刷使用量而执行毫无价值的AI任务。他说，Token消耗的增长和产品实质改善之间，"这条线还不存在"。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">亚马逊的反应更直接。管理层叫停了内部AI使用排行榜，明确告诉员工"不要为了用AI而用AI"。微软也开始逐步停用部分产品部门的Claude Code订阅。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">高盛的分析指向一个更大的风险：部分企业的AI Token支出，已经占到员工总人力成本的<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">10%</strong>。未来几个季度，这个比例可能继续攀升。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这并非需求消失了，而是AI花的钱不再被视为理所当然。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">⚔️ 三、囚徒困境：OpenAI为什么必须降价？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">在这种背景下，OpenAI选择了一条看起来反直觉的路——降价。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">6月8日前后，OpenAI秘密向美国证券交易委员会提交了S-1文件，据称目标估值达<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">1万亿美元</strong>。几乎同时，据华尔街日报6月11日报道，OpenAI正在考虑大幅削减Token收费标准，抢回被Anthropic带走的企业客户。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">选择这个时机降价，很微妙。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">根据The Information披露的数据，OpenAI 2026年第一季度的营收接近<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">60亿美元</strong>，比Anthropic高出约10亿美元。但两家公司都在巨额亏损，因为算力太贵了。OpenAI的S-1文件预计，要到2030年才能实现盈利，期间计划在计算上支出6000亿美元——这比此前1.4万亿的计划已经砍了一半多。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">更尴尬的是竞争格局。Anthropic的Claude Code在开发者群体中迅速走红，帮助这家人工智能公司在Pre-IPO市场的估值冲到了<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">1.2万亿美元</strong>，首次超过OpenAI。OpenAI的应对是把自家编程工具Codex提升为最高优先级——目前Codex的周活跃开发者已达400万，相比年初的60万增长了近7倍。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">但问题是，投资者的担忧有理可循：两家公司的产品具有高度可替代性。客户可以轻易地从一家转向另一家。降价能短期留住客户，却无法真正构建护城河。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">神经科学家Gary Marcus说得更直："一旦OpenAI走下坡路，很可能会拖垮英伟达、甲骨文、Coreweave等公司。局势正在迅速恶化。"</p>
+<section style="background:rgba(245,158,11,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#f59e0b;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚠️ 连锁反应</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">价格战的代价将通过一条传导链向外扩散：降价压缩利润率，进而冲击云厂商2万亿美元的未来合同积压——其中AI实验室占了一半，英伟达的GPU订单、数据中心的投资——整个链条都会跟着晃。</p></section>
+
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">📊 四、华尔街分裂：泡沫前夜还是新起点？</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">华尔街对此的看法完全撕裂。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">摩根大通TMT分析师Mark Schilsky认为，眼前的失控只是"通往更高支出的最小减速带"。他的逻辑很直接：Token单价下降，但AI的渗透率在上升，智能体AI会使单次任务的Token消耗达到传统问答模式的<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">3.5倍</strong>。总支出在数学上必然继续扩大。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">高盛半导体分析师Jim Covello不同意。他认为当前产业链的繁荣几乎把全部价值集中到了半导体公司，这个现象"历史上前所未有且不可持续"。一旦企业直面Token计费的真实价格，支撑GPU采购和模型训练的资本流动将面临逆转。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">两边都说得通。这才是真正让人不安的地方。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🇨🇳 五、中国玩家：这场价格战的最大变量</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">在这场OpenAI和Anthropic的双雄对决中，最容易被忽视的角色来自中国。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Ramp是美国企业支出管理平台，它6月的数据显示：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">DeepSeek已经登顶美国企业软件订阅增速榜首。</strong> 首席经济学家Ara Kharazian特别强调，这不是开源模型的本地部署——"美国公司直接通过DeepSeek收发数据"。他坦言"没料到"。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">原因不难理解。DeepSeek V4-Pro的API均价大约是GPT-5.5的十分之一，接近Claude Opus 4.7的十一分之一。当OpenAI和Anthropic需要在价格战中向IPO投资者交代利润率时，DeepSeek不需要。它可以继续保持低价，持续渗透。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">这并不是唯一发力降价的中国玩家。5月22日，DeepSeek宣布V4-Pro API在5月31日结束2.5折优惠后，正式调整为原定价的25%。小米的MiMo-V2.5也宣布调价，最高降幅达到99%，Token套餐加量不加价，用量提升到原来的5到8倍。</p>
+<blockquote style="border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;background:#f7f3ee;padding:18px 20px;margin-top:24px;margin-bottom:24px;border-radius:0;font-size:16px;color:#555555;line-height:1.7;font-style:italic;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)" data-darkmode-bgcolor="#1e1b16">
+<p style="font-size:16px;color:#000000;line-height:1.7;margin-bottom:0;background:transparent">这场价格战的最终赢家，可能不在舞台中央。</p>
+</blockquote>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<h2 style="font-size:19px;font-weight:700;color:#111111;line-height:1.5;text-transform:uppercase;letter-spacing:0.12em;text-align:center;padding:10px 0;border-top:1px solid rgba(17,17,17,0.85);border-bottom:1px solid rgba(17,17,17,0.85);margin-top:38px;margin-bottom:18px" data-darkmode-color="#e0dcd4">🔮 六、Token经济学的下一章</h2>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">价格战之后，AI行业的商业化故事该怎么写？</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">Nebius的首席营收官Marc Boroditsky提出了一个新词：<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">valuemaxxing</strong>（价值最大化）。他主张行业从追求Token消耗最大化，转向让每个Token真正产生价值。这个方向正在成为行业共识，但真正的落地还需要一套既能反映真实成本、又能被企业接受的定价体系。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">另一个可能的方向是<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">分层定价</strong>。前沿模型继续服务高价值、复杂任务；日常任务、批量任务转向廉价模型或本地模型。AI的使用将从"一刀切"走向分层。</p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">还有<strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">Agent时代</strong>——智能体AI的执行模式让单次任务的Token消耗成倍增加。但企业是否愿意为此买单，取决于这些Agent能否证明自己值那个价。</p>
+<section style="background:rgba(139,92,246,0.06);border-top:1px solid #d5cfc5;border-bottom:1px solid #d5cfc5;padding:16px;margin-top:16px;margin-bottom:16px;border-radius:0"><p style="font-weight:700;color:#8b5cf6;margin-bottom:8px;font-size:15px;letter-spacing:0.04em">⚡ 核心观点</p><p style="font-size:14px;color:#000000;line-height:1.7;letter-spacing:0.3px" data-darkmode-color="#c0c0c0">三个方向指向同一个核心问题：AI行业"烧钱换增长"的时代正在终结。当Token也可以像水电一样按量计费时，整个AI商业化的估值逻辑都需要重写。</p></section>
+
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8">没人知道下一章的样子——但所有人都知道，上一页已经翻过去了。</p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><em style="font-style:italic;color:#666666" data-darkmode-color="#a0a0a0">文章数据和信息截至2026年6月12日。部分数据和引述来自华尔街日报、彭博、The Information、Ramp、Entelligence.AI、36氪、新智元、硬AI等来源。</em></p>
+<hr style="margin-top:40px;margin-bottom:40px;height:1px;background:linear-gradient(90deg, rgba(213,207,197,0) 0%, rgba(17,17,17,0.9) 26%, rgba(17,17,17,0.9) 74%, rgba(213,207,197,0) 100%);border:none;width:38%;margin-left:auto;margin-right:auto">
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">如果觉得有收获，欢迎关注本公众号，第一时间获取深度科技商业分析 📖</strong></p>
+<p style="font-size:15px;color:#000000;line-height:1.7;margin-top:0;margin-bottom:18px;letter-spacing:0.5px;text-align:left" data-darkmode-color="#c8c8c8"><strong style="font-weight:700;color:#111111;background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 62%, rgba(50,104,145,0.1) 62%, rgba(50,104,145,0.1) 100%);display:inline" data-darkmode-color="#e0a060">转发、在看、点赞，让更多人看到AI商业化的真相 👇</strong></p></section>
+</div>
+
+<script>
+function switchFontSize(size) {
+    // 更新按钮状态
+    document.querySelectorAll('.fs-btn').forEach(function(btn) {
+        if (parseInt(btn.dataset.size) === size) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+
+    // 修改可见预览区和隐藏复制区的 p 标签
+    ['articleContent', 'wechatHtml'].forEach(function(id) {
+        var container = document.getElementById(id);
+        if (!container) return;
+        container.querySelectorAll('p').forEach(function(p) {
+            var currentSize = parseInt(window.getComputedStyle(p).fontSize);
+            if (currentSize >= 14 && currentSize <= 16) {
+                p.style.fontSize = size + 'px';
+                p.style.lineHeight = size === 16 ? '1.75' : '1.8';
+            }
+        });
+        // 修改列表项文字
+        container.querySelectorAll('[style*="font-size:15px"]').forEach(function(el) {
+            if (el.tagName === 'SPAN' || el.tagName === 'SECTION') {
+                el.style.fontSize = size + 'px';
+            }
+        });
+    });
+
+    // 保存选择到 localStorage
+    localStorage.setItem('wechat-format-fontsize', size);
+}
+
+// 页面加载时恢复上次选择
+document.addEventListener('DOMContentLoaded', function() {
+    var saved = localStorage.getItem('wechat-format-fontsize');
+    if (saved && saved !== '15') {
+        switchFontSize(parseInt(saved));
+    }
+});
+
+function copyToWechat() {
+    const source = document.getElementById('wechatHtml');
+    const range = document.createRange();
+    range.selectNodeContents(source);
+
+    // 临时让元素可见（否则某些浏览器不允许复制隐藏元素）
+    source.style.position = 'fixed';
+    source.style.left = '0';
+    source.style.top = '0';
+    source.style.opacity = '0.01';
+    source.style.width = '375px';
+
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    try {
+        document.execCommand('copy');
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '已复制!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = '复制到微信';
+            btn.classList.remove('copied');
+        }, 2500);
+    } catch(e) {
+        // fallback: 尝试 Clipboard API
+        const html = source.innerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const item = new ClipboardItem({ 'text/html': blob });
+        navigator.clipboard.write([item]).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '已复制!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = '复制到微信';
+                btn.classList.remove('copied');
+            }, 2500);
+        }).catch(() => {
+            alert('复制失败，请手动选中文章内容复制');
+        });
+    }
+
+    // 恢复隐藏
+    source.style.position = 'absolute';
+    source.style.left = '-9999px';
+    source.style.top = '-9999px';
+    source.style.opacity = '';
+    source.style.width = '';
+
+    sel.removeAllRanges();
+}
+</script>
+</body>
+</html>

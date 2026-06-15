@@ -6,10 +6,6 @@ node_modules/
 dist/
 build/
 
-## 核心内容
-
-content/
-
 ## OpenCode 会话跟踪数据
 
 .omo/
