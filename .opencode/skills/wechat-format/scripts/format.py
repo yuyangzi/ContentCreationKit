@@ -288,9 +288,9 @@ def convert_wikilinks(text: str, vault_root: Path, output_dir: Path) -> str:
     # 支持自定义图片搜索目录
     config_path = SKILL_DIR / "config.json"
     if config_path.exists():
-        import json as _json
         try:
-            _cfg = _json.load(open(config_path, encoding="utf-8"))
+            with open(config_path, encoding="utf-8") as f:
+                _cfg = json.load(f)
             for p in _cfg.get("image_search_paths", []):
                 search_roots.append(Path(p).expanduser())
         except Exception:
