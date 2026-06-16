@@ -1650,31 +1650,25 @@ def main():
     print(f"标题: {title}")
     print(f"字数: {word_count:,}")
 
-    # 非微信格式：简单输出
+    # 所有格式统一通过 format_for_output() 预处理
+    # （返回未样式化的 HTML，样式注入由下方各分支统一处理）
+    result = format_for_output(content, input_path, theme, output_dir, vault_root, args.format)
+    html = result["html"]
+    footnote_html = result["footnote_html"]
+
+    # 非微信格式：直接写入后返回
     if args.format != "wechat":
-        result = format_for_output(content, input_path, theme, output_dir, vault_root, args.format)
         out_path = output_dir / f"article.{args.format}.html"
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_html = result["html"]
-        if result["footnote_html"]:
-            out_html += "\n" + result["footnote_html"]
+        out_html = html
+        if footnote_html:
+            out_html += "\n" + footnote_html
         out_path.write_text(out_html, encoding="utf-8")
         print(f"\n输出: {out_path}")
         return
 
-    # 处理流程
-    content = strip_frontmatter(content)
-    content = process_callouts(content)
-    content = process_manual_footnotes(content)
-    content = process_fenced_containers(content)
-    content = re.sub(r'~~(.+?)~~', r'<del>\1</del>', content)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    content = convert_wikilinks(content, vault_root, output_dir)
-    content = copy_markdown_images(content, input_path.parent, output_dir)
-
-    html = md_to_html(content)
-    html, footnote_html = extract_links_as_footnotes(html)
+    # 微信格式：继续样式注入处理（仅一次注入 — format_for_output 不再注入）
+    # 注: 下方 gallery 和单主题代码保持不变，html/footnote_html 均为未样式化
 
     # ── Gallery 模式：并行渲染多主题 ──
     if args.gallery:
