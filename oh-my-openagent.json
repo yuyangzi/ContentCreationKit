@@ -65,7 +65,7 @@
       "model": "Volcengine-Plan/MiniMax-M3"
     },
     "writing": {
-      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
+      "model": "opencode/deepseek-v4-flash-free"
     }
   }
 }
