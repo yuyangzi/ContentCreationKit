@@ -1552,12 +1552,13 @@ def format_for_output(content: str, input_path: Path, theme: dict,
     """统一格式化入口，支持多种输出格式
 
     Args:
-        output_format: "wechat" (默认，全套微信兼容处理)
+        output_format: "wechat" (默认，预处理 + 脚注转换，不含样式注入)
                       "html" (标准 HTML，保留 class，不内联样式)
                       "plain" (纯文本 + 基本 HTML 结构)
 
     Returns:
         dict with keys: html, footnote_html, title, word_count
+        (html/footnote_html 均未样式化，由调用方注入)
     """
     title = extract_title(content, input_path)
     word_count = count_words(content)
@@ -1598,14 +1599,8 @@ def format_for_output(content: str, input_path: Path, theme: dict,
             "word_count": word_count,
         }
 
-    # wechat: 全套微信兼容处理
-    html = inject_inline_styles(html, theme)
-    if footnote_html:
-        footnote_html = inject_inline_styles(footnote_html, theme, skip_wrapper=True)
-    html = convert_image_captions(html)
-    if footnote_html:
-        footnote_html = convert_image_captions(footnote_html)
-
+    # 返回未样式化的 HTML（html/wechat 通用）
+    # 样式注入由调用方（main() / _render_single_theme()）统一处理
     return {
         "html": html,
         "footnote_html": footnote_html,
