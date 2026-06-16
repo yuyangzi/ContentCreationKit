@@ -6,6 +6,10 @@ node_modules/
 dist/
 build/
 
+## Git worktrees
+
+.worktrees/
+
 ## OpenCode 会话跟踪数据
 
 .omo/
