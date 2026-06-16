@@ -280,6 +280,27 @@ def fix_cjk_bold_punctuation(text: str) -> str:
     return text
 
 
+# ── 图片索引（惰性构建，替代 os.walk）─────────────────────────────────
+# 注意: 符号链接文件不会被索引（not p.is_symlink），
+# 以消除 followlinks=True 的循环递归风险。
+_image_index: dict[str, Path] = {}
+_image_index_built = False
+
+
+def _build_image_index(search_roots: list[Path]) -> None:
+    """惰性构建文件名→路径索引，一次构建，多次查询"""
+    global _image_index, _image_index_built
+    if _image_index_built:
+        return
+    for search_root in search_roots:
+        if not search_root.exists():
+            continue
+        for p in search_root.rglob("*"):
+            if p.is_file() and not p.is_symlink():
+                _image_index[p.name] = p
+    _image_index_built = True
+
+
 def convert_wikilinks(text: str, vault_root: Path, output_dir: Path) -> str:
     """把 Obsidian ![[image.jpg]] 转为 <img> 标签，复制图片到输出目录"""
     images_dir = output_dir / "images"
@@ -288,32 +309,40 @@ def convert_wikilinks(text: str, vault_root: Path, output_dir: Path) -> str:
     # 支持自定义图片搜索目录
     config_path = SKILL_DIR / "config.json"
     if config_path.exists():
-        import json as _json
         try:
-            _cfg = _json.load(open(config_path, encoding="utf-8"))
+            with open(config_path, encoding="utf-8") as f:
+                _cfg = json.load(f)
             for p in _cfg.get("image_search_paths", []):
                 search_roots.append(Path(p).expanduser())
         except Exception:
             pass
+
+    # 惰性构建图片索引（首次调用时构建）
+    _build_image_index(search_roots)
+
+    # 图片扩展名白名单
+    IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp'}
 
     def replace_img(match):
         filename = match.group(1).strip()
         # 处理带尺寸的 wikilink: ![[image.jpg|300]]
         if "|" in filename:
             filename = filename.split("|")[0].strip()
-        # 在多个目录中搜索图片（followlinks=True 跟随符号链接）
-        for search_root in search_roots:
-            if not search_root.exists():
-                continue
-            for root, dirs, files in os.walk(search_root, followlinks=True):
-                if filename in files:
-                    img_path = Path(root) / filename
-                    images_dir.mkdir(parents=True, exist_ok=True)
-                    dest = images_dir / filename
-                    if not dest.exists():
-                        shutil.copy2(img_path, dest)
-                    # 返回占位标记，后面注入样式时处理
-                    return f'<section data-role="img-wrapper"><img src="images/{filename}" alt="{filename}"></section>'
+
+        # 验证文件扩展名
+        ext = Path(filename).suffix.lower()
+        if ext not in IMAGE_EXTENSIONS:
+            return f'<span style="color:#999;">[不支持的文件: {filename}]</span>'
+
+        # 从索引查找
+        if filename in _image_index:
+            img_path = _image_index[filename]
+            images_dir.mkdir(parents=True, exist_ok=True)
+            dest = images_dir / filename
+            if not dest.exists():
+                shutil.copy2(img_path, dest)
+            return f'<section data-role="img-wrapper"><img src="images/{filename}" alt="{filename}"></section>'
+
         return f'<span style="color:#999;">[图片: {filename}]</span>'
 
     return re.sub(r"!\[\[([^\]]+)\]\]", replace_img, text)
@@ -1436,16 +1465,22 @@ def generate_preview(article_html: str, footnote_html: str, theme: dict,
 def convert_image_captions(html: str) -> str:
     """将图片后紧跟的斜体段落转为图说样式"""
     caption_style = "text-align:center;font-size:13px;color:#999999;margin-top:-8px;margin-bottom:16px;font-style:normal"
-    # 匹配 img wrapper (</section>) 后面紧跟的 <p><em>xxx</em></p>
+    # 匹配 img-wrapper (</section>) 后独立 <p><em>...</em></p>
     html = re.sub(
-        r'(</section>\s*)<p[^>]*><em>(.*?)</em></p>',
+        r'(</section>\s*)<p[^>]*><em[^>]*>(.{1,200})</em></p>',
         rf'\1<p style="{caption_style}">\2</p>',
         html
     )
-    # 同时匹配 </p>（CDN/外链图片）后面的斜体图说
+    # 匹配 </p> 后独立 <p><em>...</em></p>（CDN 图 + 空行的情况）
     html = re.sub(
-        r'(</p>\s*)<p[^>]*><em>(.*?)</em></p>',
+        r'(</p>\s*)<p[^>]*><em[^>]*>(.{1,200})</em></p>',
         rf'\1<p style="{caption_style}">\2</p>',
+        html
+    )
+    # 匹配同一 <p> 内的 <img...><br><em>...</em></p>（CDN 图无空行，最常见的情况）
+    html = re.sub(
+        r'(<p[^>]*>.*?<img[^>]*>(?:\s*<br\s*/?>)?\s*\n?\s*)<em[^>]*>(.{1,200})</em></p>',
+        rf'\1<span style="{caption_style}">\2</span></p>',
         html
     )
     return html
@@ -1538,7 +1573,7 @@ def generate_gallery(rendered_map: dict, theme_map: dict,
 
     # 写入选中主题到临时文件（默认第一个）
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUTPUT_DIR / "selected-theme.txt").write_text(default_theme, encoding="utf-8")
+    (output_dir / "selected-theme.txt").write_text(default_theme, encoding="utf-8")
 
     output_path = output_dir / "gallery.html"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1650,31 +1685,25 @@ def main():
     print(f"标题: {title}")
     print(f"字数: {word_count:,}")
 
-    # 非微信格式：简单输出
+    # 所有格式统一通过 format_for_output() 预处理
+    # （返回未样式化的 HTML，样式注入由下方各分支统一处理）
+    result = format_for_output(content, input_path, theme, output_dir, vault_root, args.format)
+    html = result["html"]
+    footnote_html = result["footnote_html"]
+
+    # 非微信格式：直接写入后返回
     if args.format != "wechat":
-        result = format_for_output(content, input_path, theme, output_dir, vault_root, args.format)
         out_path = output_dir / f"article.{args.format}.html"
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_html = result["html"]
-        if result["footnote_html"]:
-            out_html += "\n" + result["footnote_html"]
+        out_html = html
+        if footnote_html:
+            out_html += "\n" + footnote_html
         out_path.write_text(out_html, encoding="utf-8")
         print(f"\n输出: {out_path}")
         return
 
-    # 处理流程
-    content = strip_frontmatter(content)
-    content = process_callouts(content)
-    content = process_manual_footnotes(content)
-    content = process_fenced_containers(content)
-    content = re.sub(r'~~(.+?)~~', r'<del>\1</del>', content)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    content = convert_wikilinks(content, vault_root, output_dir)
-    content = copy_markdown_images(content, input_path.parent, output_dir)
-
-    html = md_to_html(content)
-    html, footnote_html = extract_links_as_footnotes(html)
+    # 微信格式：继续样式注入处理（仅一次注入 — format_for_output 不再注入）
+    # 注: 下方 gallery 和单主题代码保持不变，html/footnote_html 均为未样式化
 
     # ── Gallery 模式：并行渲染多主题 ──
     if args.gallery:
@@ -1723,7 +1752,7 @@ def main():
             print("已在浏览器中打开画廊")
 
         print(f"\n完成! 选中主题后点「用这个风格排版」即可复制到剪贴板。")
-        print(f"选中的主题 ID 会写入 {OUTPUT_DIR / 'selected-theme.txt'}")
+        print(f"选中的主题 ID 会写入 {output_dir / 'selected-theme.txt'}")
         return
 
     # ── 单主题模式 ──
