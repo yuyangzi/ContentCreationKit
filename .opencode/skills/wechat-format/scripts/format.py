@@ -1465,16 +1465,22 @@ def generate_preview(article_html: str, footnote_html: str, theme: dict,
 def convert_image_captions(html: str) -> str:
     """将图片后紧跟的斜体段落转为图说样式"""
     caption_style = "text-align:center;font-size:13px;color:#999999;margin-top:-8px;margin-bottom:16px;font-style:normal"
-    # 匹配 img wrapper (</section>) 后面紧跟的 <p><em>xxx</em></p>
+    # 匹配 img-wrapper (</section>) 后独立 <p><em>...</em></p>
     html = re.sub(
-        r'(</section>\s*)<p[^>]*><em>(.*?)</em></p>',
+        r'(</section>\s*)<p[^>]*><em[^>]*>(.{1,200})</em></p>',
         rf'\1<p style="{caption_style}">\2</p>',
         html
     )
-    # 同时匹配 </p>（CDN/外链图片）后面的斜体图说
+    # 匹配 </p> 后独立 <p><em>...</em></p>（CDN 图 + 空行的情况）
     html = re.sub(
-        r'(</p>\s*)<p[^>]*><em>(.*?)</em></p>',
+        r'(</p>\s*)<p[^>]*><em[^>]*>(.{1,200})</em></p>',
         rf'\1<p style="{caption_style}">\2</p>',
+        html
+    )
+    # 匹配同一 <p> 内的 <img...><br><em>...</em></p>（CDN 图无空行，最常见的情况）
+    html = re.sub(
+        r'(<p[^>]*>.*?<img[^>]*>(?:\s*<br\s*/?>)?\s*\n?\s*)<em[^>]*>(.{1,200})</em></p>',
+        rf'\1<span style="{caption_style}">\2</span></p>',
         html
     )
     return html
