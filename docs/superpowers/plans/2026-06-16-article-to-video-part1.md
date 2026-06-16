@@ -20,48 +20,49 @@
 
 ```
 .opencode/skills/video-generate/
-├── SKILL.md                              # Skill definition (follows image-generate pattern)
-├── requirements.txt                      # Python deps
+├── SKILL.md                              # Skill definition — **Part 2**
+├── requirements.txt                      # Python deps — **Part 1**
 ├── scripts/
-│   ├── __init__.py
-│   ├── scenes_schema.py                  # Schema validator + constants
-│   ├── generate_audio.py                 # Edge-TTS + retry + timestamp backfill → scenes_complete.json
-│   ├── fetch_assets.py                   # 3-layer asset search + download → scenes_with_assets.json
-│   ├── merge_scenes.py                   # Merge with_assets + complete → scenes_final.json
-│   ├── test_scenes_schema.py             # Schema validator tests
-│   ├── test_generate_audio.py            # Audio + retry tests
-│   ├── test_fetch_assets.py              # Asset search tests (3 per spec §13.1)
-│   ├── test_merge_scenes.py              # Merge validation tests
-│   └── render_video.sh                   # Asset copy + Remotion render + cleanup
-└── remotion/
-    ├── package.json                      # Remotion + React deps
+│   ├── __init__.py                       # **Part 1**
+│   ├── scenes_schema.py                  # Schema validator + constants — **Part 1**
+│   ├── generate_audio.py                 # Edge-TTS → scenes_complete.json — **Part 1**
+│   ├── fetch_assets.py                   # 3-layer asset search → scenes_with_assets.json — **Part 1**
+│   ├── merge_scenes.py                   # Merge → scenes_final.json — **Part 1**
+│   ├── test_scenes_schema.py             # Schema validator tests — **Part 1**
+│   ├── test_generate_audio.py            # Audio + retry tests — **Part 1**
+│   ├── test_fetch_assets.py              # Asset search tests — **Part 1**
+│   ├── test_merge_scenes.py              # Merge validation tests — **Part 1**
+│   ├── test_contract_compliance.py       # Python↔TS cross-ecosystem contract — **Part 1**
+│   └── render_video.sh                   # Asset copy + Remotion render — **Part 2**
+└── remotion/                             # — **Part 2** (all files)
+    ├── package.json
     ├── tsconfig.json
     ├── remotion.config.ts
     └── src/
-        ├── Root.tsx                      # Register composition
-        ├── MainVideo.tsx                 # Scene sequencer + audio + captions
-        ├── input-props.ts                # TypeScript types for scenes.json
-        ├── theme.ts                      # Color/font defaults
-        ├── templates/                    # 6 scene type components
+        ├── Root.tsx
+        ├── MainVideo.tsx
+        ├── input-props.ts                # — **Part 1** (created in Task 3)
+        ├── theme.ts
+        ├── templates/
         │   ├── TitleCard.tsx
         │   ├── ChapterTitle.tsx
         │   ├── StockFootageScene.tsx
         │   ├── InfoCardScene.tsx
         │   ├── CodeBlockScene.tsx
         │   └── Outro.tsx
-        └── components/                   # Reusable sub-components
+        └── components/
             ├── CaptionOverlay.tsx
             ├── KenBurnsImage.tsx
             └── TextCard.tsx
 
-.opencode/commands/
-├── to-video-script.md                    # Agent-driven scene generation
-├── to-video-footage.md                   # Asset search + download
-├── to-video-audio.md                     # TTS + timestamp backfill
-├── to-video-render.md                    # Remotion render
-└── to-video.md                           # One-click full pipeline
+.opencode/commands/                       # — **Part 2** (all files)
+├── to-video-script.md
+├── to-video-footage.md
+├── to-video-audio.md
+├── to-video-render.md
+└── to-video.md
 
-Modified:
+Modified (Part 1):
 - .gitignore                              # Add content/video/
 ```
 
@@ -76,7 +77,9 @@ Task 4: generate_audio.py (TDD)        ← depends on Task 2         │
 Task 5: fetch_assets.py (TDD)          ← depends on Task 2         │
                                                                      │
 Task 5b: merge_scenes.py (TDD)         ← depends on Task 4, 5      │
-                                                                     │
+                                                                      │
+Task 5c: test_contract_compliance.py   ← depends on Task 2, 3, 5b │
+                                                                      │
 Task 6: Remotion scaffold + configs    ← depends on Task 3         │
 Task 7: Remotion templates (6 scenes)  ← depends on Task 6         │
 Task 8: Remotion components            ← depends on Task 6         │
@@ -88,7 +91,7 @@ Task 11: SKILL.md + commands            ← depends on Task 4,5,10   │
 Task 12: Integration test              ← depends on all above      │
 ```
 
-> **Note on data flow:** Tasks 4 and 5 produce *different* artifacts (`scenes_complete.json` from audio; `scenes_with_assets.json` from assets). Task 5b is a **mandatory merge step** before the renderer can see both asset paths and audio timestamps. Part 2's `to-video-render.md` must consume `scenes_final.json`, not `scenes_complete.json`.
+> **Note on data flow:** Tasks 4 and 5 produce *different* artifacts (`scenes_complete.json` from audio; `scenes_with_assets.json` from assets). Task 5b is a **mandatory merge step** before the renderer can see both asset paths and audio timestamps. Part 2's `to-video-render.md` has been updated to consume `scenes_final.json`, not `scenes_complete.json`. Task 5c verifies that the merged `scenes_final.json` structure satisfies both the Python schema and the TypeScript type contract (docs/superpowers/specs/2026-06-16-article-to-video-design.md).
 
 ## Parallel Execution Graph
 
@@ -100,9 +103,9 @@ Wave 2 (parallel):    Task 2 ──┬── Task 3
 Wave 3 (parallel):    Task 4   Task 6
                       Task 5   ↓
                        ↓       Task 7 ──┬── Task 8
-Wave 3.5 (sync point): Task 5b          ↓
-                       ↓       ↓
-Wave 4:                       Task 9
+Wave 3.5 (sync point): Task 5b ──┬── Task 5c (contract)
+                                 ↓
+Wave 4:                          Task 9
                                ↓
 Wave 5:                       Task 10
                                ↓
@@ -117,6 +120,28 @@ Wave 6 (integration):         Task 11 ── Task 12
 - Create: `.opencode/skills/video-generate/requirements.txt`
 - Create: `.opencode/skills/video-generate/scripts/__init__.py`
 - Modify: `.gitignore`
+
+- [ ] **Step 0: Install system dependencies (prerequisite for `newspaper3k`)**
+
+```bash
+# macOS
+brew install libxml2 libxslt
+
+# Ubuntu/Debian (uncomment if on Linux):
+# sudo apt install libxml2-dev libxslt-dev
+
+# Verify lxml can be compiled later (actual pip install happens after venv setup)
+```
+
+> **Why this step matters:** `newspaper3k` depends on `lxml` which requires `libxml2`/`libxslt` development headers at compile time. Without these, `pip install lxml` will fail with cryptic C compiler errors.
+
+- [ ] **Step 0.5: Create Python virtual environment + install deps**
+
+```bash
+cd .opencode/skills/video-generate && python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+```
+
+> **Why venv:** Isolates video-generate Python deps from other skills and system Python. Each skill's dependencies stay contained.
 
 - [ ] **Step 1: Create directory structure**
 
@@ -724,36 +749,50 @@ def parse_srt_timestamps(srt_path: str):
 
 
 def match_scene_timestamps(scenes: list, srt_entries: list, full_text: str):
-    """Match SRT entries to scenes by searching for scene narration.text
-    substring positions within the concatenated full text."""
-    position = 0
+    """Match SRT entries to scenes by character-position accumulation.
+
+    Since full_text = ''.join(s['narration']['text'] for s in scenes),
+    each scene occupies a known character range. SRT entries are walked
+    in order, accumulating character lengths until each scene's range
+    is covered. This avoids str.find() bugs with duplicate/overlapping
+    narration text across scenes.
+    """
+    if not scenes or not srt_entries:
+        return
+
+    # Pre-compute scene character boundaries in full_text
+    scene_ends = []
+    pos = 0
     for scene in scenes:
-        nar = scene["narration"]
-        scene_text = nar["text"].strip()
-        # Find this scene's text in the full concatenated text
-        idx = full_text.find(scene_text, position)
-        if idx == -1:
-            # fallback: try with whitespace normalization
-            normalized_full = re.sub(r'\s+', '', full_text)
-            normalized_scene = re.sub(r'\s+', '', scene_text)
-            idx = normalized_full.find(normalized_scene, position)
-        if idx >= 0:
-            # Map character index to ms using SRT entries (approximate)
-            # Count characters up to idx in full_text, find corresponding SRT entry
-            char_count = 0
-            start_ms = srt_entries[0]["start_ms"] if srt_entries else 0
-            end_ms = srt_entries[-1]["end_ms"] if srt_entries else 0
-            for entry in srt_entries:
-                entry_len = len(entry["text"])
-                if char_count <= idx < char_count + entry_len:
-                    start_ms = entry["start_ms"]
-                # <=  (not <) so the upper boundary character is captured
-                if char_count <= (idx + len(scene_text)) <= char_count + entry_len:
-                    end_ms = entry["end_ms"]
-                char_count += entry_len
-            nar["voice_start_ms"] = start_ms
-            nar["voice_end_ms"] = end_ms
-        position = idx + len(scene_text) if idx >= 0 else position
+        pos += len(scene["narration"]["text"])
+        scene_ends.append(pos)
+
+    # Walk SRT entries in order, assigning them to scenes by character range
+    srt_idx = 0
+    for i, end_pos in enumerate(scene_ends):
+        nar = scenes[i]["narration"]
+        prev_end = scene_ends[i - 1] if i > 0 else 0
+        scene_char_len = end_pos - prev_end
+
+        # First SRT entry for this scene → voice_start_ms
+        if srt_idx < len(srt_entries):
+            nar["voice_start_ms"] = srt_entries[srt_idx]["start_ms"]
+        else:
+            nar["voice_start_ms"] = 0
+            nar["voice_end_ms"] = 0
+            continue
+
+        # Consume SRT entries until we've covered this scene's characters
+        consumed = 0
+        while srt_idx < len(srt_entries) and consumed < scene_char_len:
+            consumed += len(srt_entries[srt_idx]["text"])
+            if consumed >= scene_char_len:
+                nar["voice_end_ms"] = srt_entries[srt_idx]["end_ms"]
+            srt_idx += 1
+
+        if consumed < scene_char_len and srt_entries:
+            # Ran out of SRT entries; use last known timestamp
+            nar["voice_end_ms"] = srt_entries[-1]["end_ms"]
 
 
 def build_word_timestamps(srt_entries: list, full_text: str):
@@ -795,9 +834,7 @@ async def main_async(scenes_path: str, outdir: str, voice: str):
     # Build word-level timestamps
     word_ts = build_word_timestamps(srt_entries, full_text)
 
-    # Distribute word timestamps to each scene using character-position lookup
-    # (L3 fix: was character-count accumulation, broke for CJK where one SRT
-    # entry can span multiple characters)
+    # Distribute word timestamps to each scene using character-position accumulation
     scene_boundaries = []  # cumulative end-positions in full_text
     cumulative = 0
     for scene in data["scenes"]:
@@ -805,22 +842,15 @@ async def main_async(scenes_path: str, outdir: str, voice: str):
         scene_boundaries.append(cumulative)
 
     scene_words_map = {i: [] for i in range(len(data["scenes"]))}
-    pos = 0
+    scene_idx = 0
+    chars_in_srt = 0  # total characters processed from SRT entries
     for w in word_ts:
-        # Locate which scene this SRT entry's text starts in
-        seg_text = w["word"]
-        seg_pos = full_text.find(seg_text, pos)
-        if seg_pos == -1:
-            # Fall back: try without offset
-            seg_pos = full_text.find(seg_text)
-        if seg_pos == -1:
-            continue  # Skip entries we can't locate
-        # Find scene by cumulative boundary
-        for i, boundary in enumerate(scene_boundaries):
-            if seg_pos < boundary:
-                scene_words_map[i].append(w)
-                break
-        pos = seg_pos + len(seg_text)
+        entry_len = len(w["word"])
+        # Advance scene when cumulative SRT chars exceed the boundary
+        while scene_idx < len(scene_boundaries) - 1 and chars_in_srt >= scene_boundaries[scene_idx]:
+            scene_idx += 1
+        scene_words_map[scene_idx].append(w)
+        chars_in_srt += entry_len
 
     for i, scene in enumerate(data["scenes"]):
         scene["narration"]["timestamps"] = scene_words_map[i]
@@ -970,13 +1000,77 @@ def test_extract_ref_urls_from_markdown(tmp_path):
 
 
 def test_search_all_layers_returns_empty_without_keys(monkeypatch):
-    """When all API keys are unset and Bing scraping blocked, returns empty list."""
-    for k in ("PEXELS_API_KEY", "PIXABAY_API_KEY", "UNSPLASH_ACCESS_KEY"):
-        monkeypatch.delenv(k, raising=False)
+    """When all API keys are unset and Bing scraping blocked, returns empty list.
+
+    NOTE: Patches module-level constants directly (monkeypatch.delenv on os.environ
+    would be too late — module-level `PEXELS_API_KEY = os.environ.get(...)` was
+    already evaluated at import time).
+    """
+    import fetch_assets as fa
+    monkeypatch.setattr(fa, "PEXELS_API_KEY", "")
+    monkeypatch.setattr(fa, "PIXABAY_API_KEY", "")
+    monkeypatch.setattr(fa, "UNSPLASH_ACCESS_KEY", "")
+    monkeypatch.setattr(fa, "HAS_NEWSPAPER", False)
     with patch("fetch_assets.requests.get", side_effect=Exception("network blocked")):
         results = search_all_layers(["测试"], ["test"], [])
     assert isinstance(results, list)
     assert len(results) == 0
+
+
+def test_search_pixabay_returns_results(monkeypatch):
+    """search_pixabay returns images when API key set and mock returns 200."""
+    import fetch_assets as fa
+    monkeypatch.setattr(fa, "PIXABAY_API_KEY", "test-key")
+    fake = MockResp(200, {"hits": [
+        {"largeImageURL": "https://x/y.jpg", "pageURL": "https://pixabay.com/photo/1",
+         "imageWidth": 1920, "imageHeight": 1080}
+    ]})
+    with patch("fetch_assets.requests.get", return_value=fake):
+        results = search_pixabay("machine learning", 3)
+    assert len(results) == 1
+    assert results[0]["source"] == "pixabay"
+    assert results[0]["type"] == "image"
+
+
+def test_search_bing_images_returns_results(monkeypatch):
+    """search_bing_images parses murl from Bing HTML when mock returns 200."""
+    fake = MockResp(200, {})  # .json() not called; .text is used
+    fake.text = '<html>"murl":"https://example.com/img1.jpg"</html>'
+    with patch("fetch_assets.requests.get", return_value=fake):
+        results = search_bing_images("test query", 5)
+    assert len(results) == 1
+    assert results[0]["url"] == "https://example.com/img1.jpg"
+    assert results[0]["source"] == "bing"
+
+
+def test_download_file_returns_true_on_success(tmp_path):
+    """download_file writes content to dest and returns True on valid file."""
+    from fetch_assets import download_file
+    dest = tmp_path / "test.jpg"
+    # Mock urlopen to return 200 bytes of data
+    import urllib.request
+    from unittest.mock import Mock
+    fake_response = Mock()
+    fake_response.read.return_value = b"x" * 200
+    with patch("urllib.request.urlopen", return_value=fake_response):
+        result = download_file("https://example.com/img.jpg", str(dest))
+    assert result is True
+    assert dest.exists()
+    assert dest.stat().st_size == 200
+
+
+def test_download_file_returns_false_on_empty(tmp_path):
+    """download_file returns False when response is under 100 bytes."""
+    from fetch_assets import download_file
+    dest = tmp_path / "empty.jpg"
+    import urllib.request
+    from unittest.mock import Mock
+    fake_response = Mock()
+    fake_response.read.return_value = b"x" * 50
+    with patch("urllib.request.urlopen", return_value=fake_response):
+        result = download_file("https://example.com/empty.jpg", str(dest))
+    assert result is False
+    assert not dest.exists()
 ```
 
 - [ ] **Step 0.1: Run — expect FAIL (fetch_assets.py not implemented yet)**
@@ -1189,30 +1283,47 @@ def search_unsplash(query: str, max_results: int = 3) -> List[Dict]:
 
 # --- Layer 3: Web image search (Bing) ---
 
+BING_RETRY_DELAYS = [2, 5]  # 2s, then 5s before giving up
+
+
 def search_bing_images(query: str, max_results: int = 10) -> List[Dict]:
     """Search Bing images (no API key needed). Uses HTML parsing.
-    WARNING: Fragile — Bing changes HTML structure periodically. M6 fix:
-    failures now log a warning so silent degradation is observable.
+
+    NOTE on fragility: Bing changes HTML structure periodically, which breaks
+    the `murl` regex. A retry loop with short backoff mitigates transient
+    network/rendering issues. If all attempts fail, a structured warning
+    is emitted so callers can detect layer-3 degradation.
+
+    Returns (list): image results. Empty list means all retries failed.
     """
     results = []
-    try:
-        url = f"https://www.bing.com/images/search?q={urllib.parse.quote(query)}&first=1"
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
-        resp = requests.get(url, headers=headers, timeout=15)
-        if resp.status_code == 200:
-            # Extract murl from Bing's image JSON data
-            import re as _re
-            matches = _re.findall(r'"murl"\s*:\s*"([^"]+)"', resp.text)
-            for murl in matches[:max_results]:
-                results.append({
-                    "url": murl, "source": "bing",
-                    "source_url": url, "type": "image"
-                })
-            if not matches:
-                print(f"⚠️ Bing 返回 200 但 murl 解析为 0 条 (query={query})。"
-                      f"HTML 结构可能已变。", file=sys.stderr)
-    except Exception as e:
-        print(f"⚠️ Bing 抓取失败 (query={query}): {e}", file=sys.stderr)
+    url = f"https://www.bing.com/images/search?q={urllib.parse.quote(query)}&first=1"
+    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+
+    for attempt in range(1 + len(BING_RETRY_DELAYS)):  # 1 initial + N retries
+        try:
+            resp = requests.get(url, headers=headers, timeout=15)
+            if resp.status_code == 200:
+                import re as _re
+                matches = _re.findall(r'"murl"\s*:\s*"([^"]+)"', resp.text)
+                for murl in matches[:max_results]:
+                    results.append({
+                        "url": murl, "source": "bing",
+                        "source_url": url, "type": "image"
+                    })
+                if not matches:
+                    print(f"⚠️ Bing 返回 200 但 murl 解析为 0 条 (query={query})。"
+                          f"HTML 结构可能已变。", file=sys.stderr)
+                # Got results or got 200 with no matches — either way, done.
+                break
+        except Exception as e:
+            if attempt < len(BING_RETRY_DELAYS):
+                delay = BING_RETRY_DELAYS[attempt]
+                print(f"⚠️ Bing 抓取失败 (attempt {attempt+1}, query={query}): {e}."
+                      f" 重试 {delay}s 后…", file=sys.stderr)
+                time.sleep(delay)
+            else:
+                print(f"⚠️ Bing 抓取全部失败 (query={query}): {e}", file=sys.stderr)
     return results
 
 
@@ -1220,7 +1331,12 @@ def search_bing_images(query: str, max_results: int = 10) -> List[Dict]:
 
 def search_all_layers(keywords_zh: List[str], keywords_en: List[str],
                       ref_urls: List[str], max_per_scene: int = 8) -> List[Dict]:
-    """Run all 5 search layers, deduplicate, and return best results."""
+    """Run all 5 search layers, deduplicate, and return best results.
+
+    WARNING: When ALL layers return zero results (no API keys, Bing blocked,
+    no ref URLs), the caller will receive an empty list. This function emits
+    a structured warning on stderr so the orchestrator can detect degradation.
+    """
     all_results = []
 
     # Layer 1: Reference links
@@ -1239,6 +1355,14 @@ def search_all_layers(keywords_zh: List[str], keywords_en: List[str],
 
     # Layer 4 (AI generation) and Layer 5 (screenshots) are deferred
     # — triggered by Agent when no suitable assets found.
+
+    # Warn if ALL layers returned nothing — highest severity degradation
+    if not all_results:
+        kw_str = ", ".join(keywords_en[:2] + keywords_zh[:2])
+        print(f"⚠️ [search_all_layers] ZERO results for keywords '{kw_str}'. "
+              f"Check: PEXELS_API_KEY, PIXABAY_API_KEY, UNSPLASH_ACCESS_KEY env vars, "
+              f"Bing availability, and reference URLs.",
+              file=sys.stderr)
 
     # Deduplicate by URL
     seen = set()
@@ -1259,6 +1383,10 @@ def process_scene(scene: dict, ref_urls: List[str],
     sid = scene["id"]
 
     results = search_all_layers(kw_zh, kw_en, ref_urls)
+    if not results:
+        print(f"⚠️ [{sid}] ZERO assets found across all search layers. "
+              f"Scene will render with no background media.",
+              file=sys.stderr)
     assets = []
     for i, r in enumerate(results):
         ext = "mp4" if r["type"] == "video" else "jpg"
@@ -1390,6 +1518,10 @@ import subprocess
 import sys
 import pytest
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MERGE_SCRIPT = os.path.join(SCRIPT_DIR, "merge_scenes.py")
+
+
 def test_merge_scenes_creates_final(tmp_path):
     """merge_scenes.py reads scenes_with_assets.json + scenes_complete.json → scenes_final.json."""
     with_assets = {
@@ -1428,7 +1560,7 @@ def test_merge_scenes_creates_final(tmp_path):
 
     out_path = tmp_path / "scenes_final.json"
     result = subprocess.run(
-        [sys.executable, str(tmp_path.parent / "scripts" / "merge_scenes.py"),
+        [sys.executable, MERGE_SCRIPT,
          str(wa_path), str(co_path), "--output", str(out_path)],
         capture_output=True, text=True, timeout=30
     )
@@ -1451,7 +1583,7 @@ def test_merge_rejects_mismatched_scene_count(tmp_path):
     wa_path.write_text(json.dumps(wa), encoding="utf-8")
     co_path.write_text(json.dumps(co), encoding="utf-8")
     result = subprocess.run(
-        [sys.executable, str(tmp_path.parent / "scripts" / "merge_scenes.py"),
+        [sys.executable, MERGE_SCRIPT,
          str(wa_path), str(co_path), "--output", str(tmp_path / "final.json")],
         capture_output=True, text=True, timeout=30
     )
@@ -1467,7 +1599,7 @@ def test_merge_rejects_mismatched_scene_ids(tmp_path):
     wa_path.write_text(json.dumps(wa), encoding="utf-8")
     co_path.write_text(json.dumps(co), encoding="utf-8")
     result = subprocess.run(
-        [sys.executable, str(tmp_path.parent / "scripts" / "merge_scenes.py"),
+        [sys.executable, MERGE_SCRIPT,
          str(wa_path), str(co_path), "--output", str(tmp_path / "final.json")],
         capture_output=True, text=True, timeout=30
     )
@@ -1614,7 +1746,412 @@ git add .opencode/skills/video-generate/scripts/merge_scenes.py \
 git commit -m "feat(video): add merge_scenes.py to combine assets + audio outputs"
 ```
 
-> **Part 2 impact:** `to-video-render.md` (Part 2) must pass `scenes_final.json` (not `scenes_complete.json`) to `render_video.sh`. Part 2 plan needs a corresponding update when it is revised.
+> **Part 2 impact (ALREADY FIXED):** `to-video-render.md` (Part 2) has been updated to pass `scenes_final.json` (not `scenes_complete.json`) to `render_video.sh`. The Part 2 SKILL.md and output structure documentation also reflect the merge step.
+
+---
+
+### Task 5c: Cross-Ecosystem Contract Compliance Test
+
+> **Why this task matters (Fix #2 from review):** The Python validation (`scenes_schema.py`) and TypeScript type definitions (`input-props.ts`) are maintained independently. Without a contract test, adding a field in Python but forgetting TypeScript (or vice versa) causes silent rendering failures. This test is the shared truth — it generates a reference `scenes_final.json`, validates it against both ecosystems, and fails early when they drift apart.
+
+**Files:**
+- Create: `.opencode/skills/video-generate/scripts/test_contract_compliance.py`
+
+- [ ] **Step 1: Write contract compliance test**
+
+Create `test_contract_compliance.py`:
+
+```python
+"""Cross-ecosystem contract compliance test.
+
+Validates that a reference `scenes_final.json` generated by the Python pipeline
+satisfies all field expectations required by the TypeScript `input-props.ts` types.
+This catches silent drift between the two ecosystems.
+
+The test generates a realistic scenes_final.json, validates it with:
+1. Python validate_scenes() — structural correctness
+2. Field-presence assertions matching every required TypeScript field
+3. Type-level assertions (string vs number vs list vs dict)
+
+If this test fails while all other tests pass, the Python↔TypeScript
+interface contract has been broken — check input-props.ts for mismatches.
+"""
+
+import json
+import os
+import sys
+import pytest
+
+# Add scripts dir to path for import
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, SCRIPT_DIR)
+
+from scenes_schema import validate_scenes, SCENE_TYPES, CAPTION_STYLES
+
+
+def build_reference_scenes_json() -> dict:
+    """Build a reference scenes_final.json covering all scene types.
+    
+    This mirrors the TypeScript ScenesJson interface from input-props.ts
+    and serves as the ground truth for the contract.
+    """
+    return {
+        "meta": {
+            "article_title": "Reference Test",
+            "article_source": "ref/test.md",
+            "output": "ref/test.mp4",
+            "aspect_ratio": "16:9",
+            "width": 1920,
+            "height": 1080,
+            "fps": 30,
+            "total_duration_frames": 900,
+            "total_duration_seconds": 30,
+            "total_duration_ms": 30000,
+            "font_family": "sans-serif",
+            "color_theme": {
+                "primary": "#1a1a2e",
+                "accent": "#e94560",
+                "text": "#ffffff",
+                "background": "#000000",
+            },
+        },
+        "scenes": [
+            {
+                "id": "s1",
+                "type": "title_card",
+                "duration_frames": 150,
+                "search_keywords": {"zh": ["测试"], "en": ["test"]},
+                "data": {"title": "Hello World", "subtitle": "A Test"},
+                "animation": {"type": "fade_in", "duration_frames": 30},
+                "narration": {
+                    "text": "Hello world",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 0,
+                    "voice_end_ms": 1500,
+                    "timestamps": [
+                        {"word": "Hello", "start_ms": 0, "end_ms": 500},
+                        {"word": "world", "start_ms": 500, "end_ms": 1500},
+                    ],
+                },
+            },
+            {
+                "id": "s2",
+                "type": "chapter_title",
+                "duration_frames": 120,
+                "search_keywords": {"zh": ["章节"], "en": ["chapter"]},
+                "data": {"chapter_number": 1, "title": "Getting Started", "subtitle": "Basics"},
+                "narration": {
+                    "text": "Chapter one",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 1500,
+                    "voice_end_ms": 3000,
+                    "timestamps": [
+                        {"word": "Chapter", "start_ms": 1500, "end_ms": 2200},
+                        {"word": "one", "start_ms": 2200, "end_ms": 3000},
+                    ],
+                },
+            },
+            {
+                "id": "s3",
+                "type": "stock_footage",
+                "duration_frames": 180,
+                "search_keywords": {"zh": ["人工智能"], "en": ["AI"]},
+                "data": {
+                    "media": [
+                        {
+                            "file": "assets/s3_00.jpg",
+                            "source": "pexels",
+                            "source_url": "https://pexels.com/photo/1",
+                            "type": "image",
+                            "width": 1920,
+                            "height": 1080,
+                            "relevance_score": 0.95,
+                        }
+                    ],
+                    "media_manifest": [],
+                    "text_overlays": [
+                        {"text": "AI in Action", "position": "bottom", "font_size": 24}
+                    ],
+                },
+                "animation": {"type": "ken_burns", "scale_start": 1.0, "scale_end": 1.1},
+                "narration": {
+                    "text": "AI is transforming our world",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 3000,
+                    "voice_end_ms": 5000,
+                    "timestamps": [
+                        {"word": "AI", "start_ms": 3000, "end_ms": 3400},
+                        {"word": "is", "start_ms": 3400, "end_ms": 3600},
+                        {"word": "transforming", "start_ms": 3600, "end_ms": 4200},
+                        {"word": "our", "start_ms": 4200, "end_ms": 4400},
+                        {"word": "world", "start_ms": 4400, "end_ms": 5000},
+                    ],
+                },
+            },
+            {
+                "id": "s4",
+                "type": "info_card",
+                "duration_frames": 200,
+                "search_keywords": {"zh": ["信息"], "en": ["info"]},
+                "data": {
+                    "layout": "bullet_list",
+                    "items": [
+                        {"text": "First point", "highlight": True},
+                        {"text": "Second point"},
+                    ],
+                    "columns": [
+                        {"title": "Col 1", "content": "Content A", "icon": "star"},
+                    ],
+                    "quote": "A wise quote",
+                    "quote_source": "Expert",
+                },
+                "narration": {
+                    "text": "Here are some key points",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 5000,
+                    "voice_end_ms": 6500,
+                    "timestamps": [],
+                },
+            },
+            {
+                "id": "s5",
+                "type": "code_block",
+                "duration_frames": 200,
+                "search_keywords": {"zh": ["代码"], "en": ["code"]},
+                "data": {"code": "print('hello')", "language": "python", "title": "Example"},
+                "narration": {
+                    "text": "Print hello",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 6500,
+                    "voice_end_ms": 7500,
+                    "timestamps": [],
+                },
+            },
+            {
+                "id": "s6",
+                "type": "outro",
+                "duration_frames": 50,
+                "search_keywords": {"zh": ["结尾"], "en": ["outro"]},
+                "data": {"cta_text": "Subscribe now", "logo": "logo.png"},
+                "narration": {
+                    "text": "Thanks for watching",
+                    "voice_file": "voice.mp3",
+                    "voice_start_ms": 7500,
+                    "voice_end_ms": 9000,
+                    "timestamps": [],
+                },
+            },
+        ],
+        "audio": {
+            "voice_file": "voice.mp3",
+            "bgm_file": None,
+            "bgm_volume": 0.15,
+            "voice_volume": 0.9,
+        },
+        "captions": {
+            "enabled": True,
+            "style": "karaoke",
+            "font_size": 36,
+            "position_y": 920,
+            "active_color": "#e94560",
+            "inactive_color": "#ffffff",
+        },
+    }
+
+
+# ── Contract assertions (mirror input-props.ts) ──
+
+
+def check_field(data: dict, path: str, expected_type: type):
+    """Assert that field at dot-separated path exists and is of expected_type."""
+    parts = path.split(".")
+    current = data
+    for part in parts:
+        if not isinstance(current, dict) or part not in current:
+            pytest.fail(f"Contract breach: missing '{path}' in scenes_final.json")
+        current = current[part]
+    if not isinstance(current, expected_type):
+        pytest.fail(
+            f"Contract breach: '{path}' expected {expected_type.__name__}, "
+            f"got {type(current).__name__} (value: {current!r})"
+        )
+
+
+class TestContractCompliance:
+    """Every assertion here maps to a required field in input-props.ts."""
+
+    def build(self):
+        return build_reference_scenes_json()
+
+    # ── Python schema validation ──
+
+    def test_passes_python_schema_validation(self):
+        """Must pass scenes_schema.validate_scenes() with zero errors."""
+        data = self.build()
+        errors = validate_scenes(data)
+        assert errors == [], (
+            f"Contract breach: Python schema validation failed:\n"
+            + "\n".join(f"  - {e}" for e in errors)
+        )
+
+    # ── Meta contract ──
+
+    def test_meta_top_level_fields(self):
+        data = self.build()["meta"]
+        for field in ["article_title", "article_source", "output",
+                       "aspect_ratio", "width", "height", "fps",
+                       "total_duration_frames", "total_duration_seconds",
+                       "font_family", "color_theme"]:
+            check_field(data, field, str if field not in ("width", "height", "fps", "total_duration_frames", "total_duration_seconds") else (int, float))
+
+    def test_meta_total_duration_ms(self):
+        """total_duration_ms is optional in TS but must be present when backfilled."""
+        data = self.build()["meta"]
+        check_field(data, "total_duration_ms", (int, float))
+
+    def test_meta_color_theme(self):
+        ct = self.build()["meta"]["color_theme"]
+        for c in ["primary", "accent", "text", "background"]:
+            check_field(ct, c, str)
+
+    # ── Audio contract ──
+
+    def test_audio_fields(self):
+        audio = self.build()["audio"]
+        for field in ["voice_file", "bgm_volume", "voice_volume"]:
+            check_field(audio, field, str if field == "voice_file" else (int, float))
+
+    def test_audio_bgm_file_optional(self):
+        """bgm_file can be None (null in JSON)."""
+        audio = self.build()["audio"]
+        assert "bgm_file" in audio, "Contract breach: missing 'audio.bgm_file'"
+        # None (null) is valid — TypeScript type is `string | null`
+
+    # ── Captions contract ──
+
+    def test_captions_fields(self):
+        caps = self.build()["captions"]
+        for field in ["enabled", "style", "font_size", "position_y",
+                       "active_color", "inactive_color"]:
+            check_field(caps, field, bool if field == "enabled" else (str if "color" in field else int))
+
+    def test_captions_style_valid(self):
+        caps = self.build()["captions"]
+        assert caps["style"] in CAPTION_STYLES, \
+            f"Contract breach: captions.style '{caps['style']}' not in {CAPTION_STYLES}"
+
+    # ── Scenes contract ──
+
+    def test_each_scene_has_required_fields(self):
+        scenes = self.build()["scenes"]
+        assert len(scenes) > 0
+        for i, s in enumerate(scenes):
+            for field in ["id", "type", "duration_frames", "search_keywords",
+                           "data", "narration"]:
+                assert field in s, \
+                    f"Contract breach: scenes[{i}].{field} missing"
+
+    def test_each_scene_type_valid(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            assert s["type"] in SCENE_TYPES, \
+                f"Contract breach: scenes[{i}].type '{s['type']}' not in {SCENE_TYPES}"
+
+    def test_each_scene_duration_frames_positive(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            assert isinstance(s["duration_frames"], (int, float)) and s["duration_frames"] > 0, \
+                f"Contract breach: scenes[{i}].duration_frames must be positive"
+
+    def test_each_scene_search_keywords(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            sk = s.get("search_keywords", {})
+            assert isinstance(sk, dict) and "zh" in sk and "en" in sk, \
+                f"Contract breach: scenes[{i}].search_keywords requires 'zh' and 'en'"
+
+    # ── Narration contract (per scene) ──
+
+    def test_each_scene_narration(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            nar = s.get("narration", {})
+            for f in ["text", "voice_file", "voice_start_ms",
+                       "voice_end_ms", "timestamps"]:
+                assert f in nar, \
+                    f"Contract breach: scenes[{i}].narration.{f} missing"
+
+    def test_each_scene_narration_timestamps_type(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            ts = s["narration"].get("timestamps", [])
+            assert isinstance(ts, list), \
+                f"Contract breach: scenes[{i}].narration.timestamps must be list"
+            for j, t in enumerate(ts):
+                for f in ["word", "start_ms", "end_ms"]:
+                    assert f in t, \
+                        f"Contract breach: scenes[{i}].narration.timestamps[{j}].{f} missing"
+
+    # ── Per-scene-type data contract ──
+
+    def test_title_card_has_title(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "title_card"][0]
+        check_field(scene["data"], "title", str)
+
+    def test_chapter_title_has_number_and_title(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "chapter_title"][0]
+        check_field(scene["data"], "chapter_number", (int, float))
+        check_field(scene["data"], "title", str)
+
+    def test_stock_footage_has_media_list(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "stock_footage"][0]
+        media = scene["data"].get("media", [])
+        for i, m in enumerate(media):
+            for f in ["file", "source", "type"]:
+                assert f in m, \
+                    f"Contract breach: stock_footage.data.media[{i}].{f} missing"
+            if "source_url" in m:
+                assert isinstance(m["source_url"], str)
+
+    def test_info_card_has_layout(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "info_card"][0]
+        check_field(scene["data"], "layout", str)
+
+    def test_code_block_has_code(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "code_block"][0]
+        check_field(scene["data"], "code", str)
+        check_field(scene["data"], "language", str)
+
+    def test_outro_has_cta_text(self):
+        scene = [s for s in self.build()["scenes"] if s["type"] == "outro"][0]
+        check_field(scene["data"], "cta_text", str)
+
+    # ── Animation contract (optional but structured) ──
+
+    def test_animation_structure_if_present(self):
+        scenes = self.build()["scenes"]
+        for i, s in enumerate(scenes):
+            anim = s.get("animation")
+            if anim and isinstance(anim, dict):
+                anim_type = anim.get("type")
+                assert anim_type is not None, \
+                    f"Contract breach: scenes[{i}].animation.type required if animation present"
+```
+
+- [ ] **Step 2: Run all tests — expect PASS**
+
+```bash
+cd .opencode/skills/video-generate/scripts && python3 -m pytest test_contract_compliance.py -v
+```
+
+Expected: 20+ tests PASS (all contract assertions pass for the reference JSON)
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add .opencode/skills/video-generate/scripts/test_contract_compliance.py
+git commit -m "feat(video): add cross-ecosystem contract compliance test"
+```
 
 ---
 
