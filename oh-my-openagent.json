@@ -2,11 +2,11 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "hephaestus": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "Volcengine-Plan/Kimi-K2.6",
       "enabled": true
     },
     "oracle": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "Volcengine-Plan/DeepSeek-V4-Pro",
       "enabled": true
     },
     "librarian": {
@@ -18,11 +18,11 @@
       "enabled": true
     },
     "multimodal-looker": {
-      "model": "siliconflow-cn/Qwen/Qwen3-VL-32B-Instruct",
+      "model": "Volcengine-Plan/ark-code-latest",
       "enabled": true
     },
     "prometheus": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "deepseek/deepseek-v4-pro",
       "enabled": true
     },
     "metis": {
@@ -34,7 +34,7 @@
       "enabled": true
     },
     "atlas": {
-      "model": "opencode/deepseek-v4-flash-free",
+      "model": "Volcengine-Plan/MiniMax-M3",
       "enabled": true
     },
     "sisyphus": {
@@ -44,28 +44,28 @@
   },
   "categories": {
     "visual-engineering": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/MiniMax-M3"
     },
     "ultrabrain": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/GLM-5.1"
     },
     "deep": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/Kimi-K2.6"
     },
     "artistry": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "quick": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/ark-code-latest"
     },
     "unspecified-low": {
       "model": "opencode/deepseek-v4-flash-free"
     },
     "unspecified-high": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/MiniMax-M3"
     },
     "writing": {
-      "model": "siliconflow-cn/deepseek-ai/DeepSeek-V3.2"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     }
   }
 }

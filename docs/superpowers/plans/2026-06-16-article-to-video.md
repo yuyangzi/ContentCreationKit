@@ -6,7 +6,7 @@
 
 **Architecture:** Python scripts handle data preparation (schema validation, asset fetch, audio generation). Remotion (React/Node.js) handles video rendering. A single `scenes.json` interface file bridges the two ecosystems. OpenCode slash commands orchestrate the pipeline, following existing command/skill patterns.
 
-**Tech Stack:** Python 3 (edge-tts, newspaper3k, Pillow, requests), Node.js (Remotion 4.x, React 18, @remotion/captions), Bash (orchestration), OpenCode Agent (LLM scene analysis)
+**Tech Stack:** Python 3 (edge-tts, newspaper3k, Pillow, requests), Node.js (Remotion 4.x, React 18), Bash (orchestration), OpenCode Agent (LLM scene analysis)
 
 **Spec reference:** `docs/superpowers/specs/2026-06-16-article-to-video-design.md`
 
@@ -41,10 +41,8 @@
         │   ├── CodeBlockScene.tsx
         │   └── Outro.tsx
         └── components/                   # Reusable sub-components
-            ├── KenBurnsImage.tsx
-            ├── BulletList.tsx
             ├── CaptionOverlay.tsx
-            ├── SplitLayout.tsx
+            ├── KenBurnsImage.tsx
             └── TextCard.tsx
 
 .opencode/commands/
@@ -120,6 +118,7 @@ newspaper3k>=0.2
 Pillow>=9.0
 requests>=2.31
 imagehash>=4.3
+pytest>=8.0
 ```
 
 Note: `stockmedia-sdk` and `imgsearch-api` are NOT included — they don't exist as reliable PyPI packages. `fetch_assets.py` will use `requests` to call Pexels/Pixabay/Unsplash/Bing APIs directly.
@@ -508,6 +507,7 @@ import json
 import os
 import subprocess
 import sys
+import pytest
 
 def test_edge_tts_available():
     """Verify edge-tts CLI is installed."""
@@ -728,7 +728,20 @@ async def main_async(scenes_path: str, outdir: str, voice: str):
     if srt_entries:
         data["meta"]["total_duration_ms"] = srt_entries[-1]["end_ms"]
         data["meta"]["total_duration_seconds"] = round(srt_entries[-1]["end_ms"] / 1000)
-        data["meta"]["total_duration_frames"] = int(data["meta"]["total_duration_seconds"] * data["meta"]["fps"])
+        data["meta"]["total_duration_frames"] = int(srt_entries[-1]["end_ms"] * data["meta"]["fps"] / 1000)
+
+    # Distribute total duration across scenes proportionally to narration length
+    total_frames = data["meta"]["total_duration_frames"]
+    char_lens = [len(scene["narration"]["text"]) for scene in data["scenes"]]
+    total_chars = sum(char_lens)
+    if total_chars > 0:
+        accumulated = 0
+        for i, scene in enumerate(data["scenes"]):
+            if i == len(data["scenes"]) - 1:
+                scene["duration_frames"] = total_frames - accumulated
+            else:
+                scene["duration_frames"] = int(total_frames * char_lens[i] / total_chars)
+                accumulated += scene["duration_frames"]
 
     # Write outputs
     ts_path = os.path.join(outdir, "timestamps.json")
@@ -809,6 +822,7 @@ import os
 import sys
 import time
 import urllib.request
+import urllib.parse
 from typing import List, Dict, Optional
 
 try:
@@ -1046,7 +1060,7 @@ def search_all_layers(keywords_zh: List[str], keywords_en: List[str],
     return unique[:max_per_scene]
 
 
-def process_scene(scene: dict, ref_urls: List[str], scene_idx: int,
+def process_scene(scene: dict, ref_urls: List[str],
                   assets_dir: str) -> dict:
     """Process a single scene: search → download → return manifest entry."""
     kw_zh = scene.get("search_keywords", {}).get("zh", [])
@@ -1117,8 +1131,11 @@ def main():
     manifest = {"scenes": [], "stats": {"total_assets": 0, "by_source": {}, "failed_queries": []}}
 
     for i, scene in enumerate(data["scenes"]):
-        entry = process_scene(scene, ref_urls, i, args.outdir)
+        entry = process_scene(scene, ref_urls, args.outdir)
         manifest["scenes"].append(entry)
+        # Backfill downloaded assets into scenes.json so Remotion can read scene.data.media
+        data["scenes"][i].setdefault("data", {})["media"] = [a for a in entry["assets"] if a["status"] == "downloaded"]
+        data["scenes"][i].setdefault("data", {})["media_manifest"] = entry["assets"]
         for a in entry["assets"]:
             src = a["source"]
             manifest["stats"]["by_source"][src] = manifest["stats"]["by_source"].get(src, 0) + 1
@@ -1129,6 +1146,11 @@ def main():
     manifest_path = os.path.join(args.outdir, "manifest.json")
     with open(manifest_path, 'w', encoding='utf-8') as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
+
+    # Write backfilled scenes (with asset paths) alongside original scenes.json
+    scenes_backfill_path = os.path.splitext(args.scenes_path)[0] + "_with_assets.json"
+    with open(scenes_backfill_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"\n✅ {manifest['stats']['total_assets']} assets saved to {args.outdir}")
     print(f"   manifest.json written with summary")
@@ -1178,7 +1200,6 @@ git commit -m "feat(video): add 5-layer asset search and download script"
     "react-dom": "^18.3.1",
     "remotion": "^4.0.0",
     "@remotion/cli": "^4.0.0",
-    "@remotion/captions": "^4.0.0",
     "@remotion/media": "^4.0.0"
   },
   "devDependencies": {
@@ -1322,10 +1343,10 @@ export const TitleCard: React.FC<Props> = ({ data, meta }) => {
 
 ```tsx
 import { spring, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
-import type { ChapterTitleData, Meta } from "../input-props";
+import type { ChapterTitleData, AnimationConfig, Meta } from "../input-props";
 import { resolveTheme } from "../theme";
 
-export const ChapterTitle: React.FC<{ data: ChapterTitleData; meta: Meta }> = ({ data, meta }) => {
+export const ChapterTitle: React.FC<{ data: ChapterTitleData; animation?: AnimationConfig; meta: Meta }> = ({ data, meta }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = resolveTheme(meta);
@@ -1469,7 +1490,16 @@ export const InfoCardScene: React.FC<{ data: InfoCardData; animation?: Animation
           })}
         </div>
       )}
-      {isSplit && <div style={{ color: theme.color.text, fontSize: 32 }}>Split layout (content TBD)</div>}
+      {isSplit && data.columns && (
+  <div style={{ display: "flex", gap: 40, width: "100%", justifyContent: "center" }}>
+    {data.columns.map((col, i) => (
+      <div key={i} style={{ flex: 1, background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: 32 }}>
+        {col.title && <h3 style={{ color: theme.color.accent, fontSize: 28, marginBottom: 16 }}>{col.title}</h3>}
+        <p style={{ color: theme.color.text, fontSize: 24, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>{col.content}</p>
+      </div>
+    ))}
+  </div>
+)}
     </div>
   );
 };
@@ -1479,10 +1509,10 @@ export const InfoCardScene: React.FC<{ data: InfoCardData; animation?: Animation
 
 ```tsx
 import { useCurrentFrame, interpolate } from "remotion";
-import type { CodeBlockData, Meta } from "../input-props";
+import type { CodeBlockData, AnimationConfig, Meta } from "../input-props";
 import { resolveTheme } from "../theme";
 
-export const CodeBlockScene: React.FC<{ data: CodeBlockData; meta: Meta }> = ({ data, meta }) => {
+export const CodeBlockScene: React.FC<{ data: CodeBlockData; animation?: AnimationConfig; meta: Meta }> = ({ data, meta }) => {
   const frame = useCurrentFrame();
   const theme = resolveTheme(meta);
   const lines = data.code.split("\n");
@@ -1517,10 +1547,10 @@ export const CodeBlockScene: React.FC<{ data: CodeBlockData; meta: Meta }> = ({ 
 
 ```tsx
 import { spring, useCurrentFrame, useVideoConfig, interpolate } from "remotion";
-import type { OutroData, Meta } from "../input-props";
+import type { OutroData, AnimationConfig, Meta } from "../input-props";
 import { resolveTheme } from "../theme";
 
-export const Outro: React.FC<{ data: OutroData; meta: Meta }> = ({ data, meta }) => {
+export const Outro: React.FC<{ data: OutroData; animation?: AnimationConfig; meta: Meta }> = ({ data, meta }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const theme = resolveTheme(meta);
@@ -1693,7 +1723,7 @@ export const RemotionRoot: React.FC = () => {
       fps={30}
       width={1920}
       height={1080}
-      defaultProps={{ scenes: null as unknown as ScenesJson }}
+      defaultProps={{ meta: null as unknown as ScenesJson["meta"], scenes: [] as unknown as ScenesJson["scenes"], audio: {} as ScenesJson["audio"], captions: {} as ScenesJson["captions"] }}
       calculateMetadata={({ props }) => {
         const meta = props.meta;
         if (!meta) return {};
@@ -1726,6 +1756,7 @@ import { CaptionOverlay } from "./components/CaptionOverlay";
 import { resolveTheme } from "./theme";
 
 function SceneRenderer({ scene, meta }: { scene: Scene; meta: ScenesJson["meta"] }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const props = { data: scene.data as any, animation: scene.animation, meta };
 
   switch (scene.type) {
@@ -1817,6 +1848,14 @@ if ! command -v ffmpeg &> /dev/null; then
     exit 1
 fi
 
+# --- ffprobe pre-check ---
+if ! command -v ffprobe &> /dev/null; then
+    echo "❌ ffprobe is required but not installed (part of ffmpeg)."
+    echo "   Install: brew install ffmpeg  # macOS"
+    echo "   or: sudo apt install ffmpeg   # Linux"
+    exit 1
+fi
+
 # --- Parse args ---
 VIDEO_NAME="${1:-}"
 SCENES_FILE="${2:-}"
@@ -1830,12 +1869,12 @@ ASSETS_SRC="$OUTPUT_DIR/assets"
 ASSETS_DST="$REMOTION_DIR/public/assets"
 OUTPUT_FILE="$OUTPUT_DIR/final.mp4"
 
-# --- Concurrent render lock ---
-exec 200>"$LOCK_FILE"
-if ! flock -n 200; then
+# --- Concurrent render lock (POSIX-compatible, no flock needed) ---
+if ! mkdir "$LOCK_FILE.lock" 2>/dev/null; then
     echo "❌ Another render is already running (lock: $LOCK_FILE)"
     exit 1
 fi
+trap 'rm -rf "$LOCK_FILE.lock"' EXIT
 
 # --- Install Remotion deps if needed ---
 if [ ! -d "$REMOTION_DIR/node_modules" ]; then
@@ -1873,7 +1912,7 @@ npx remotion render MainVideo \
     --output="$OUTPUT_FILE" \
     --codec=h264 \
     --crf=23 \
-    --concurrency=4
+    --concurrency=${REMOTION_CONCURRENCY:-4}
 
 # --- Cleanup ---
 rm -rf "$ASSETS_DST"
@@ -2004,6 +2043,10 @@ description: 生成视频场景脚本
 
 ## 步骤
 
+0. **创建输出目录**：
+   ```bash
+   mkdir -p content/video/{name}
+   ```
 1. **读取文章**：读取 `content/article/{name}.md`
 2. **分析结构**：识别标题层级、表格、引用块、代码块、列表
 3. **生成场景**：
@@ -2021,6 +2064,7 @@ description: 生成视频场景脚本
    ```bash
    python3 .opencode/skills/video-generate/scripts/scenes_schema.py content/video/{name}/scenes.json
    ```
+7. **修复策略**：若校验失败，尝试自动修复 JSON 问题（移除尾部逗号、修复引号、闭合花括号）后重试校验，最多 3 次。若仍失败，保存错误场景 JSON 到 `content/video/{name}/scenes_error.json` 并中止。
 
 ## 输出
 `content/video/{name}/scenes.json` — 8-15 个场景的结构化 JSON
@@ -2148,8 +2192,13 @@ description: 一键文章转视频
 ## 目标
 全自动将文章转化为视频，无暂停。
 
+## 前置条件
+- 文章已通过 `/to-article` 管线最终确认
+- `content/video/{name}/scenes.json` 尚未存在（避免覆盖）
+
 ## 步骤
 
+0. **确认文章**：检查 `content/article/` 目录选择最新文章，或让用户指定文章名称
 1. `/to-video-script` → 生成场景脚本
 2. `/to-video-footage` → 搜索下载素材
 3. `/to-video-audio` → 生成旁白音频
@@ -2318,11 +2367,14 @@ git commit -m "test(video): add integration tests for pipeline stages"
 - §12 error handling → embedded in each script ✓
 - §13 test plan → Task 2, 4, 12 (unit + integration tests) ✓
 
-**Placeholder scan:** No TBD, TODO, "implement later", "add validation later" found.
+**Placeholder scan:** 1 known TBD resolved: InfoCardScene `isSplit` branch now has proper implementation (was "Split layout (content TBD)", replaced with two-column render).
 
 **Type consistency:** `scenes_schema.py` constants match `input-props.ts` types. `animation.type` enum values are shared. Scene data required fields match template component props.
 
-**Gap identified:** Background music files are not included in this plan (placeholder directory created). The render script copies `voice.mp3` but not BGM. This is acceptable — BGM is a "nice to have" that can be added after core pipeline works end-to-end. The render script and MainVideo.tsx already support `bgm_file` via the `audio` config.
+**Gaps identified:** 
+- Background music files are not included in this plan (placeholder directory created). The render script copies `voice.mp3` but not BGM. This is acceptable — BGM is a "nice to have" that can be added after core pipeline works end-to-end. The render script and MainVideo.tsx already support `bgm_file` via the `audio` config.
+- Asset-to-scene data flow: `fetch_assets.py` now writes `scenes_with_assets.json` with backfilled `data.media` and `data.media_manifest` for Remotion consumption. The `_with_assets.json` file should be passed to the render script instead of the original `scenes.json`.
+- Remotion component tests: No snapshot/render tests for the 6 templates and 3 components. Recommended to add in a follow-up after core pipeline verification.
 
 ---
 
