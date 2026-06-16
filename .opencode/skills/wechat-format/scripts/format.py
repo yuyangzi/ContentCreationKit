@@ -280,6 +280,27 @@ def fix_cjk_bold_punctuation(text: str) -> str:
     return text
 
 
+# ── 图片索引（惰性构建，替代 os.walk）─────────────────────────────────
+# 注意: 符号链接文件不会被索引（not p.is_symlink），
+# 以消除 followlinks=True 的循环递归风险。
+_image_index: dict[str, Path] = {}
+_image_index_built = False
+
+
+def _build_image_index(search_roots: list[Path]) -> None:
+    """惰性构建文件名→路径索引，一次构建，多次查询"""
+    global _image_index, _image_index_built
+    if _image_index_built:
+        return
+    for search_root in search_roots:
+        if not search_root.exists():
+            continue
+        for p in search_root.rglob("*"):
+            if p.is_file() and not p.is_symlink():
+                _image_index[p.name] = p
+    _image_index_built = True
+
+
 def convert_wikilinks(text: str, vault_root: Path, output_dir: Path) -> str:
     """把 Obsidian ![[image.jpg]] 转为 <img> 标签，复制图片到输出目录"""
     images_dir = output_dir / "images"
@@ -296,24 +317,32 @@ def convert_wikilinks(text: str, vault_root: Path, output_dir: Path) -> str:
         except Exception:
             pass
 
+    # 惰性构建图片索引（首次调用时构建）
+    _build_image_index(search_roots)
+
+    # 图片扩展名白名单
+    IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp'}
+
     def replace_img(match):
         filename = match.group(1).strip()
         # 处理带尺寸的 wikilink: ![[image.jpg|300]]
         if "|" in filename:
             filename = filename.split("|")[0].strip()
-        # 在多个目录中搜索图片（followlinks=True 跟随符号链接）
-        for search_root in search_roots:
-            if not search_root.exists():
-                continue
-            for root, dirs, files in os.walk(search_root, followlinks=True):
-                if filename in files:
-                    img_path = Path(root) / filename
-                    images_dir.mkdir(parents=True, exist_ok=True)
-                    dest = images_dir / filename
-                    if not dest.exists():
-                        shutil.copy2(img_path, dest)
-                    # 返回占位标记，后面注入样式时处理
-                    return f'<section data-role="img-wrapper"><img src="images/{filename}" alt="{filename}"></section>'
+
+        # 验证文件扩展名
+        ext = Path(filename).suffix.lower()
+        if ext not in IMAGE_EXTENSIONS:
+            return f'<span style="color:#999;">[不支持的文件: {filename}]</span>'
+
+        # 从索引查找
+        if filename in _image_index:
+            img_path = _image_index[filename]
+            images_dir.mkdir(parents=True, exist_ok=True)
+            dest = images_dir / filename
+            if not dest.exists():
+                shutil.copy2(img_path, dest)
+            return f'<section data-role="img-wrapper"><img src="images/{filename}" alt="{filename}"></section>'
+
         return f'<span style="color:#999;">[图片: {filename}]</span>'
 
     return re.sub(r"!\[\[([^\]]+)\]\]", replace_img, text)
