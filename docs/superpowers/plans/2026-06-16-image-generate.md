@@ -217,20 +217,20 @@ print(f"✅ 图片已生成: {output_path}")
 PYEOF
 
 # 4. 执行脚本（prompt 通过管道传入，避免 shell 注入）
-echo '<prompt>' | python3 /tmp/image-generate.py '<name>' '<model>' '<size>'
+printf '%s\n' '<prompt>' | python3 /tmp/image-generate.py '<name>' '<model>' '<size>'
 
 # 5. 清理临时文件
-rm /tmp/image-generate.py
+rm -f /tmp/image-generate.py
 ```
 
 ## 调用示例
 
 ```bash
 # 基本调用（prompt 通过管道传入，避免 shell 注入）
-echo "一只坐在窗边的猫" | python3 /tmp/image-generate.py "cat-cover"
+echo '一只坐在窗边的猫' | python3 /tmp/image-generate.py 'cat-cover'
 
 # 指定尺寸
-echo "星际穿越，黑洞" | python3 /tmp/image-generate.py "interstellar" "doubao-seedream-4-5-251128" "4K"
+echo '星际穿越，黑洞' | python3 /tmp/image-generate.py 'interstellar' 'doubao-seedream-4-5-251128' '4K'
 ```
 
 ## 输出
@@ -244,7 +244,7 @@ echo "星际穿越，黑洞" | python3 /tmp/image-generate.py "interstellar" "do
 |----------|----------|----------|
 | `ARK_API_KEY` 未设置 | `os.environ.get()` 返回 None | 提示设置方法，退出 |
 | `openai` 包未安装 | `import openai` 失败 | 提示安装命令 |
-| 参数不足 | `len(sys.argv) < 3` | 显示用法说明，退出 |
+| 参数不足 | `len(sys.argv) < 2` | 显示用法说明，退出 |
 | API 调用失败 | `except Exception` 捕获 | 显示错误信息，退出（不重试） |
 | 图片下载失败 | `urllib` 异常 | 显示 URL 和错误，退出 |
 | 图片下载超时 | `urlopen(timeout=30)` 超时 | 显示超时错误，退出 |
@@ -383,8 +383,6 @@ print('✓ PNG 文件头验证逻辑正确')
 ```
 
 期望输出: `✓ PNG 文件头验证逻辑正确`
-
-期望输出: `✓ 文件名清理逻辑测试全部通过`
 
 ---
 
