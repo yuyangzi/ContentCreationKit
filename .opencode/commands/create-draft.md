@@ -24,11 +24,11 @@ description: 创建草稿
 2. 加载 `humanizer` 、 `content-research-writer`、`writer-style` skill。
 3. 确保草稿数据真实可追溯，不使用待核实的数据和引用。
 4. 生成中文文章草稿
-5. 以 `{主题名}-{时间戳}.md` 的文件名保存到 `content/draft/` 目录。
+5. 以 `{时间戳}-{主题名}.md` 的文件名保存到 `content/draft/` 目录。
 
 ## 输出
 
-- `content/draft/{主题名}-{时间戳}.md`：完整的文章草稿文件
+- `content/draft/{时间戳}-{主题名}.md`：完整的文章草稿文件
 
 ## 约束
 

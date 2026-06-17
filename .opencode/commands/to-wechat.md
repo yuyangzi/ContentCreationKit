@@ -24,14 +24,14 @@ description: 文章转公众号排版
    - 段落不宜过长，每段控制在手机屏幕 3-5 行
    - 适当增加小标题分割长内容
    - 添加引导关注话术（如文末引导语）
-4. 以 `{主题名}-{时间戳}.md` 的文件名保存到 `content/wechat/` 目录。
+4. 以 `{时间戳}-{主题名}.md` 的文件名保存到 `content/wechat/` 目录。
 5. 告知用户排版完成，HTML 已复制到剪贴板，可粘贴到公众号后台发布。
 
 ## 输出
 
-- `content/wechat/{主题名}-{时间戳}.md`：公众号排版后的文章文件
-- `content/wechat/{文章名}/article.html`：微信兼容的 HTML 文件（可直接复制到公众号后台）
-- `content/wechat/{文章名}/preview.html`：手机预览页面
+- `content/wechat/{时间戳}-{主题名}.md`：公众号排版后的文章文件
+- `content/wechat/{时间戳}-{文章名}/article.html`：微信兼容的 HTML 文件（可直接复制到公众号后台）
+- `content/wechat/{时间戳}-{文章名}/preview.html`：手机预览页面
 
 ## 约束
 

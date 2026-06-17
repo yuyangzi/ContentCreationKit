@@ -29,13 +29,13 @@ flowchart LR
 
 | 阶段 | 命令 | 说明 | 输出 |
 |------|------|------|------|
-| ① 选题 | `/find-popular-topics` | 在主流平台挖掘高热话题 | content/topics/{主题}-{时间戳}.md |
-| ② 审核 | `/review-topics` | 深度拷问主题，收集背景资料 | content/reference/{主题}-{时间戳}.md |
+| ① 选题 | `/find-popular-topics` | 在主流平台挖掘高热话题 | content/topics/{时间戳}-{主题}.md |
+| ② 审核 | `/review-topics` | 深度拷问主题，收集背景资料 | content/reference/{时间戳}-{主题}.md |
 | ③ 验证 | `/review-reference` | 核实数据准确性与来源可靠性 | 修正意见（对话中） |
-| ④ 草稿 | `/create-draft` | 生成自然耐读的中文草稿 | content/draft/{主题}-{时间戳}.md |
+| ④ 草稿 | `/create-draft` | 生成自然耐读的中文草稿 | content/draft/{时间戳}-{主题}.md |
 | ⑤ 审稿 | `/review-draft` | AI 去味检查 + 逻辑连贯性审核 | 审核意见（对话中） |
-| ⑥ 成文 | `/to-article` | 润色为正式文章，生成候选标题 | content/article/{主题}-{时间戳}.md + 3 个候选标题 |
-| ⑦ 排版 | `/to-wechat` | 公众号适配排版 (HTML) | content/WeChat/{主题}-{时间戳}.md + HTML |
+| ⑥ 成文 | `/to-article` | 润色为正式文章，生成候选标题 | content/article/{时间戳}-{主题}.md + 3 个候选标题 |
+| ⑦ 排版 | `/to-wechat` | 公众号适配排版 (HTML) | content/WeChat/{时间戳}-{主题}.md + HTML |
 | ⑧ 配图 | `/image-prompt` | 生成 AI 绘图封面提示词 | 2-3 组提示词（对话中） |
 
 ---
@@ -129,13 +129,13 @@ ContentCreationKit/
 
 | 命令 | 描述 | 前置条件 | 输出 |
 |------|------|----------|------|
-| `/find-popular-topics` | 从知乎、微博、36氪等平台挖掘热门话题 | 无 | content/topics/{主题}-{时间戳}.md |
-| `/review-topics` | 对主题进行深度拷问和背景研究 | 已完成 `/find-popular-topics`，或已有确认主题 | content/reference/{主题}-{时间戳}.md |
+| `/find-popular-topics` | 从知乎、微博、36氪等平台挖掘热门话题 | 无 | content/topics/{时间戳}-{主题}.md |
+| `/review-topics` | 对主题进行深度拷问和背景研究 | 已完成 `/find-popular-topics`，或已有确认主题 | content/reference/{时间戳}-{主题}.md |
 | `/review-reference` | 核实每条数据准确性和时效性 | 已完成 `/review-topics`，`content/reference/` 有资料 | 修正意见（对话中） |
-| `/create-draft` | 生成 AI 去味的中文草稿 | 已完成 `/review-reference`，参考资料已确认 | content/draft/{主题}-{时间戳}.md |
+| `/create-draft` | 生成 AI 去味的中文草稿 | 已完成 `/review-reference`，参考资料已确认 | content/draft/{时间戳}-{主题}.md |
 | `/review-draft` | AI 腔检查 + 数据核对 + 逻辑审核 | 已完成 `/create-draft`，`content/draft/` 有草稿 | 审核意见（对话中） |
-| `/to-article` | 润色草稿为正式文章 + 候选标题 | 已完成 `/review-draft`，草稿已通过审核 | content/article/{主题}-{时间戳}.md + 3 个候选标题 |
-| `/to-wechat` | 公众号排版（HTML + 手机预览） | 已完成 `/to-article`，`content/article/` 有文章 | content/WeChat/{主题}-{时间戳}.md + HTML |
+| `/to-article` | 润色草稿为正式文章 + 候选标题 | 已完成 `/review-draft`，草稿已通过审核 | content/article/{时间戳}-{主题}.md + 3 个候选标题 |
+| `/to-wechat` | 公众号排版（HTML + 手机预览） | 已完成 `/to-article`，`content/article/` 有文章 | content/WeChat/{时间戳}-{主题}.md + HTML |
 | `/image-prompt` | 生成封面图 AI 提示词 | 已完成 `/to-article`，或已有确认文章 | 2-3 组提示词（对话中） |
 
 ---
