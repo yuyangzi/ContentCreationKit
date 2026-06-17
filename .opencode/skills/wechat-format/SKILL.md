@@ -112,7 +112,7 @@ python3 {baseDir}/scripts/format.py \
   --recommend newspaper magazine ink
 ```
 
-浏览器中切换主题预览，选择最佳方案。
+浏览器中切换主题预览，选择最佳方案(优化使用Edge/Chrome浏览器)。
 
 ### 第 6 步（备选）：直接指定主题
 
@@ -134,7 +134,7 @@ python3 {baseDir}/scripts/format.py \
 - `article.html`：纯微信兼容 HTML（内联样式，可直接复制）
 - `preview.html`：手机预览页面（含复制按钮）
 
-同时将原始 Markdown 复制一份到 `content/wechat/{主题名}-{时间戳}.md`。
+同时将原始 Markdown 复制一份到 `content/wechat/{时间戳}-{主题名}.md`。
 
 ### 参数说明
 
