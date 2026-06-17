@@ -9,6 +9,7 @@ build/
 ## Python
 
 __pycache__/
+.venv/
 
 ## Git worktrees
 
