@@ -244,7 +244,7 @@ def test_valid_minimal_scenes_json_passes():
 - [ ] **Step 2: Run test — expect FAIL**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_scenes_schema.py::test_valid_minimal_scenes_json_passes -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_scenes_schema.py::test_valid_minimal_scenes_json_passes -v
 ```
 
 Expected: FAIL (ModuleNotFoundError: scenes_schema)
@@ -404,7 +404,7 @@ if __name__ == "__main__":
 - [ ] **Step 5: Run all tests — expect PASS**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_scenes_schema.py -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_scenes_schema.py -v
 ```
 
 Expected: 4 tests PASS
@@ -662,7 +662,7 @@ def test_retry_succeeds_on_second_attempt(monkeypatch):
 - [ ] **Step 2: Run — expect FAIL**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_generate_audio.py::test_generate_audio_creates_output -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_generate_audio.py::test_generate_audio_creates_output -v
 ```
 
 Expected: FAIL (generate_audio.py not found)
@@ -737,7 +737,8 @@ def parse_srt_timestamps(srt_path: str):
         if len(lines) < 2:
             continue
         # Parse timestamp line: 00:00:00,000 --> 00:00:00,000
-        ts_match = re.match(r'(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})', lines[1])
+        # Supports both comma (locale) and period as millisecond separator
+        ts_match = re.match(r'(\d{2}):(\d{2}):(\d{2})[,.](\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2})[,.](\d{3})', lines[1])
         if not ts_match:
             continue
         h1, m1, s1, ms1, h2, m2, s2, ms2 = map(int, ts_match.groups())
@@ -827,6 +828,10 @@ async def main_async(scenes_path: str, outdir: str, voice: str):
 
     # Parse SRT for timestamps
     srt_entries = parse_srt_timestamps(srt_path)
+    if not srt_entries:
+        print("⚠️ Warning: SRT parsing returned 0 entries. "
+              "Edge-TTS may have produced non-standard timestamp format.",
+              file=sys.stderr)
 
     # Backfill scene timestamps
     match_scene_timestamps(data["scenes"], srt_entries, full_text)
@@ -921,7 +926,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run basic import check**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -c "from generate_audio import parse_srt_timestamps; print('OK')"
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -c "from generate_audio import parse_srt_timestamps; print('OK')"
 ```
 
 Expected: `OK`
@@ -1076,7 +1081,7 @@ def test_download_file_returns_false_on_empty(tmp_path):
 - [ ] **Step 0.1: Run — expect FAIL (fetch_assets.py not implemented yet)**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_fetch_assets.py -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_fetch_assets.py -v
 ```
 
 Expected: FAIL (ModuleNotFoundError: fetch_assets)
@@ -1482,7 +1487,7 @@ if __name__ == "__main__":
 - [ ] **Step 2: Verify import** (H2 fix: must `cd` into scripts dir)
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -c "from fetch_assets import search_all_layers; print('OK')"
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -c "from fetch_assets import search_all_layers; print('OK')"
 ```
 
 Expected: `OK` (no API key warnings are fine)
@@ -1610,7 +1615,7 @@ def test_merge_rejects_mismatched_scene_ids(tmp_path):
 - [ ] **Step 2: Run test — expect FAIL** (merge_scenes.py doesn't exist)
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_merge_scenes.py -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_merge_scenes.py -v
 ```
 
 Expected: FAIL (ModuleNotFoundError)
@@ -1649,6 +1654,12 @@ def validate(wa: dict, co: dict) -> list:
     errors = []
     wa_scenes = wa.get("scenes", [])
     co_scenes = co.get("scenes", [])
+    if not wa_scenes:
+        errors.append("scenes_with_assets has no scenes — nothing to merge")
+    if not co_scenes:
+        errors.append("scenes_complete has no scenes — nothing to merge")
+    if errors:
+        return errors  # Don't proceed if either is empty
     if len(wa_scenes) != len(co_scenes):
         errors.append(
             f"Scene count mismatch: scenes_with_assets has {len(wa_scenes)}, "
@@ -1733,7 +1744,7 @@ if __name__ == "__main__":
 - [ ] **Step 4: Run all tests — expect PASS**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_merge_scenes.py -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_merge_scenes.py -v
 ```
 
 Expected: 3 tests PASS
@@ -2141,7 +2152,7 @@ class TestContractCompliance:
 - [ ] **Step 2: Run all tests — expect PASS**
 
 ```bash
-cd .opencode/skills/video-generate/scripts && python3 -m pytest test_contract_compliance.py -v
+cd .opencode/skills/video-generate/scripts && ../.venv/bin/python -m pytest test_contract_compliance.py -v
 ```
 
 Expected: 20+ tests PASS (all contract assertions pass for the reference JSON)
