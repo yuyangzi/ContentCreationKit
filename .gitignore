@@ -10,6 +10,8 @@ build/
 
 ## Git worktrees
 
+.venv/
+
 .worktrees/
 
 ## OpenCode 会话跟踪数据
