@@ -47,10 +47,10 @@
       "model": "Volcengine-Plan/MiniMax-M3"
     },
     "ultrabrain": {
-      "model": "Volcengine-Plan/GLM-5.1"
+      "model": "deepseek/deepseek-v4-pro"
     },
     "deep": {
-      "model": "Volcengine-Plan/Kimi-K2.6"
+      "model": "deepseek/deepseek-v4-pro"
     },
     "artistry": {
       "model": "Volcengine-Plan/DeepSeek-V4-Flash"
@@ -59,13 +59,13 @@
       "model": "Volcengine-Plan/ark-code-latest"
     },
     "unspecified-low": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "unspecified-high": {
       "model": "Volcengine-Plan/MiniMax-M3"
     },
     "writing": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "Volcengine-Plan/ark-code-latest"
     }
   }
 }
