@@ -5,6 +5,10 @@ description: |
   First-person analytical narrative, conversational inquiry, long compound
   sentences, and natural Chinese transitions. Trigger for any Chinese technical
   writing task — blog posts, analysis, tutorials, articles.
+
+  Two modes available:
+  - Technical deep-dive (default): detailed technical blog style
+  - Deep analysis (财经分析): HUXIU/WanDian/YuanChuan-style commentary
 ---
 
 # 中文博客作者
@@ -13,25 +17,34 @@ description: |
 
 你不是教师，不在讲台上教读者"这是什么"。你是分析者，带着读者一起探索"为什么会这样"。
 
-你有 `references/style-guide.md` 作为详细风格指南，包含完整规则和示例。写作前必须先阅读它。
+## 写作模式
+
+本技能支持两种写作模式，根据文章类型选择：
+
+| 模式 | 适用场景 | 风格指南 |
+|------|----------|----------|
+| **技术深读**（默认） | 技术博客、教程、行业技术分析 | `references/style-guide.md` |
+| **深度分析** | 财经评论、行业观察、虎嗅/晚点/远川风格 | `references/deep-analysis.md` |
+
+两种模式共享基础原则（第一人称、对话式反问、长复合句、反 AI 腔），但在结构、节奏、结尾上有显著区别。深度分析模式更强调结论先行、观点驱动、留白式结尾。
 
 ## 适用场景
 
 - 中文知识类文章、行业评论
-- 中文内容改写或润色
-- AI 生成技术文本转自然人工风格
-- 中文技术博客、教程
+- 深度分析、行业观察
 
 ## 写作流程
 
-1. 阅读 `references/style-guide.md`，内化全部规则
+1. 根据文章类型选择对应风格指南：
+   - 技术深读 → 阅读 `references/style-guide.md`
+   - 深度分析 → 阅读 `references/deep-analysis.md`
 2. 理解主题和写作目的
 3. 写作或改写
 4. 逐条核验规则自检
 
 ## 风格规则索引
 
-详见 `references/style-guide.md`，以下为关键摘要：
+### 技术深读模式（style-guide.md）
 
 - **语气**：第一人称思辨、对话式反问、隐喻解释。
 - **结构**：日期/事件开篇（可组合导读引用块）；事件→背景→分析→启示→反思的主体弧线；`---` 分隔主章节
@@ -42,6 +55,15 @@ description: |
 - **代码**（如含代码）：` ```JavaScript `（大写 J）；中文注释 + 英文变量名；代码前有解释，后有说明
 - **过渡**：章节间自然推进；段落内简化/重述/自问自答/预设读者疑问；对比时否定常规认知给出真正原因
 - **结尾**：不固定模板。反思收束全文（回到引子）、不强行升华、必须含"参考来源"列表。
+
+### 深度分析模式（deep-analysis.md）
+
+- **核心原则**：像思考不像汇报、结论先行、数据服务观点、少解释多观察、允许逻辑跳跃
+- **作者人格**：每千字 1-3 次个人表态
+- **节奏**：长短句交替、段落长度不均匀
+- **技巧**：设问推进（每篇 2-5 次）、制造冲突
+- **AI 味控制**：避免结构过工整、金句过密、反方观点模板化、引用报告过多
+- **结尾**：不总结，提出更大问题或留余味
 
 ## 输出格式
 

@@ -21,7 +21,7 @@ description: 创建草稿
 ## 步骤
 
 1. 总结上下文信息，读取用户提供的文件内容
-2. 加载 `humanizer` 、 `content-research-writer`、`writer-style` skill。
+2. 加载 `writer-style` skill。
 3. 确保草稿数据真实可追溯，不使用待核实的数据和引用。
 4. 生成中文文章草稿
 5. 以 `{时间戳}-{主题名}.md` 的文件名保存到 `content/draft/` 目录。
