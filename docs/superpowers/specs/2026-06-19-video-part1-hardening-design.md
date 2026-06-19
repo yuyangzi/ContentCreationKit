@@ -44,6 +44,7 @@
 - 不引入新的素材搜索 SDK；继续使用 `requests`、`newspaper3k` 和标准库。
 - 不处理未跟踪的文章、选题或其他内容文件。
 - 不重构与 video-generate 无关的技能、命令和内容归档。
+- 不修改 `generate_audio.py` 的 `match_scene_timestamps()` 字符位置累加逻辑。该函数对 Edge-TTS 输出与原始文本逐字符对齐有依赖，已知边缘情况（数字念读、标点规范化）由 Part 2 处理。
 
 ## 4. 设计方案
 
@@ -96,10 +97,12 @@ python fetch_assets.py content/video/my-video/scenes.json \
     ],
     "media_manifest": [
       {
-        "url": "https://...",
         "file": "assets/s1_00.jpg",
         "source": "pexels",
+        "source_url": "https://...",
         "type": "image",
+        "width": 1920,
+        "height": 1080,
         "status": "downloaded"
       }
     ]
@@ -196,11 +199,12 @@ git diff --check
 满足以下条件才认为 Part 1 完善完成：
 
 - `fetch_assets.py --article-source ... --outdir ...` 可运行，输出 `assets/manifest.json` 和 `scenes_with_assets.json`。
-- `scenes_with_assets.json` 的 stock footage scene 包含 `data.media` 和 `data.media_manifest`。
+- `scenes_with_assets.json` 中**每个 scene** 的 `data` 都包含 `media` 和 `media_manifest` 字段（即使为空数组），与 §4.3 设计一致。Stock footage 类型的 scene 在有可用素材时 `media` 非空。
 - `merge_scenes.py` 能生成同时包含素材和音频时间戳的 `scenes_final.json`。
+- 完整管线 `fetch_assets.py` → `generate_audio.py`（mock）→ `merge_scenes.py` 在测试样本上跑通，`scenes_final.json` 通过 `validate_scenes()`（由 `test_e2e_pipeline.py` 验证）。
 - Part 1 Python 测试通过。
 - `git diff --check` 不报告 Part 1 相关文件问题。
-- 文档命令与实际 CLI 完全一致。
+- `test_docs_cli_alignment.py` 通过：SKILL.md 中所有 `python ... --flag` 例子都能被对应脚本的 argparse 识别。
 - 代码和文档没有扩大到 Part 2 渲染实现。
 
 ## 7. 风险与处理
