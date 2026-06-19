@@ -27,7 +27,7 @@ from scenes_schema import validate_scenes, SCENE_TYPES, CAPTION_STYLES
 
 def build_reference_scenes_json() -> dict:
     """Build a reference scenes_final.json covering all scene types.
-    
+
     This mirrors the TypeScript ScenesJson interface from input-props.ts
     and serves as the ground truth for the contract.
     """
