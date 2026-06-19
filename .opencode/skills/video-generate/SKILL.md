@@ -109,15 +109,16 @@ For full field spec, animation types, caption styles: [references/schemas.md](re
 
 ## Tests
 
-38 tests across 5 suites (all pass in CI):
+49 tests across 6 suites (all pass in CI):
 
 | Suite | Tests | Coverage |
 |---|---|---|
 | `test_scenes_schema.py` | 4 | JSON schema validation |
 | `test_generate_audio.py` | 3 | Edge-TTS + timestamp backfill + retry |
-| `test_fetch_assets.py` | 7 | 3-layer search + download + URL extraction |
-| `test_merge_scenes.py` | 3 | Merge logic + count/ID mismatch errors |
-| `test_contract_compliance.py` | 21 | Python↔TypeScript cross-ecosystem contract |
+| `test_fetch_assets.py` | 13 | 3-layer search + download + CLI + data backfill |
+| `test_merge_scenes.py` | 4 | Merge logic + count/ID mismatch + wa-only field preservation |
+| `test_contract_compliance.py` | 23 | Python↔TypeScript cross-ecosystem contract |
+| `test_docs_cli_alignment.py` | 2 | SKILL.md command examples ↔ argparse parity |
 
 ## Common Pitfalls
 
