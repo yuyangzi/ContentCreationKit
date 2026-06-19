@@ -20,10 +20,18 @@ allowed-tools: Bash
 
 ### 1. API Key
 
-需要设置 `ARK_API_KEY` 环境变量。如果未设置，技能会提示用户。
+需要设置 `ARK_API_KEY` 环境变量，或将其写入项目根目录的 `.env` 文件。
+
+技能启动时会自动从项目根目录的 `.env` 文件加载环境变量。如 `.env` 不存在或无法读取，则仅依赖已设置的 shell 环境变量。
+
+设置方式（任选其一）：
 
 ```bash
+# 方式一：export 环境变量
 export ARK_API_KEY='your-api-key'
+
+# 方式二：写入 .env 文件（技能自动加载）
+echo "ARK_API_KEY='your-api-key'" >> .env
 ```
 
 ### 2. Python 依赖
@@ -69,6 +77,56 @@ import sys
 import urllib.request
 from openai import OpenAI
 
+
+def load_env():
+    """从项目根目录加载 .env 文件（如有），不覆盖已存在的环境变量。
+    
+    如 .env 不存在或无法读取，静默跳过（仍依赖已设置的环境变量）。
+    加载所有变量，不限于 ARK_API_KEY。
+    重复 key 时优先采用先出现者（因 key not in os.environ 检查）。
+    """
+    # 定位项目根目录
+    try:
+        import subprocess
+        root = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, timeout=5,
+        ).stdout.strip()
+    except Exception:
+        root = os.getcwd()
+
+    env_path = os.path.join(root, ".env")
+    if not os.path.isfile(env_path):
+        return  # .env 不存在，静默跳过
+
+    # 读取并解析 .env，任何 I/O 错误都静默回退
+    try:
+        with open(env_path, encoding="utf-8-sig") as f:  # utf-8-sig 兼容 Windows BOM
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                if line.startswith("export "):
+                    line = line[7:].strip()
+                if "=" not in line:
+                    continue
+                key, _, val = line.partition("=")
+                key = key.strip()
+                val = val.strip()
+                # 剥掉行内注释（# 之前的部分）
+                inline_comment = val.find(" #")
+                if inline_comment >= 0:
+                    val = val[:inline_comment].strip()
+                # 剥掉引号
+                if len(val) >= 2 and val[0] == val[-1] and val[0] in ('"', "'"):
+                    val = val[1:-1]
+                # 仅当未设置时才写入（先出现者获胜）
+                if key and key not in os.environ:
+                    os.environ[key] = val
+    except Exception:
+        pass  # 任何 I/O 错误（权限、编码等）静默跳过
+
+
 # === 参数解析 ===
 if len(sys.argv) < 2:
     print("用法: echo '<prompt>' | python3 generate.py <name> [model] [size]")
@@ -84,6 +142,9 @@ if not PROMPT:
 NAME = sys.argv[1]
 MODEL = sys.argv[2] if len(sys.argv) > 2 else "doubao-seedream-4-5-251128"
 SIZE = sys.argv[3] if len(sys.argv) > 3 else "2K"
+
+# === 加载 .env 环境变量 ===
+load_env()
 
 # === 文件名清理（防路径遍历） ===
 NAME = re.sub(r'[^a-zA-Z0-9_\-\u4e00-\u9fff]', '_', NAME)
@@ -180,6 +241,11 @@ echo '星际穿越，黑洞' | python3 /tmp/image-generate.py 'interstellar' 'do
 | 图片下载失败 | `urllib` 异常 | 显示 URL 和错误，退出 |
 | 图片下载超时 | `urlopen(timeout=30)` 超时 | 显示超时错误，退出 |
 | 非法文件名 | 正则清理 | 自动替换为 `_` |
+| `.env` 不存在 | `os.path.isfile()` 返回 False | 静默跳过，依赖已有环境变量 |
+| `.env` 权限不足 | `open()` 抛出 `PermissionError` 或被 try/except 捕获 | 静默跳过，依赖已有环境变量 |
+| `.env` 编码异常 | `open(encoding="utf-8-sig")` 抛出 `UnicodeError` | 被 try/except 捕获，静默跳过 |
+| `.env` 格式错误 | 行内无 `=` | 跳过该行，继续解析 |
+| 行内注释 | 检测值中的 ` #` | 截断 ` #` 之后的内容 |
 
 ## 安全措施
 
