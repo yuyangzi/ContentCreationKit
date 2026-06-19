@@ -61,19 +61,26 @@ def merge(with_assets: dict, complete: dict) -> dict:
         # narration always from complete (audio is source of truth)
         merged_scene["narration"] = co_scene.get("narration", wa_scene.get("narration", {}))
 
-        # data: media + media_manifest from with_assets; other fields from complete
+        # data merge rule (per spec §4.4):
+        # 1. Start with complete's data (it wins for shared non-media fields)
+        # 2. media/media_manifest always come from with_assets
+        # 3. Add wa-only non-media fields that complete does not have
         wa_data = wa_scene.get("data", {})
         co_data = co_scene.get("data", {})
         merged_data = {}
-
-        # Start with complete's data fields
         merged_data.update(co_data)
 
-        # Overwrite media and media_manifest with with_assets (asset source of truth)
         if "media" in wa_data:
             merged_data["media"] = wa_data["media"]
         if "media_manifest" in wa_data:
             merged_data["media_manifest"] = wa_data["media_manifest"]
+
+        # Preserve wa-only non-media fields
+        for key, val in wa_data.items():
+            if key in ("media", "media_manifest"):
+                continue
+            if key not in merged_data:
+                merged_data[key] = val
 
         merged_scene["data"] = merged_data
         merged["scenes"].append(merged_scene)
