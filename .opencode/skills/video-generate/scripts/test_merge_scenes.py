@@ -91,3 +91,55 @@ def test_merge_rejects_mismatched_scene_ids(tmp_path):
     )
     assert result.returncode != 0
     assert "id" in result.stderr.lower() or "order" in result.stderr.lower()
+
+
+def test_merge_preserves_wa_only_non_media_fields(tmp_path):
+    """Fields that exist only in scenes_with_assets.json (non-media) must
+    survive the merge into scenes_final.json."""
+    with_assets = {
+        "meta": {"article_title": "T"},
+        "audio": {}, "captions": {},
+        "scenes": [{
+            "id": "s1", "type": "stock_footage",
+            "data": {
+                "media": [{"file": "a.jpg", "source": "pexels",
+                          "source_url": "x", "type": "image",
+                          "width": 1, "height": 1, "status": "downloaded"}],
+                "media_manifest": [],
+                "wa_only_field": "preserve_me",
+            },
+        }],
+    }
+    complete = {
+        "meta": {"article_title": "T", "total_duration_frames": 100,
+                "total_duration_seconds": 3.3},
+        "audio": {"voice_file": "v.mp3", "bgm_file": None,
+                 "bgm_volume": 0.15, "voice_volume": 0.9},
+        "captions": {},
+        "scenes": [{
+            "id": "s1", "type": "stock_footage",
+            "data": {"co_only_field": "from_complete"},
+            "narration": {"text": "Hi", "voice_file": "v.mp3",
+                         "voice_start_ms": 0, "voice_end_ms": 100,
+                         "timestamps": []},
+        }],
+    }
+    wa_path = tmp_path / "wa.json"
+    co_path = tmp_path / "co.json"
+    out_path = tmp_path / "final.json"
+    wa_path.write_text(json.dumps(with_assets), encoding="utf-8")
+    co_path.write_text(json.dumps(complete), encoding="utf-8")
+
+    import subprocess, sys
+    result = subprocess.run(
+        [sys.executable, MERGE_SCRIPT, str(wa_path), str(co_path),
+         "--output", str(out_path)],
+        capture_output=True, text=True, timeout=30,
+    )
+    assert result.returncode == 0, f"stderr: {result.stderr[:500]}"
+
+    final = json.loads(out_path.read_text(encoding="utf-8"))
+    data = final["scenes"][0]["data"]
+    assert data["co_only_field"] == "from_complete"
+    assert data["wa_only_field"] == "preserve_me"
+    assert data["media"][0]["file"] == "a.jpg"
