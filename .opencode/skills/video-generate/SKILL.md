@@ -109,7 +109,7 @@ For full field spec, animation types, caption styles: [references/schemas.md](re
 
 ## Tests
 
-49 tests across 6 suites (all pass in CI):
+50 tests across 7 suites (all pass in CI):
 
 | Suite | Tests | Coverage |
 |---|---|---|
@@ -119,6 +119,7 @@ For full field spec, animation types, caption styles: [references/schemas.md](re
 | `test_merge_scenes.py` | 4 | Merge logic + count/ID mismatch + wa-only field preservation |
 | `test_contract_compliance.py` | 23 | Python↔TypeScript cross-ecosystem contract |
 | `test_docs_cli_alignment.py` | 2 | SKILL.md command examples ↔ argparse parity |
+| `test_e2e_pipeline.py` | 1 | Fetch → merge → validate end-to-end |
 
 ## Common Pitfalls
 
