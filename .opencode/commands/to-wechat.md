@@ -19,7 +19,7 @@ description: 文章转公众号排版
 ## 步骤
 
 1. 加载 `wechat-format` skill，按其排版工作流对文章进行处理。
-2. 使用 `scripts/format.py` 进行排版：默认使用 github 主题。
+2. 使用 `scripts/format.py` 进行排版：如果没有特别契合的主题，默认使用 newspaper 主题。
 3. 对文章进行公众号适配补充：
    - 段落不宜过长，每段控制在手机屏幕 3-5 行
    - 适当增加小标题分割长内容
