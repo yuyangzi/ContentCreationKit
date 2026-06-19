@@ -62,6 +62,22 @@ Merge rules per scene:
 
 Validation: scene counts must match; scene IDs must match in order. Exit 1 with descriptive stderr on mismatch.
 
+### Merge precedence (scenes_final.json)
+
+The merge step combines `scenes_with_assets.json` (asset side) and `scenes_complete.json` (audio side). Per spec §4.4:
+
+| Field | Source |
+|---|---|
+| `meta` | scenes_complete.json |
+| `audio` | scenes_complete.json |
+| `captions` | scenes_complete.json (fallback to with_assets if absent) |
+| `scenes[i].narration` | scenes_complete.json |
+| `scenes[i].data.media` | scenes_with_assets.json |
+| `scenes[i].data.media_manifest` | scenes_with_assets.json |
+| `scenes[i].data.<other>` | scenes_complete.json wins; wa-only fields are added if not in complete |
+
+`media_manifest` is a Part 1 debug field. Part 2 (Remotion render) consumes `media[]` and may ignore `media_manifest`.
+
 ## Why merge is mandatory
 
 `generate_audio.py` reads `scenes.json` (no assets). `fetch_assets.py` reads `scenes.json` (no timestamps). Neither sees the other's output. Without merge, the renderer gets timestamps but no media paths → `stock_footage` scenes render as empty gradients.
