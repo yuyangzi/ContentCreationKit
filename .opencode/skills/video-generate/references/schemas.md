@@ -55,6 +55,28 @@ Contract test: `scripts/test_contract_compliance.py` (21 assertions bridging bot
 | `code_block` | `code` | `language`, `title` |
 | `outro` | `cta_text` | `logo` |
 
+### media[] / media_manifest[] item schema
+
+Both `data.media[]` and `data.media_manifest[]` use the **same item schema**. The two arrays differ only by content:
+- `media[]`: only items with `status == "downloaded"` (consumed by Remotion render)
+- `media_manifest[]`: all candidates including failed downloads (debug/manual replacement)
+
+| Field | Type | Required | Notes |
+|---|---|---|---|
+| `file` | string | yes | Project-relative path, e.g. `"assets/s1_00.jpg"` |
+| `source` | enum | yes | One of: `pexels`, `pixabay`, `unsplash`, `bing`, `newspaper3k` |
+| `source_url` | string | yes | Original page URL; `""` if unknown |
+| `type` | enum | yes | `image` or `video` |
+| `width` | number | yes | Pixels; `0` if unknown |
+| `height` | number | yes | Pixels; `0` if unknown |
+| `status` | enum | yes | `downloaded` or `failed` |
+
+**Status lifecycle:** Search-layer results carry no status. After `download_file()` runs, each candidate is tagged `downloaded` (HTTP 200, body > 100 bytes) or `failed`. No `pending` state in persisted JSON.
+
+**Empty arrays:** When no candidates found OR all downloads failed, both arrays may be empty (`[]`). Render must degrade gracefully (text-only background).
+
+**TypeScript counterpart:** `StockMediaItem` in `remotion/src/input-props.ts` has `status?: "downloaded" | "failed"` as optional.
+
 ### narration
 
 | Field | Type | Required | Backfilled |
