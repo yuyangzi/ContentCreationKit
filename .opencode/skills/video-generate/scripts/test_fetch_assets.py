@@ -1,5 +1,7 @@
 import json
 import os
+import subprocess
+import sys
 import pytest
 from unittest.mock import patch, MagicMock
 
@@ -116,3 +118,93 @@ def test_download_file_returns_false_on_empty(tmp_path):
         result = download_file("https://example.com/empty.jpg", str(dest))
     assert result is False
     assert not dest.exists()
+
+
+def _make_minimal_scenes_json(tmp_path, article_path=""):
+    """Minimal valid scenes.json for CLI invocation."""
+    return {
+        "meta": {
+            "article_title": "T", "article_source": article_path,
+            "output": "out.mp4", "aspect_ratio": "16:9",
+            "width": 1920, "height": 1080, "fps": 30,
+            "total_duration_frames": 150, "total_duration_seconds": 5,
+            "font_family": "sans-serif",
+            "color_theme": {"primary": "#000", "accent": "#f00",
+                           "text": "#fff", "background": "#000"},
+        },
+        "scenes": [{
+            "id": "s1", "type": "stock_footage", "duration_frames": 150,
+            "search_keywords": {"zh": ["test"], "en": ["test"]},
+            "data": {},
+            "narration": {"text": "Hi", "voice_file": "v.mp3",
+                         "voice_start_ms": 0, "voice_end_ms": 0,
+                         "timestamps": []},
+        }],
+        "audio": {"voice_file": "v.mp3", "bgm_file": None,
+                 "bgm_volume": 0.15, "voice_volume": 0.9},
+        "captions": {"enabled": True, "style": "karaoke", "font_size": 36,
+                    "position_y": 920, "active_color": "#fff",
+                    "inactive_color": "#888"},
+    }
+
+
+def test_cli_accepts_outdir_flag(tmp_path, monkeypatch):
+    """fetch_assets.py CLI must accept --outdir as canonical name."""
+    import subprocess, sys, os
+    SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "fetch_assets.py")
+    scenes_path = tmp_path / "scenes.json"
+    scenes_path.write_text(json.dumps(_make_minimal_scenes_json(tmp_path)),
+                          encoding="utf-8")
+    outdir = tmp_path / "myassets"
+    env = {**os.environ, "PEXELS_API_KEY": "", "PIXABAY_API_KEY": "",
+           "UNSPLASH_ACCESS_KEY": ""}
+    result = subprocess.run(
+        [sys.executable, SCRIPT, str(scenes_path),
+         "--outdir", str(outdir), "--offline"],
+        capture_output=True, text=True, timeout=60, env=env,
+    )
+    assert result.returncode == 0, f"stderr: {result.stderr[:500]}"
+    assert outdir.exists()
+    assert (outdir / "manifest.json").exists()
+    assert (tmp_path / "scenes_with_assets.json").exists()
+
+
+def test_cli_accepts_article_source_flag(tmp_path, monkeypatch):
+    """fetch_assets.py CLI must accept --article-source overriding meta."""
+    import subprocess, sys, os
+    SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "fetch_assets.py")
+    article = tmp_path / "myarticle.md"
+    article.write_text("# Article\nSee https://example.com/page\n",
+                      encoding="utf-8")
+    scenes_path = tmp_path / "scenes.json"
+    scenes_path.write_text(json.dumps(_make_minimal_scenes_json(tmp_path)),
+                          encoding="utf-8")
+    env = {**os.environ, "PEXELS_API_KEY": "", "PIXABAY_API_KEY": "",
+           "UNSPLASH_ACCESS_KEY": ""}
+    result = subprocess.run(
+        [sys.executable, SCRIPT, str(scenes_path),
+         "--article-source", str(article),
+         "--outdir", str(tmp_path / "assets"), "--offline"],
+        capture_output=True, text=True, timeout=60, env=env,
+    )
+    assert result.returncode == 0, f"stderr: {result.stderr[:500]}"
+
+
+def test_cli_accepts_assets_dir_alias(tmp_path):
+    """fetch_assets.py CLI must keep --assets-dir as deprecated alias."""
+    import subprocess, sys, os
+    SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                          "fetch_assets.py")
+    scenes_path = tmp_path / "scenes.json"
+    scenes_path.write_text(json.dumps(_make_minimal_scenes_json(tmp_path)),
+                          encoding="utf-8")
+    env = {**os.environ, "PEXELS_API_KEY": "", "PIXABAY_API_KEY": "",
+           "UNSPLASH_ACCESS_KEY": ""}
+    result = subprocess.run(
+        [sys.executable, SCRIPT, str(scenes_path),
+         "--assets-dir", str(tmp_path / "assets"), "--offline"],
+        capture_output=True, text=True, timeout=60, env=env,
+    )
+    assert result.returncode == 0, f"stderr: {result.stderr[:500]}"
