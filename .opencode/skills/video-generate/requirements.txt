@@ -1,0 +1,5 @@
+edge-tts>=7.2
+newspaper3k>=0.2
+Pillow>=9.0
+requests>=2.31
+pytest>=8.0

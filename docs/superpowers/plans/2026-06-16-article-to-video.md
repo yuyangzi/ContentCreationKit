@@ -1776,7 +1776,7 @@ export const MainVideo: React.FC<{
   audio: ScenesJson["audio"];
   captions: ScenesJson["captions"];
 } | Record<string, never>> = (props) => {
-  // When --props points to scenes_complete.json, Remotion spreads top-level keys.
+  // When --props points to scenes_final.json, Remotion spreads top-level keys.
   const { meta, scenes = [], audio = {} as ScenesJson["audio"], captions = {} as ScenesJson["captions"] } = props;
 
   if (!meta || scenes.length === 0) return null;
@@ -1860,7 +1860,7 @@ fi
 VIDEO_NAME="${1:-}"
 SCENES_FILE="${2:-}"
 if [ -z "$VIDEO_NAME" ] || [ -z "$SCENES_FILE" ]; then
-    echo "Usage: render_video.sh <video_name> <scenes_complete.json>"
+    echo "Usage: render_video.sh <video_name> <scenes_final.json>"
     exit 1
 fi
 
@@ -1902,7 +1902,7 @@ else
 fi
 
 # --- Render ---
-# Pass scenes_complete.json as Remotion input props file.
+# Pass scenes_final.json as Remotion input props file (merged assets + timestamps).
 # Remotion reads the JSON file and spreads its top-level keys as props.
 # MainVideo receives: { meta, scenes, audio, captions }
 echo "🎬 Rendering video..."
@@ -1998,7 +1998,8 @@ pip install -r .opencode/skills/video-generate/requirements.txt
 | `/to-video-script` | `scenes.json` | Agent 分析文章 → 分场景脚本 |
 | `/to-video-footage` | `assets/` + `manifest.json` | 五层素材搜索下载 |
 | `/to-video-audio` | `voice.mp3` + `scenes_complete.json` | Edge-TTS 旁白 + 时间戳回填 |
-| `/to-video-render` | `final.mp4` | Remotion 渲染 |
+| *(合并步骤)* | `scenes_final.json` | 合并素材路径 + 音频时间戳 |
+| `/to-video-render` | `final.mp4` | Remotion 渲染（读取 `scenes_final.json`） |
 
 一键模式：`/to-video`
 
@@ -2006,13 +2007,15 @@ pip install -r .opencode/skills/video-generate/requirements.txt
 
 ```
 content/video/{article-name}/
-├── scenes.json           # 场景脚本（Agent 生成）
-├── scenes_complete.json  # 含时间戳的完整场景（/to-video-audio 输出）
-├── voice.mp3             # 旁白音频
-├── timestamps.json       # 词级时间戳
-├── assets/               # 素材缓存
+├── scenes.json              # 场景脚本（Agent 生成）
+├── scenes_with_assets.json  # 含素材路径的场景（fetch_assets 输出）
+├── scenes_complete.json     # 含时间戳的场景（generate_audio 输出）
+├── scenes_final.json        # 合并后数据（render 输入）
+├── voice.mp3                # 旁白音频
+├── timestamps.json          # 词级时间戳
+├── assets/                  # 素材缓存
 │   └── manifest.json
-└── final.mp4             # 最终视频
+└── final.mp4                # 最终视频
 ```
 
 ## 错误处理
@@ -2144,7 +2147,7 @@ description: 生成视频旁白音频
 ## 输出
 - `voice.mp3` — 旁白音频
 - `timestamps.json` — 词级时间戳
-- `scenes_complete.json` — 含回填时间戳的完整场景数据
+- `scenes_complete.json` — 含回填时间戳的完整场景数据（⚠️ 非 render 直接输入，需合并素材路径）
 
 ## 约束
 - Edge-TTS 失败自动重试 3 次（5s/15s/45s 间隔）
@@ -2170,7 +2173,7 @@ description: 渲染最终视频
 ```bash
 bash .opencode/skills/video-generate/scripts/render_video.sh \
   {video_name} \
-  content/video/{video_name}/scenes_complete.json
+  content/video/{video_name}/scenes_final.json
 ```
 
 ## 输出

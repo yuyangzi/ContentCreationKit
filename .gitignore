@@ -8,6 +8,11 @@ __pycache__/
 dist/
 build/
 
+## Python
+
+__pycache__/
+.venv/
+
 ## Git worktrees
 
 .venv/
@@ -24,3 +29,4 @@ content/draft/
 content/reference/
 content/WeChat/
 content/images/
+content/video/
