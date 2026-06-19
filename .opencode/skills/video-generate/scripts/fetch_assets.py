@@ -343,23 +343,48 @@ def main():
     )
     parser.add_argument("scenes_path", help="Path to scenes.json")
     parser.add_argument(
-        "--assets-dir", default=None, help="Assets output directory"
+        "--outdir", "--assets-dir", dest="outdir", default=None,
+        help="Assets output directory (default: <scenes_dir>/assets)",
+    )
+    parser.add_argument(
+        "--article-source", dest="article_source", default=None,
+        help="Path to source article markdown (overrides meta.article_source)",
+    )
+    parser.add_argument(
+        "--offline", dest="offline", action="store_true",
+        help="Skip all network search/download (test-only). Produces empty media arrays.",
     )
     args = parser.parse_args()
+
+    # Honor --offline by short-circuiting all search layers.
+    if args.offline:
+        global PEXELS_API_KEY, PIXABAY_API_KEY, UNSPLASH_ACCESS_KEY
+        PEXELS_API_KEY = ""
+        PIXABAY_API_KEY = ""
+        UNSPLASH_ACCESS_KEY = ""
+        # Disable Bing scraping by monkeypatching the function reference here.
+        global search_bing_images
+        search_bing_images = lambda q, mr=5: []
 
     with open(args.scenes_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    base = os.path.splitext(args.scenes_path)[0]
-    outdir = args.assets_dir or os.path.join(
-        os.path.dirname(os.path.abspath(args.scenes_path)), "assets"
-    )
+    scenes_dir = os.path.dirname(os.path.abspath(args.scenes_path))
+    outdir = args.outdir or os.path.join(scenes_dir, "assets")
     os.makedirs(outdir, exist_ok=True)
 
-    article_source = data.get("meta", {}).get("article_source", "")
+    # Article source: --article-source > meta.article_source > none
+    article_source = args.article_source or data.get("meta", {}).get(
+        "article_source", ""
+    )
     ref_urls = []
     if article_source and os.path.exists(article_source):
         ref_urls = extract_ref_urls(article_source)
+    elif article_source:
+        print(
+            f"Warning: article source not found: {article_source}",
+            file=sys.stderr,
+        )
 
     manifest = {"scenes": {}}
     for scene in data["scenes"]:
@@ -371,14 +396,17 @@ def main():
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
 
-    with_assets_path = f"{base}_with_assets.json"
+    # Always write to scenes_with_assets.json in scenes_dir.
+    # If input is itself scenes_with_assets.json, this is a no-op overwrite
+    # (idempotent re-run). Avoids chained naming like _with_assets_with_assets.
+    with_assets_path = os.path.join(scenes_dir, "scenes_with_assets.json")
     for scene in data["scenes"]:
         scene.pop("_assets", None)
     with open(with_assets_path, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"manifest.json -> {manifest_path}")
-    print(f"{os.path.basename(base)}_with_assets.json -> {with_assets_path}")
+    print(f"scenes_with_assets.json -> {with_assets_path}")
 
 
 if __name__ == "__main__":
