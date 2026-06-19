@@ -305,6 +305,19 @@ def search_all_layers(keywords_zh, keywords_en, ref_urls, max_per_scene=8):
     return results[:max_per_scene]
 
 
+def _normalize_asset(raw, file_path, status):
+    """Project a search-layer result into the unified media item schema."""
+    return {
+        "file": file_path,
+        "source": raw.get("source", "unknown"),
+        "source_url": raw.get("source_url", ""),
+        "type": raw.get("type", "image"),
+        "width": raw.get("width", 0),
+        "height": raw.get("height", 0),
+        "status": status,
+    }
+
+
 def process_scene(scene, ref_urls, assets_dir):
     sid = scene["id"]
     keywords_zh = scene.get("search_keywords", {}).get("zh", [])
@@ -312,7 +325,7 @@ def process_scene(scene, ref_urls, assets_dir):
 
     results = search_all_layers(keywords_zh, keywords_en, ref_urls)
 
-    assets = []
+    manifest_items = []
     downloaded = 0
     failed = 0
     for i, r in enumerate(results):
@@ -322,18 +335,25 @@ def process_scene(scene, ref_urls, assets_dir):
             ext = "jpg"
         filename = f"{sid}_{i:02d}.{ext}"
         dest = os.path.join(assets_dir, filename)
+        file_rel = f"assets/{filename}"
         if download_file(r["url"], dest):
-            r["file"] = f"assets/{filename}"
-            r["status"] = "downloaded"
+            manifest_items.append(_normalize_asset(r, file_rel, "downloaded"))
             downloaded += 1
         else:
-            r["file"] = f"assets/{filename}"
-            r["status"] = "failed"
+            manifest_items.append(_normalize_asset(r, file_rel, "failed"))
             failed += 1
-        assets.append(r)
 
     print(f"Scene {sid}: {downloaded} downloaded, {failed} failed")
-    scene["_assets"] = assets
+
+    # Backfill data.media (downloaded) and data.media_manifest (all),
+    # preserving existing data fields like title_card.data.title
+    scene.setdefault("data", {})
+    scene["data"]["media"] = [
+        m for m in manifest_items if m["status"] == "downloaded"
+    ]
+    scene["data"]["media_manifest"] = manifest_items
+    # Keep _assets as a transient mirror for manifest.json output
+    scene["_assets"] = manifest_items
     return scene
 
 
