@@ -208,3 +208,90 @@ def test_cli_accepts_assets_dir_alias(tmp_path):
         capture_output=True, text=True, timeout=60, env=env,
     )
     assert result.returncode == 0, f"stderr: {result.stderr[:500]}"
+
+
+def test_process_scene_backfills_media_and_manifest(monkeypatch, tmp_path):
+    """process_scene() must populate data.media (downloaded) and
+    data.media_manifest (all candidates), preserving existing data fields."""
+    import fetch_assets as fa
+    monkeypatch.setattr(fa, "PEXELS_API_KEY", "fake")
+    monkeypatch.setattr(fa, "PIXABAY_API_KEY", "")
+    monkeypatch.setattr(fa, "UNSPLASH_ACCESS_KEY", "")
+    monkeypatch.setattr(fa, "HAS_NEWSPAPER", False)
+
+    fake_results = [
+        {"url": "https://x/ok.jpg", "source": "pexels",
+         "source_url": "https://pexels.com/p/1", "type": "image",
+         "width": 1920, "height": 1080},
+        {"url": "https://x/bad.jpg", "source": "pexels",
+         "source_url": "https://pexels.com/p/2", "type": "image",
+         "width": 1280, "height": 720},
+    ]
+    monkeypatch.setattr(fa, "search_all_layers",
+                        lambda zh, en, refs: fake_results)
+
+    def fake_download(url, dest, timeout=30):
+        if "ok" in url:
+            os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+            with open(dest, "wb") as f:
+                f.write(b"x" * 200)
+            return True
+        return False
+    monkeypatch.setattr(fa, "download_file", fake_download)
+
+    scene = {
+        "id": "s1", "type": "stock_footage",
+        "search_keywords": {"zh": ["x"], "en": ["x"]},
+        "data": {"text_overlays": [{"text": "preserved"}]},
+    }
+    fa.process_scene(scene, [], str(tmp_path))
+
+    # data.media: downloaded only
+    assert "media" in scene["data"]
+    assert len(scene["data"]["media"]) == 1
+    assert scene["data"]["media"][0]["status"] == "downloaded"
+    assert scene["data"]["media"][0]["file"].endswith("s1_00.jpg")
+
+    # data.media_manifest: all candidates
+    assert "media_manifest" in scene["data"]
+    assert len(scene["data"]["media_manifest"]) == 2
+    statuses = [m["status"] for m in scene["data"]["media_manifest"]]
+    assert "downloaded" in statuses and "failed" in statuses
+
+    # Existing data field preserved
+    assert scene["data"]["text_overlays"] == [{"text": "preserved"}]
+
+
+def test_process_scene_preserves_title_card_data(monkeypatch, tmp_path):
+    """For non-stock scenes (e.g. title_card), process_scene must not
+    overwrite existing data.title; media/media_manifest may be empty arrays."""
+    import fetch_assets as fa
+    monkeypatch.setattr(fa, "search_all_layers", lambda zh, en, refs: [])
+
+    scene = {
+        "id": "s_title", "type": "title_card",
+        "search_keywords": {"zh": [], "en": []},
+        "data": {"title": "My Video", "subtitle": "An intro"},
+    }
+    fa.process_scene(scene, [], str(tmp_path))
+
+    assert scene["data"]["title"] == "My Video"
+    assert scene["data"]["subtitle"] == "An intro"
+    assert scene["data"].get("media", []) == []
+    assert scene["data"].get("media_manifest", []) == []
+
+
+def test_process_scene_no_data_key_initializes_it(monkeypatch, tmp_path):
+    """If scene lacks a 'data' key, process_scene must create it without crash."""
+    import fetch_assets as fa
+    monkeypatch.setattr(fa, "search_all_layers", lambda zh, en, refs: [])
+
+    scene = {
+        "id": "s2", "type": "stock_footage",
+        "search_keywords": {"zh": [], "en": []},
+        # no 'data' key at all
+    }
+    fa.process_scene(scene, [], str(tmp_path))
+    assert "data" in scene
+    assert scene["data"]["media"] == []
+    assert scene["data"]["media_manifest"] == []
