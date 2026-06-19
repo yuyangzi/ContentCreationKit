@@ -57,7 +57,7 @@ export interface AnimationConfig {
 // Scene-specific data types
 export interface TitleCardData { title: string; subtitle?: string; background?: string; }
 export interface ChapterTitleData { chapter_number: number; title: string; subtitle?: string; }
-export interface StockMediaItem { file: string; source: string; source_url?: string; type: "image" | "video"; width?: number; height?: number; relevance_score?: number; }
+export interface StockMediaItem { file: string; source: string; source_url?: string; type: "image" | "video"; width?: number; height?: number; relevance_score?: number; status?: "downloaded" | "failed"; }
 export interface TextOverlay { text: string; position?: string; font_size?: number; }
 export interface StockFootageData { media?: StockMediaItem[]; text_overlays?: TextOverlay[]; }
 export interface InfoCardColumn { title?: string; content: string; icon?: string; }
