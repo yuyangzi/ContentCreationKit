@@ -372,3 +372,61 @@ class TestContractCompliance:
                 anim_type = anim.get("type")
                 assert anim_type is not None, \
                     f"Contract breach: scenes[{i}].animation.type required if animation present"
+
+
+def test_media_item_has_all_unified_schema_fields():
+    """Every media[] item must carry the full unified schema:
+    file, source, source_url, type, width, height, status."""
+    from scenes_schema import validate_scenes
+    # Build a reference scene with stock footage and a downloaded media item
+    scenes = build_reference_scenes_json()  # existing helper
+    stock_scene = next(
+        (s for s in scenes["scenes"] if s["type"] == "stock_footage"),
+        None,
+    )
+    assert stock_scene is not None, "Reference must have a stock_footage scene"
+    # Inject a fully-populated media item
+    stock_scene["data"]["media"] = [{
+        "file": "assets/test.jpg",
+        "source": "pexels",
+        "source_url": "https://pexels.com/p/test",
+        "type": "image",
+        "width": 1920,
+        "height": 1080,
+        "status": "downloaded",
+    }]
+    stock_scene["data"]["media_manifest"] = stock_scene["data"]["media"][:]
+    # Schema must accept it
+    errs = validate_scenes(scenes)
+    assert errs == [], f"validate_scenes failed: {errs}"
+    # Field assertion
+    item = stock_scene["data"]["media"][0]
+    required_fields = {"file", "source", "source_url", "type",
+                      "width", "height", "status"}
+    assert required_fields.issubset(item.keys()), (
+        f"missing fields: {required_fields - set(item.keys())}"
+    )
+    assert item["status"] in ("downloaded", "failed")
+
+
+def test_media_manifest_can_contain_failed_items():
+    """media_manifest must allow status='failed' items;
+    media (downloaded-only) must filter them."""
+    from scenes_schema import validate_scenes
+    scenes = build_reference_scenes_json()
+    stock_scene = next(
+        (s for s in scenes["scenes"] if s["type"] == "stock_footage"),
+        None,
+    )
+    stock_scene["data"]["media"] = []  # nothing downloaded
+    stock_scene["data"]["media_manifest"] = [{
+        "file": "assets/failed.jpg",
+        "source": "bing",
+        "source_url": "",
+        "type": "image",
+        "width": 0,
+        "height": 0,
+        "status": "failed",
+    }]
+    errs = validate_scenes(scenes)
+    assert errs == [], f"validate_scenes failed: {errs}"
