@@ -19,7 +19,9 @@
       "command": [
         "npx",
         "-y",
-        "@modelcontextprotocol/server-brave-search@latest"
+        "@brave/brave-search-mcp-server@latest",
+        "--transport",
+        "stdio"
       ],
       "enabled": true,
       "environment": {
