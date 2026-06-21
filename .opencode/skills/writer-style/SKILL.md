@@ -8,7 +8,7 @@ description: |
 
   Two modes available:
   - Technical deep-dive (default): detailed technical blog style
-  - Deep analysis (财经分析): HUXIU/WanDian/YuanChuan-style commentary
+  - Deep analysis: HUXIU/WanDian/YuanChuan-style commentary
 ---
 
 # 中文博客作者
