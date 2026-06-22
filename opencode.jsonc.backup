@@ -29,6 +29,14 @@
       },
       "type": "local"
     },
+    "Jina": {
+      "type": "remote",
+      "url": "https://mcp.jina.ai/v1",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer MY_API_KEY"
+      }
+    },
     "BingSearch": {
       "command": [
         "npx",
