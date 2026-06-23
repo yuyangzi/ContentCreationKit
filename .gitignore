@@ -31,3 +31,7 @@ content/reference/
 content/WeChat/
 content/images/
 content/video/
+
+## 包管理锁文件
+
+package-lock.json
