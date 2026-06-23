@@ -134,6 +134,84 @@ svg text { font-family: 'PingFang SC','Microsoft YaHei',sans-serif !important; }
 
 ---
 
+## 录屏面板隐藏（全量版）
+
+Slidev 和 neocarbon 主题有多层导航/目录/overview 面板。简单 selector 容易漏掉变体，导致录屏时面板遮挡内容。**必须使用全量 selector**，覆盖以下三类：
+
+1. **Slidev 内置面板**：`#slidev-overview`, `#slidev-toc`, `.slidev-overview`, `.slidev-toc`, `.slidev-sidebar`, `.slidev-nav`, `.slidev-slide-nav`, `.slidev-nav-overlay`, `.slidev-navigation`, `.slidev-overview-panel`, `.slidev-control-layout`
+2. **通用语义元素**：`nav`, `aside`, `.nav`, `.nav-overlay`, `.toc`, `.toc-overlay`
+3. **属性模糊匹配（兜底）**：`[class*="sidebar"]`, `[class*="toc"]`, `[class*="navigation"]`, `[class*="nav-overlay"]`, `[id*="slidev-overview"]`, `[id*="slidev-toc"]`
+
+```css
+/* Hide ALL Slidev/neocarbon navigation, TOC, sidebar, overview panels */
+#slidev-overview,
+#slidev-toc,
+.slidev-overview,
+.slidev-toc,
+.slidev-toc-list,
+.slidev-sidebar,
+.slidev-nav,
+.slidev-slide-nav,
+.slidev-nav-overlay,
+.slidev-navigation,
+.slidev-overview-panel,
+.slidev-control-layout,
+.nav,
+.nav-overlay,
+.toc,
+.toc-overlay,
+aside,
+nav,
+[class*="sidebar"],
+[class*="toc"],
+[class*="navigation"],
+[class*="nav-overlay"],
+[id*="slidev-overview"],
+[id*="slidev-nav"],
+[id*="slidev-toc"] {
+  display: none !important;
+}
+```
+
+> 放在 `slides.md` 的 `<style>` 块中，紧跟动画降级 CSS 之后。
+
+---
+
+## 内容居中
+
+neocarbon 的 `default` 布局内容默认偏上排列，下半屏留白过多。通过 flex 布局强制垂直居中，同时限制文字最大宽度防止行过长。
+
+```css
+/* Force content vertical centering on default layout */
+.slidev-layout.default {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  padding: 3rem 4rem !important;
+  min-height: 100vh;
+}
+.slidev-layout.default h1 {
+  margin-bottom: 1.5rem;
+}
+.slidev-layout.default ul, 
+.slidev-layout.default ol,
+.slidev-layout.default p {
+  max-width: 85%;
+}
+
+/* Center comparison layout */
+.slidev-layout.comparison {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+```
+
+> 放在 `slides.md` 的 `<style>` 块中，紧跟在面板隐藏 CSS 之后。`comparison` 布局同样加居中，防止左右栏顶部对齐。
+
+---
+
 ## Slidev 配置模板
 
 ### frontmatter（`slides.md` 顶部）
@@ -147,6 +225,9 @@ info: |
   数据来源概述
 highlighter: shiki
 transition: fade
+# 禁用导出 PDF/PPTX 时自动生成目录页
+export:
+  withToc: false
 fonts:
   sans: 'PingFang SC, Microsoft YaHei, Noto Sans SC'
   serif: 'Noto Serif SC, serif'
