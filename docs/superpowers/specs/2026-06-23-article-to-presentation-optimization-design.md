@@ -54,10 +54,30 @@
 | 档位 | frontmatter | `<style>` CSS | 说明 |
 |------|------------|-------------|------|
 | 保留全部 | `clickAnimation: fade.up` | 无额外 CSS | staggered/shimmer/particles 全保留 |
-| **淡入（默认）** | `clickAnimation: fade` / `transition: fade` | 三段降级 CSS | 仅 fade，禁用 staggered/shimmer/particles |
-| 全部禁用 | `transition: none` | 全禁 CSS | 纯静态，适合纯旁白 |
+| **淡入（默认）** | `clickAnimation: fade` / `transition: fade` | 三段降级 CSS（见下） | 仅 fade，禁用 staggered/shimmer/particles |
+| 全部禁用 | `transition: none` | 全禁 CSS（见下） | 纯静态，适合纯旁白 |
 
 现有"动画策略（visual companion 确认）"表替换为上表。
+
+**淡入档三段降级 CSS（完整写法）：**
+
+```css
+.nc-stagger > * { animation: none !important; opacity: 1 !important; }
+.nc-shimmer { animation: none !important; }
+.nc-particles { display: none !important; }
+```
+
+**全禁 CSS（完整写法）：**
+
+```css
+.nc-stagger > *,
+.nc-shimmer,
+.nc-particles,
+[class*="nc-animate"] { animation: none !important; opacity: 1 !important; }
+```
+
+> ⚠️ `clickAnimation` frontmatter 字段需经第七节验证（7.3）。
+> 若不生效，改为纯 CSS 降级方案（不写 frontmatter，仅靠 `<style>` 控制）。
 
 ### 2.3 阶段三 — 新增配色预设选择步骤
 
@@ -218,9 +238,11 @@ fonts:
 6. `<NcLineChart />` — 多线趋势扩展示例（双 Y 轴用例）
 7. `<NcHeatmap />` — GitHub 风格热力图
 
-### 3.5 布局映射表 — 8 → 15 行
+### 3.5 布局映射表 — 补全至 15+ 行
 
-与 SKILL.md 同步更新完整表格。
+technical-details.md 现有映射表已有 13 行（非 8 行）。此处仅添加**现有表中未包含的新行**。
+最终行数取决于实际重叠，预计 15-20 行。
+两个文件（SKILL.md / technical-details.md）的映射表内容（PPT 内容类型 + neocarbon 方案）必须完全一致。
 
 ---
 
@@ -283,3 +305,100 @@ fonts:
 | CJK 字体栈在不同平台表现差异 | 🟡 中 | 三级回退：PingFang SC → Microsoft YaHei → Noto Sans SC |
 | 新布局 API 文档与实际组件行为不一致 | 🟡 中 | 基于 neocarbon v1.0.8 源码验证，非凭记忆 |
 | 新陷阱遗漏重要场景 | 🟢 低 | 基于已有生产构建经验补充，非凭空推测 |
+| `clickAnimation` 非真实 Slidev 字段 | 🔴 高 | 实施前验证（见第七节），不存在则降级为 CSS-only 方案 |
+| 新增组件在 v1.0.8 中不存在 | 🔴 高 | 实施前验证（见第七节），不存在则标注 ⚠️ 占位 |
+| 颜色语义文本未同步（"橙色"→"紫色"） | 🟡 中 | 见第七节 grep 指令 |
+
+---
+
+## 七、验证前置条件（Metis 审查追加）
+
+**以下验证必须在实施任何文件改动之前完成。**
+
+### 7.1 neocarbon v1.0.8 存在性验证
+
+```bash
+npm view @enyineer/slidev-theme-neocarbon@1.0.8 version
+# 预期输出：1.0.8
+```
+
+若不存在 → 使用实际最新版本，spec 中所有 `1.0.8` 引用同步更新。
+
+### 7.2 新增组件存在性验证
+
+```bash
+# 安装后检查组件文件
+ls node_modules/@enyineer/slidev-theme-neocarbon/components/ | grep -iE "terminal|steps|flip|roi|heatmap"
+```
+
+逐个确认：
+- `NcTerminal.vue` → 存在？
+- `NcSteps.vue` → 存在？
+- `NcFlipCard.vue` → 存在？
+- `NcRoiCard.vue` → 存在？
+- `NcHeatmap.vue` → 存在？
+
+**不存在 → technical-details.md 中该组件文档标注 `⚠️ 需验证 — 基于 README 描述，未经源码确认`。** 写入完整但带警告的文档，而非删除。
+
+### 7.3 `clickAnimation` 字段验证
+
+创建一个最小化测试 `slides.md`：
+
+```yaml
+---
+theme: '@enyineer/slidev-theme-neocarbon'
+clickAnimation: fade
+transition: fade
+---
+
+# Slide 1
+
+<v-clicks>
+- Item A
+- Item B
+</v-clicks>
+```
+
+```bash
+npx slidev build
+# 检查：exit code 0 且无 "unknown frontmatter" 警告
+# 浏览器中检查 v-click 动画是否为 fade 而非默认动画
+```
+
+**结果判定：**
+- `clickAnimation` 被识别且生效 → spec 保持不变
+- `clickAnimation` 被忽略但不报错 → 改为 CSS-only 方案（不写 frontmatter，只在 `<style>` 中通过 CSS 控制）
+- `clickAnimation` 报错 → 完全移除该字段，改用 Slidev 原生 `transition` + CSS 降级
+
+### 7.4 `fonts.provider: none` 验证
+
+在 7.3 的测试 slides.md 中加入：
+
+```yaml
+fonts:
+  sans: 'PingFang SC, Microsoft YaHei, Noto Sans SC'
+  provider: none
+```
+
+构建后用浏览器 DevTools Network 面板确认：**无 `fonts.googleapis.com` 请求**。
+
+### 7.5 颜色语义文本更新范围
+
+实施前执行以下 grep，确定所有需更新的位置：
+
+```bash
+grep -n "橙色\|#ff6b35\|nc-text-accent.*橙" .opencode/skills/article-to-presentation/references/technical-details.md
+grep -n "1\.0\.5" .opencode/skills/article-to-presentation/
+```
+
+所有匹配项按以下规则处理：
+- `#ff6b35`（作为默认示例时）→ `#a855f7`
+- "橙色"（作为默认配色描述时）→ "紫色"
+- `1.0.5` → `1.0.8`
+- `#ff6b35`（作为预设 B 暖橙的示例时）→ 保留不变
+
+### 7.6 布局映射行数对齐
+
+- SKILL.md：8 行 → 加 7 行 = **15 行**
+- technical-details.md：先 diff 现有 13 行与新 7 行的重叠情况，仅添加**未包含的行**。最终行数可能是 15-20 行。
+- 两个文件的映射表内容（PPT 内容类型 + neocarbon 方案两列）必须完全一致。
