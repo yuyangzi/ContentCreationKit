@@ -20,6 +20,10 @@
 | 14 | **Slidev TOC 面板遮挡内容** | 右侧导航目录面板在录屏时覆盖幻灯片内容 → 画面不完整 | 在 `<style>` 中添加 `.slidev-toc, .slidev-nav, .slidev-menu { display: none !important; }` |
 | 15 | **npm 安装慢（国内网络）** | `npm install` 耗时数分钟甚至超时 → 阻塞流程 | 使用镜像：`npm install --registry https://registry.npmmirror.com` |
 | 16 | **`npx serve` 配置不当** | 目录列表泄露 / 端口冲突 / 路径错误 → 多次重启 | 固定命令：`npx serve dist -p 3030 --no-clipboard`，从 `dist/` 目录启动，不是项目根目录 |
+| 17 | **CJK 行高缺失** | 中文汉字上下行挤在一起，可读性下降 | `<style>` 中设置 `.slidev-layout { line-height: 1.75; font-size: 24px; }` |
+| 18 | **配色预设覆盖遗漏** | 选了预设但漏改部分变量，该语义色仍是旧默认值 | 选择预设后完整粘贴整套 5 变量（accent/success/danger/warning/info），不要只改单个 |
+| 19 | **click 动画与 slide 过渡冲突** | `transition: slide-left` + `clickAnimation: fade.up` → 翻页瞬间元素先淡入再位移，视觉撕裂 | 统一动画方向：要么全 fade，要么全 slide，不混搭 |
+| 20 | **font provider 阻塞构建** | Google Fonts CDN 请求超时 → `slidev dev` 或 `slidev build` 卡死数分钟 | frontmatter 设 `fonts.provider: none` |
 
 ---
 
@@ -30,6 +34,21 @@
 - **默会知识/价值判断必须用 `nc-text-success`（绿色）**。是审查中最常见的错误——AI agent 倾向用 `nc-text-accent`（橙色）来"强调"价值判断，这违反了颜色语义。
 - **红色仅用于负面**。93% 的 AI 使用率是事实性数据，不能标红。
 - **检查**：遍历 `slides.md`，搜索 `nc-text-danger` 和 `nc-text-success` 的每次使用，确认上下文匹配颜色语义。
+
+### 配色预设
+
+- **阶段二选定预设后，检查 `<style>` 中 5 个 CSS 变量是否全部覆盖**
+- 遗漏任一变量 → 该语义色仍是上次使用的值，视觉上与预设不协调
+- 自定义色值仍遵守语义：success 正面、danger 负面、accent 中性
+- **检查**：搜索 `--nc-accent`、`--nc-success`、`--nc-danger`、`--nc-warning`、`--nc-info` 在 `<style>` 中是否全部出现
+
+### Click 动画
+
+- **`<style>` 中的动画降级 CSS 必须与档位匹配**
+- 淡入档 → 含 `.nc-stagger > *`/`.nc-shimmer`/`.nc-particles` 禁用 CSS
+- 全禁档 → 含全禁 CSS 块 + `transition: none`
+- 复杂幻灯片（3+ v-click）必须显式设 `clicks: N`
+- **检查**：搜索 frontmatter 中的 `transition: none`，确认与 `<style>` 中的动画 CSS 一致
 
 ### 布局语法
 
@@ -65,3 +84,7 @@
 - [ ] 1920×1080 分辨率下每张幻灯片内容完整（无 TOC 遮挡）
 - [ ] 无 console 错误
 - [ ] 章节标题在正确的 slide 位置
+- [ ] 配色预设 5 变量全部覆盖（或确认使用默认霓虹紫）
+- [ ] CJK 行高 ≥ 1.75（`.slidev-layout`）
+- [ ] Mermaid 中文补丁生效（`svg text` font-family 含 CJK 字体）
+- [ ] `fonts.provider: none` 已设置
