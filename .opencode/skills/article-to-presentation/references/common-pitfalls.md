@@ -17,7 +17,7 @@
 | 11 | **CJK 字体回退异常** | 中文文字在 neocarbon 中出现粗细不均或字形回退 | 在 frontmatter 中设置 `fonts.sans: 'PingFang SC, Microsoft YaHei, sans-serif'` |
 | 12 | **`<style>` 块位置错误** | 颜色令牌覆盖 CSS 写在 `<style>` 块外部 → 不生效 | 颜色令牌和动画控制 CSS 必须写在 `slides.md` 的 `<style>` 块内（不拘位置，建议在末尾） |
 | 13 | **中文目录名导致构建失败** | `slidev build` 对 URL 编码的中文路径处理异常 → vite 报错 | 目录名只用 ASCII：`AI-execution-judgment` 而非 `AI压缩执行力` |
-| 14 | **Slidev TOC 面板遮挡内容** | 右侧导航目录面板在录屏时覆盖幻灯片内容 → 画面不完整 | 在 `<style>` 中添加完整 selector 块：`.slidev-sidebar, .slidev-nav, .slidev-slide-nav, .slidev-navigation, .slidev-toc, .slidev-overview-panel, aside, nav.slidev-nav, [class*="sidebar"], [class*="toc"], [class*="navigation"], #slidev-nav, .slidev-layout-nav { display: none !important; }` |
+| 14 | **Slidev TOC/目录面板遮挡内容** | 左侧目录面板在录屏时覆盖幻灯片内容 → 画面不完整。简单 selector 可能漏掉变体面板 | 使用精简 selector 块只隐藏TOC（导出目录已通过 `export.withToc: false` 配置禁用）：`#slidev-toc, .slidev-toc, .slidev-toc-list, .toc, .toc-overlay, [class*="toc"], [id*="slidev-toc"] { display: none !important; }` |
 | 15 | **npm 安装慢（国内网络）** | `npm install` 耗时数分钟甚至超时 → 阻塞流程 | 使用镜像：`npm install --registry https://registry.npmmirror.com` |
 | 16 | **`npx serve` 配置不当** | 目录列表泄露 / 端口冲突 / 路径错误 → 多次重启 | 固定命令：`npx serve dist -p 3030 --no-clipboard`，从 `dist/` 目录启动，不是项目根目录 |
 | 17 | **CJK 行高缺失** | 中文汉字上下行挤在一起，可读性下降 | `<style>` 中设置 `.slidev-layout { line-height: 1.75; font-size: 24px; }` |
@@ -25,6 +25,7 @@
 | 19 | **slide 过渡方向与内容样式冲突** | `transition: slide-left` / `slide-right` + 复杂 CSS 动画 → 翻页瞬间元素跳动、布局抖动 | B站录屏统一使用 `transition: fade`；若某单张幻灯片确实需要方向感，单独为该张设置 `transition: slide-left`，不要全局设置 |
 | 20 | **font provider 阻塞构建** | Google Fonts CDN 请求超时 → `slidev dev` 或 `slidev build` 卡死数分钟 | frontmatter 设 `fonts.provider: none` |
 | 21 | **WSL node_modules 清理失败** | `rm -rf node_modules` 因深层嵌套目录（如 monaco-editor）报 `ENOTEMPTY` → 无法重新安装 | 使用 `find . -name node_modules -exec rm -rf {} + 2>/dev/null`；或在 `/tmp/` 独立目录安装后 `cp -r` 到项目目录 |
+| 22 | **`default` 布局内容未居中** | neocarbon 的 `default` 布局内容偏上排列，下半屏留白过多 → 视觉效果差 | 在 `<style>` 中添加 `.slidev-layout.default { display: flex !important; flex-direction: column !important; justify-content: center !important; padding: 3rem 4rem !important; }` 以及 `.slidev-layout.default ul, .slidev-layout.default ol, .slidev-layout.default p { max-width: 85%; }` 防止行过长 |
 
 ---
 
