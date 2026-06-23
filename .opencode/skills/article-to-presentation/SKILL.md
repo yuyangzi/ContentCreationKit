@@ -130,19 +130,33 @@ content/ppt/YYYY-MM-DD-<topic>/
 
 ### 任务拆分
 
-1. **Task 1**: 初始化项目（`package.json` + `npm install`）
-2. **Task 2**: 编写 `slides.md` frontmatter（主题配置、颜色令牌、动画策略）
-3. **Task 3**: 生成封面 + 章节标题幻灯片（`cover`, `section`）
-4. **Task 4**: 生成数据图表幻灯片（`metrics`, `comparison`, `default` + 组件）
-5. **Task 5**: 生成引用/金句/案例幻灯片（`quote`, `statement`）
-6. **Task 6**: 生成结尾幻灯片 + 数据来源
-7. **Task 7**: `slidev build` + 本地服务器预览 + 手动验证
+| # | 任务 | 执行方式 | category / 说明 |
+|---|------|---------|-----------------|
+| 1 | 初始化项目（`package.json` + `npm install`） | **主流程** | 不派发子代理。检查 npm 复用条件（见"项目初始化"章节） |
+| 2 | 编写 `slides.md` frontmatter + CSS 样式 | 子代理 | `deep` — 颜色语义决策 + 骨架结构 |
+| 3 | 封面 + 章节标题幻灯片（`cover`, `section`） | **主流程** | 模板化输出，不派发子代理 |
+| 4 | 数据图表幻灯片（`metrics`, `comparison`, `default` + 组件） | 子代理 | `ultrabrain` — 布局映射 + 颜色编码 + 组件 props 语法 |
+| 5 | 引用/金句/案例/结尾幻灯片 + 数据来源（`quote`, `statement`, `spotlight`） | 子代理 | `ultrabrain` — 需理解文章论点的语境 |
+| 6 | `slidev build` + 本地服务器预览 + 手动验证 | **主流程 bash** | 纯 CLI 命令，不依赖认知推理。`npx slidev build` 在主流程直接执行 |
 
 ### 环境要求
 
 - Node.js >= 20.12.0
 - `@slidev/cli` 精确版本 `52.0.0`
 - `@enyineer/slidev-theme-neocarbon` 精确版本 `1.0.8`
+
+### npm 包复用策略（主流程 Task 1）
+
+执行 `npm install` 前，按以下顺序检查依赖是否已存在：
+
+1. **检查项目根目录** `../../node_modules/`（ContentCreationKit 项目级）
+   - 条件：`@slidev/cli` 版本 == `52.0.0` 且 `@enyineer/slidev-theme-neocarbon` 版本 == `1.0.8`
+   - 满足 → 跳过 `npm install`，直接使用根目录依赖
+   - 不满足 → 继续下一步
+2. **检查同会话缓存**：如果本次会话已为另一个演示文稿项目安装过依赖，复制已缓存的 `node_modules`
+3. **都不满足**：在项目目录下执行 `npm install --registry https://registry.npmmirror.com`
+
+> ⚠️ WSL 环境下 `rm -rf node_modules` 可能因深层嵌套目录报 `ENOTEMPTY` 错误。如需清理，用 `find . -name node_modules -exec rm -rf {} + 2>/dev/null` 或换用 `/tmp/` 独立目录安装后再复制。
 
 ---
 
@@ -153,6 +167,16 @@ content/ppt/YYYY-MM-DD-<topic>/
 审查重点：数据准确性、布局映射合理性、neocarbon 组件使用、颜色编码合规。
 
 常见审查发现 → 详见 [references/common-pitfalls.md](references/common-pitfalls.md)
+
+### Metis 审查失败降级策略
+
+Metis 调用可能因基础架构问题（API 超时、模型不可用等）失败。按以下顺序降级：
+
+1. **重试 1 次**：临时故障，重试通常可恢复
+2. **转 Momus 审查**：不同的审查视角，侧重计划完整性和可执行性
+3. **输出审查问题列表，用户人工确认**：跳过自动审查，但将审查重点清单输出到对话中供用户逐项确认
+
+> 审查失败 ≠ 计划有问题。基础架构错误不应阻塞流程。
 
 ---
 
@@ -189,7 +213,9 @@ AI 生成全部幻灯片 Markdown。关键点：
   ```
 - 动画降级 CSS 按档位选择（详见「Click 动画配置」章节）
 
-### 构建与预览
+### 构建与预览（主流程 Task 6）
+
+`slidev build` 在主流程用 `bash` 直接执行，不派发子代理（构建依赖环境状态，子代理无法保证环境一致）。
 
 ```bash
 npx slidev build

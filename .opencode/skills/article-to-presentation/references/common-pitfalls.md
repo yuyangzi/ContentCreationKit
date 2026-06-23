@@ -24,6 +24,7 @@
 | 18 | **配色预设覆盖遗漏** | 选了预设但漏改部分变量，该语义色仍是旧默认值 | 选择预设后完整粘贴整套 5 变量（accent/success/danger/warning/info），不要只改单个 |
 | 19 | **slide 过渡方向与内容样式冲突** | `transition: slide-left` / `slide-right` + 复杂 CSS 动画 → 翻页瞬间元素跳动、布局抖动 | B站录屏统一使用 `transition: fade`；若某单张幻灯片确实需要方向感，单独为该张设置 `transition: slide-left`，不要全局设置 |
 | 20 | **font provider 阻塞构建** | Google Fonts CDN 请求超时 → `slidev dev` 或 `slidev build` 卡死数分钟 | frontmatter 设 `fonts.provider: none` |
+| 21 | **WSL node_modules 清理失败** | `rm -rf node_modules` 因深层嵌套目录（如 monaco-editor）报 `ENOTEMPTY` → 无法重新安装 | 使用 `find . -name node_modules -exec rm -rf {} + 2>/dev/null`；或在 `/tmp/` 独立目录安装后 `cp -r` 到项目目录 |
 
 ---
 
