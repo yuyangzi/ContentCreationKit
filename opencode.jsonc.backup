@@ -30,12 +30,34 @@
       "type": "local"
     },
     "Jina": {
-      "type": "remote",
-      "url": "https://mcp.jina.ai/v1",
+      "command": [
+        "npx",
+        "-y",
+        "jina-mcp-tools",
+        "--transport",
+        "stdio",
+        "--tokens-per-page",
+        "15000",
+        "--search-endpoint",
+        "standard"
+      ],
       "enabled": true,
-      "headers": {
-        "Authorization": "Bearer MY_API_KEY"
-      }
+      "environment": {
+        "JINA_API_KEY": "--------------------------------------------"
+      },
+      "type": "local"
+    },
+    "ExaSearch": {
+      "command": [
+        "npx",
+        "-y",
+        "exa-mcp-server"
+      ],
+      "enabled": true,
+      "environment": {
+        "EXA_API_KEY": "----------------------------------------"
+      },
+      "type": "local"
     },
     "BingSearch": {
       "command": [
