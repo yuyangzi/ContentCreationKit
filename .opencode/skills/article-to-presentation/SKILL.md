@@ -1,6 +1,6 @@
 ---
 name: article-to-presentation
-description: "将内容文章转为可用于B站视频录制的HTML演示文稿(Slidev + neocarbon主题)。触发条件: 用户要求将文章/文案转为PPT、演示文稿、幻灯片、或B站视频素材。流程: 数据提取→生成PPT文案→/before-dev(需求确认+visual companion动画策略)→设计方案→Metis审查→实施计划→实现(slides.md生成+slidev build)"
+description: "将内容文章转为 Slidev HTML 演示文稿（B站视频录制用）。触发条件：用户要求把文章转为 PPT、演示文稿、幻灯片、或 B站视频素材。"
 ---
 
 # 文章转HTML演示文稿
@@ -74,14 +74,9 @@ neocarbon 默认电影级动画（staggered entrances、shimmer、pulse、partic
 | **淡入（默认）** | `transition: fade` + 三段降级 CSS | 仅 fade，禁用 staggered/shimmer/particles |
 | 全部禁用 | `transition: none` + 全禁 CSS | 纯静态，适合画外音旁白聚焦 |
 
-三段降级 CSS（写入 slides.md `<style>` 块）：
-```css
-.nc-stagger > * { animation: none !important; opacity: 1 !important; }
-.nc-shimmer { animation: none !important; }
-.nc-particles { display: none !important; }
-```
+三段降级 CSS + 全禁 CSS 完整模板 → [references/technical-details.md](references/technical-details.md)「Click 动画配置」章节。
 
-> neocarbon 不支持 `clickAnimation` frontmatter。动画仅靠 `<style>` CSS 控制。完整 CSS 模板 → [references/technical-details.md](references/technical-details.md)「Click 动画配置」章节。
+> neocarbon 不支持 `clickAnimation` frontmatter。动画仅靠 `<style>` CSS 控制。
 
 ### 布局映射覆盖（可选）
 
@@ -104,26 +99,17 @@ neocarbon 默认电影级动画（staggered entrances、shimmer、pulse、partic
 
 ### 默认布局映射
 
+5 个最常用布局（速查）：
+
 | PPT 内容类型 | neocarbon 方案 | 示例 |
 |-------------|---------|------|
 | 封面主标题 | `cover` 布局 | "AI压缩了执行力，放大了判断力" |
 | 章节分隔 | `section` 布局 | "第一章 · 执行层的差距" |
 | 开场钩子（引用） | `quote` 布局 | "同一个AI，对不同的人'努力程度'不一样" |
 | 柱状图对比 | `default` + `<NcBarChart />` | 89% vs 88% |
-| 趋势数据（多线） | `default` + `<NcLineChart />` | 7 个月会话变化 |
-| 并排指标卡 | `metrics` 布局 | 放弃率、动作数、词数 |
 | 左右概念对比 | `comparison` 布局（`::left::`/`::right::`） | 可编码 vs 默会 |
-| 金句（多行大字） | `statement` 布局 | "你可以让AI写一千个方案..." |
-| 数据来源列表 | `default` 布局 | 6 个来源 + 链接 |
-| 流程分叉图 | `diagram` + Mermaid | 碰壁→放弃/翻盘 |
-| 终端/CLI 展示 | `default` + `<NcTerminal />` | 部署命令输出 |
-| 多步流程 | `default` + `<NcSteps />` | 管线步骤展示 |
-| 金融指标/KPI | `metrics` + `<NcRoiCard />` | ROI 卡片 |
-| 浏览器截图 | `browser` 布局 | Web 产品界面 |
-| 翻转卡片 | `default` + `<NcFlipCard />` | 术语定义（正/反面） |
-| 聚焦核心洞察 | `spotlight` 布局 | "判断力 = 护城河" |
 
-完整映射 + 组件 API + 设计令牌 → 详见 [references/technical-details.md](references/technical-details.md)
+完整 19 种映射 + 组件 API + 设计令牌 → [references/technical-details.md](references/technical-details.md)「布局映射表（完整版）」章节
 
 审查：提交设计文档给 **Metis**
 
@@ -186,33 +172,22 @@ npm install --registry https://registry.npmmirror.com
 ### 写入 slides.md
 
 AI 生成全部幻灯片 Markdown。关键点：
-- 颜色令牌在 `<style>` 块中覆盖（默认霓虹紫预设，详见 references/technical-details.md）
-- CJK 行高 + Mermaid 中文补丁 + TOC 隐藏 + 动画降级 CSS 均在同一个 `<style>` 块中
-- **必须**包含以下完整 `<style>` 块：
+- **必须**在 `slides.md` 末尾包含 `<style>` 块
+- 完整 CSS 模板 + 顺序 → [references/technical-details.md](references/technical-details.md)「Slidev 配置模板」+「Click 动画配置」章节
 
-```css
-:root {
-  --nc-accent:  #a855f7;   /* 霓虹紫默认 */
-  --nc-success: #22d3ee;
-  --nc-danger:  #f43f5e;
-  --nc-warning: #fbbf24;
-  --nc-info:    #818cf8;
-}
-/* CJK 行高 */
-.slidev-layout { line-height: 1.75; font-size: 24px; }
-/* Mermaid 中文补丁 */
-svg text { font-family: 'PingFang SC','Microsoft YaHei',sans-serif !important; }
-/* 隐藏 Slidev 导航面板 — 录屏时遮挡内容 */
-.slidev-sidebar, .slidev-nav, .slidev-slide-nav,
-.slidev-navigation, .slidev-toc, .slidev-overview-panel,
-aside, nav.slidev-nav,
-[class*="sidebar"], [class*="toc"], [class*="navigation"],
-#slidev-nav, .slidev-layout-nav { display: none !important; }
-/* 动画降级（淡入档） */
-.nc-stagger > * { animation: none !important; opacity: 1 !important; }
-.nc-shimmer { animation: none !important; }
-.nc-particles { display: none !important; }
-```
+要点速查：
+- 5 个 `--nc-*` 变量（默认霓虹紫，详见「配色预设库」章节）
+- CJK 行高 `.slidev-layout { line-height: 1.75; font-size: 24px; }`
+- Mermaid 中文补丁 `svg text { font-family: 'PingFang SC',... }`
+- **隐藏 Slidev 导航面板**（录屏必加，technical-details.md 未覆盖完整版）：
+  ```css
+  .slidev-sidebar, .slidev-nav, .slidev-slide-nav,
+  .slidev-navigation, .slidev-toc, .slidev-overview-panel,
+  aside, nav.slidev-nav,
+  [class*="sidebar"], [class*="toc"], [class*="navigation"],
+  #slidev-nav, .slidev-layout-nav { display: none !important; }
+  ```
+- 动画降级 CSS 按档位选择（详见「Click 动画配置」章节）
 
 ### 构建与预览
 
