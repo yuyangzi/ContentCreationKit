@@ -54,6 +54,7 @@ description: "将内容文章转为可用于B站视频录制的HTML演示文稿(
 | 文件 | `slides.md` + `package.json` → `slidev build` → `dist/` SPA |
 | 图表 | neocarbon 25 组件 + Mermaid |
 | 翻页 | 键盘纯手动 |
+| CJK 字体 | `fonts.sans: 'PingFang SC, Microsoft YaHei, Noto Sans SC'` / `fonts.provider: none` |
 
 ### 需要确认的维度
 
@@ -65,13 +66,22 @@ description: "将内容文章转为可用于B站视频录制的HTML演示文稿(
 
 ### 动画策略（visual companion 确认）
 
-neocarbon 默认电影级动画（staggered entrances、shimmer、pulse、particles）。B站录屏需确认：
+neocarbon 默认电影级动画（staggered entrances、shimmer、pulse、particles）。B站录屏需确认动画档位：
 
-| 选项 | 说明 |
-|------|------|
-| 保留全部 | 视觉最炫，但录屏可能有动画噪音 |
-| 降级为淡入 | 禁用 staggered/shimmer/particles，保留 fade |
-| 全部禁用 | 纯静态，适合画外音旁白聚焦 |
+| 档位 | frontmatter / CSS 配置 | 说明 |
+|------|-------------|------|
+| 保留全部 | `transition: fade`，无额外 CSS | staggered/shimmer/particles 全保留，视觉最炫但录屏可能有动画噪音 |
+| **淡入（默认）** | `transition: fade` + 三段降级 CSS | 仅 fade，禁用 staggered/shimmer/particles |
+| 全部禁用 | `transition: none` + 全禁 CSS | 纯静态，适合画外音旁白聚焦 |
+
+三段降级 CSS（写入 slides.md `<style>` 块）：
+```css
+.nc-stagger > * { animation: none !important; opacity: 1 !important; }
+.nc-shimmer { animation: none !important; }
+.nc-particles { display: none !important; }
+```
+
+> neocarbon 不支持 `clickAnimation` frontmatter。动画仅靠 `<style>` CSS 控制。完整 CSS 模板 → [references/technical-details.md](references/technical-details.md)「Click 动画配置」章节。
 
 ### 布局映射覆盖（可选）
 
@@ -86,23 +96,32 @@ neocarbon 默认电影级动画（staggered entrances、shimmer、pulse、partic
 技术选型：Slidev + neocarbon 主题
 
 输出内容：
-1. **主题配置**：`--nc-accent`、`--nc-success`、`--nc-danger` 颜色值（默认橙/绿/红）
+0. **配色预设选择**：从预设库选基础配色（默认霓虹紫），用户可覆盖个别色值。完整预设 → [references/technical-details.md](references/technical-details.md)「配色预设库」
+1. **主题配置**：`--nc-accent`、`--nc-success`、`--nc-danger` 颜色值（默认紫/青/玫红）
 2. **动画策略**：保留/降级/禁用
 3. **布局映射表**：确认或覆盖默认映射（见下方）
 4. **幻灯片结构**：按章节组织，每张幻灯片指定 neocarbon 布局 + 组件
 
 ### 默认布局映射
 
-| PPT 内容类型 | neocarbon 方案 |
-|-------------|---------------|
-| 封面主标题 | `cover` 布局 |
-| 章节分隔 | `section` 布局 |
-| 开场钩子（引用） | `quote` 布局 |
-| 柱状图对比 | `default` + `<NcBarChart />` |
-| 并排指标卡 | `metrics` 布局 |
-| 左右概念对比 | `comparison` 布局（`::left::`/`::right::`） |
-| 金句（多行大字） | `statement` 布局 |
-| 数据来源列表 | `default` 布局 |
+| PPT 内容类型 | neocarbon 方案 | 示例 |
+|-------------|---------|------|
+| 封面主标题 | `cover` 布局 | "AI压缩了执行力，放大了判断力" |
+| 章节分隔 | `section` 布局 | "第一章 · 执行层的差距" |
+| 开场钩子（引用） | `quote` 布局 | "同一个AI，对不同的人'努力程度'不一样" |
+| 柱状图对比 | `default` + `<NcBarChart />` | 89% vs 88% |
+| 趋势数据（多线） | `default` + `<NcLineChart />` | 7 个月会话变化 |
+| 并排指标卡 | `metrics` 布局 | 放弃率、动作数、词数 |
+| 左右概念对比 | `comparison` 布局（`::left::`/`::right::`） | 可编码 vs 默会 |
+| 金句（多行大字） | `statement` 布局 | "你可以让AI写一千个方案..." |
+| 数据来源列表 | `default` 布局 | 6 个来源 + 链接 |
+| 流程分叉图 | `diagram` + Mermaid | 碰壁→放弃/翻盘 |
+| 终端/CLI 展示 | `default` + `<NcTerminal />` | 部署命令输出 |
+| 多步流程 | `default` + `<NcSteps />` | 管线步骤展示 |
+| 金融指标/KPI | `metrics` + `<NcRoiCard />` | ROI 卡片 |
+| 浏览器截图 | `browser` 布局 | Web 产品界面 |
+| 翻转卡片 | `default` + `<NcFlipCard />` | 术语定义（正/反面） |
+| 聚焦核心洞察 | `spotlight` 布局 | "判断力 = 护城河" |
 
 完整映射 + 组件 API + 设计令牌 → 详见 [references/technical-details.md](references/technical-details.md)
 
@@ -137,7 +156,7 @@ content/ppt/YYYY-MM-DD-<topic>/
 
 - Node.js >= 20.12.0
 - `@slidev/cli` 精确版本 `52.0.0`
-- `@enyineer/slidev-theme-neocarbon` 精确版本 `1.0.5`
+- `@enyineer/slidev-theme-neocarbon` 精确版本 `1.0.8`
 
 ---
 
@@ -167,13 +186,32 @@ npm install --registry https://registry.npmmirror.com
 ### 写入 slides.md
 
 AI 生成全部幻灯片 Markdown。关键点：
-- 颜色令牌在 `<style>` 块中覆盖 `--nc-accent`/`--nc-success`/`--nc-danger`
-- 动画控制 CSS 在同一个 `<style>` 块中
-- **必须**在 `<style>` 中添加 Slidev TOC 面板隐藏（录屏时遮挡内容）：
+- 颜色令牌在 `<style>` 块中覆盖（默认霓虹紫预设，详见 references/technical-details.md）
+- CJK 行高 + Mermaid 中文补丁 + TOC 隐藏 + 动画降级 CSS 均在同一个 `<style>` 块中
+- **必须**包含以下完整 `<style>` 块：
 
 ```css
+:root {
+  --nc-accent:  #a855f7;   /* 霓虹紫默认 */
+  --nc-success: #22d3ee;
+  --nc-danger:  #f43f5e;
+  --nc-warning: #fbbf24;
+  --nc-info:    #818cf8;
+}
+/* CJK 行高 */
+.slidev-layout { line-height: 1.75; font-size: 24px; }
+/* Mermaid 中文补丁 */
+svg text { font-family: 'PingFang SC','Microsoft YaHei',sans-serif !important; }
 /* 隐藏 Slidev 导航面板 — 录屏时遮挡内容 */
-.slidev-toc, .slidev-nav, .slidev-menu { display: none !important; }
+.slidev-sidebar, .slidev-nav, .slidev-slide-nav,
+.slidev-navigation, .slidev-toc, .slidev-overview-panel,
+aside, nav.slidev-nav,
+[class*="sidebar"], [class*="toc"], [class*="navigation"],
+#slidev-nav, .slidev-layout-nav { display: none !important; }
+/* 动画降级（淡入档） */
+.nc-stagger > * { animation: none !important; opacity: 1 !important; }
+.nc-shimmer { animation: none !important; }
+.nc-particles { display: none !important; }
 ```
 
 ### 构建与预览
@@ -192,7 +230,7 @@ npx serve dist -p 3030 --no-clipboard
 - 颜色编码检查清单：
   - [ ] 默会知识/价值判断：`nc-text-success`（绿色），**不是** `nc-text-accent`
   - [ ] 下降/负面数据：`nc-text-danger`（红色）
-  - [ ] 中性数据（如 93% 使用率）：`nc-text-accent`（橙色），**不是** 红色
+  - [ ] 中性数据（如 93% 使用率）：`nc-text-accent`（紫色），**不是** 红色
   - [ ] 所有数据点对照 PPT 文案逐条核对
   - [ ] 数据来源数量一致（文案/计划/实现三方统一，≥6 个）
 
