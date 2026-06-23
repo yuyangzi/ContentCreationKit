@@ -134,10 +134,10 @@ content/ppt/YYYY-MM-DD-<topic>/
 | # | 任务 | 执行方式 | category / 说明 |
 |---|------|---------|-----------------|
 | 1 | 创建 PPT 目录 + 确认根依赖就绪 | **主流程** | 创建 `content/ppt/YYYY-MM-DD-<topic>/` 目录，确认根 `node_modules/` 已安装（见"项目初始化"章节） |
-| 2 | 编写 `slides.md` frontmatter + CSS 样式 | 子代理 | `deep` — 颜色语义决策 + 骨架结构 |
+| 2 | 编写 `slides.md` frontmatter + CSS 样式 | **主流程** | 颜色语义决策 + 骨架结构 |
 | 3 | 封面 + 章节标题幻灯片（`cover`, `section`） | **主流程** | 模板化输出，不派发子代理 |
-| 4 | 数据图表幻灯片（`metrics`, `comparison`, `default` + 组件） | 子代理 | `ultrabrain` — 布局映射 + 颜色编码 + 组件 props 语法 |
-| 5 | 引用/金句/案例/结尾幻灯片 + 数据来源（`quote`, `statement`, `spotlight`） | 子代理 | `ultrabrain` — 需理解文章论点的语境 |
+| 4 | 数据图表幻灯片（`metrics`, `comparison`, `default` + 组件） | **主流程** | 布局映射 + 颜色编码 + 组件 props 语法 |
+| 5 | 引用/金句/案例/结尾幻灯片 + 数据来源（`quote`, `statement`, `spotlight`） | **主流程** | 需理解文章论点的语境 |
 | 6 | `slidev build` + 本地服务器预览 + 手动验证 | **主流程 bash** | 纯 CLI 命令，不依赖认知推理。`npx slidev build` 在主流程直接执行 |
 
 ### 环境要求
@@ -207,13 +207,15 @@ AI 生成全部幻灯片 Markdown。关键点：
 - 5 个 `--nc-*` 变量（默认霓虹紫，详见「配色预设库」章节）
 - CJK 行高 `.slidev-layout { line-height: 1.75; font-size: 24px; }`
 - Mermaid 中文补丁 `svg text { font-family: 'PingFang SC',... }`
-- **隐藏 Slidev 导航面板**（录屏必加，technical-details.md 未覆盖完整版）：
+- **禁用TOC/目录生成**（录屏必加配置+CSS）：
+  - 配置：frontmatter 模板已预置 `export.withToc: false` → 导出 PDF/PPTX 不生成目录页
+  - CSS：完整TOC隐藏规则见 [references/technical-details.md](references/technical-details.md)「录屏面板隐藏」章节，自动添加到 `<style>` 块
+- **内容垂直居中**（`default` 布局内容偏上需修正）→ 完整 CSS 见 [references/technical-details.md](references/technical-details.md)「内容居中」章节，速查：
   ```css
-  .slidev-sidebar, .slidev-nav, .slidev-slide-nav,
-  .slidev-navigation, .slidev-toc, .slidev-overview-panel,
-  aside, nav.slidev-nav,
-  [class*="sidebar"], [class*="toc"], [class*="navigation"],
-  #slidev-nav, .slidev-layout-nav { display: none !important; }
+  .slidev-layout.default {
+    display: flex !important; flex-direction: column !important;
+    justify-content: center !important; padding: 3rem 4rem !important;
+  }
   ```
 - 动画降级 CSS 按档位选择（详见「Click 动画配置」章节）
 
