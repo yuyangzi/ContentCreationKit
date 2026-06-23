@@ -82,7 +82,6 @@
 - [ ] 目录名纯 ASCII（无中文字符）
 - [ ] Slidev TOC 面板隐藏 CSS 已添加
 - [ ] `slidev build` 成功，无错误
-- [ ] `npx serve dist -p 3030` 后浏览器可正常打开（**不是** `file://`）
 - [ ] 1920×1080 分辨率下每张幻灯片内容完整（无 TOC 遮挡）
 - [ ] 无 console 错误
 - [ ] 章节标题在正确的 slide 位置
