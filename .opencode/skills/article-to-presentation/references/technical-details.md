@@ -134,40 +134,24 @@ svg text { font-family: 'PingFang SC','Microsoft YaHei',sans-serif !important; }
 
 ---
 
-## 录屏面板隐藏（全量版）
+## 录屏面板隐藏（仅TOC）
 
-Slidev 和 neocarbon 主题有多层导航/目录/overview 面板。简单 selector 容易漏掉变体，导致录屏时面板遮挡内容。**必须使用全量 selector**，覆盖以下三类：
+Slidev 在导出和UI层面都会生成目录(TOC)。我们通过配置+CSS组合禁用：
+1. 配置：`export.withToc: false` → 导出 PDF/PPTX 不生成目录页
+2. CSS：只隐藏UI层面的TOC面板，防止录屏时遮挡内容。覆盖以下：
 
-1. **Slidev 内置面板**：`#slidev-overview`, `#slidev-toc`, `.slidev-overview`, `.slidev-toc`, `.slidev-sidebar`, `.slidev-nav`, `.slidev-slide-nav`, `.slidev-nav-overlay`, `.slidev-navigation`, `.slidev-overview-panel`, `.slidev-control-layout`
-2. **通用语义元素**：`nav`, `aside`, `.nav`, `.nav-overlay`, `.toc`, `.toc-overlay`
-3. **属性模糊匹配（兜底）**：`[class*="sidebar"]`, `[class*="toc"]`, `[class*="navigation"]`, `[class*="nav-overlay"]`, `[id*="slidev-overview"]`, `[id*="slidev-toc"]`
+1. **Slidev 内置TOC面板**：`#slidev-toc`, `.slidev-toc`, `.slidev-toc-list`
+2. **通用语义元素**：`.toc`, `.toc-overlay`
+3. **属性模糊匹配（兜底）**：`[class*="toc"]`, `[id*="slidev-toc"]`
 
 ```css
-/* Hide ALL Slidev/neocarbon navigation, TOC, sidebar, overview panels */
-#slidev-overview,
+/* Hide only TOC (table of contents) panels for clean Bilibili recording */
 #slidev-toc,
-.slidev-overview,
 .slidev-toc,
 .slidev-toc-list,
-.slidev-sidebar,
-.slidev-nav,
-.slidev-slide-nav,
-.slidev-nav-overlay,
-.slidev-navigation,
-.slidev-overview-panel,
-.slidev-control-layout,
-.nav,
-.nav-overlay,
 .toc,
 .toc-overlay,
-aside,
-nav,
-[class*="sidebar"],
 [class*="toc"],
-[class*="navigation"],
-[class*="nav-overlay"],
-[id*="slidev-overview"],
-[id*="slidev-nav"],
 [id*="slidev-toc"] {
   display: none !important;
 }
