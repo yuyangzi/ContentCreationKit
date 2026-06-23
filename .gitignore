@@ -22,6 +22,7 @@ __pycache__/
 ## OpenCode 会话跟踪数据
 
 .omo/
+.superpowers/
 
 ## 内容文件夹（本地内容，不纳入版本控制）
 
