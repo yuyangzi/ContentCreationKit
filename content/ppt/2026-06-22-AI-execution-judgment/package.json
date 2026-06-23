@@ -1,0 +1,13 @@
+{
+  "name": "ppt-ai-execution-judgment",
+  "private": true,
+  "scripts": {
+    "build": "slidev build",
+    "dev": "slidev --open",
+    "export": "slidev export"
+  },
+  "dependencies": {
+    "@slidev/cli": "52.0.0",
+    "@enyineer/slidev-theme-neocarbon": "1.0.8"
+  }
+}
