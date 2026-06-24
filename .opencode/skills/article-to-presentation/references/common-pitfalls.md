@@ -26,6 +26,14 @@
 | 20 | **font provider 阻塞构建** | Google Fonts CDN 请求超时 → `slidev dev` 或 `slidev build` 卡死数分钟 | frontmatter 设 `fonts.provider: none` |
 | 21 | **WSL node_modules 清理失败** | `rm -rf node_modules` 因深层嵌套目录（如 monaco-editor）报 `ENOTEMPTY` → 无法重新安装 | 使用 `find . -name node_modules -exec rm -rf {} + 2>/dev/null`；或在 `/tmp/` 独立目录安装后 `cp -r` 到项目目录 |
 | 22 | **`default` 布局内容未居中** | neocarbon 的 `default` 布局内容偏上排列，下半屏留白过多 → 视觉效果差 | 在 `<style>` 中添加 `.slidev-layout.default { display: flex !important; flex-direction: column !important; justify-content: center !important; padding: 3rem 4rem !important; }` 以及 `.slidev-layout.default ul, .slidev-layout.default ol, .slidev-layout.default p { max-width: 85%; }` 防止行过长 |
+| 23 | **图表组件不支持 CSS 变量** | `<NcBarChart :colors="['var(--nc-accent)']" />` → 柱子显示黑色，CSS 变量未解析 | 图表组件必须使用十六进制颜色值：`:colors="['#a855f7']"`，颜色语义仍需遵守（success=青、danger=红、accent=紫） |
+| 24 | **`::metrics::` slot 布局异常** | 使用 `layout: metrics` + `::metrics::` → 卡片排列异常或数据来源文字位置偏移 | 改用 `layout: default` + 自定义 flex 容器：`<div style="display:flex; justify-content:center; gap:1.5rem;">` |
+| 25 | **`comparison` 布局高度不一致** | 左右内容量不均 → 卡片高度不一致，视觉不平衡 | 改用 `layout: default` + 自定义 flex 容器，左右各用 `<div style="flex:1; ...">` 包裹 |
+| 26 | **内容偏上 — 下半屏大面积空白** | `default` 布局不自动居中 → 内容集中在上半部分，视觉效果差 | 在 `<style>` 中添加 `.slidev-layout.default { display: flex !important; flex-direction: column !important; justify-content: center !important; padding: 3rem 4rem !important; }`（完整模板见 technical-details「视觉质量 CSS 模板」） |
+| 27 | **数据卡片/标签太靠上** | flex 容器紧贴标题下方，无顶部外边距 → 视觉拥挤，内容离顶边过近 | 卡片容器加 `margin-top: 1.5rem`；或在 `<style>` 中全局添加 `.slidev-layout.default [style*="display:flex"] { margin-top: 1.5rem; }` |
+| 28 | **幻灯片缺少标题** | AI 生成时遗漏 `#`/`##` 标题 → 页面无视觉焦点，观众不知道要表达什么 | **强制规则**：除 `cover`/`section`/`quote`/`statement`/`spotlight` 外，每张幻灯片必须以 `#` 或 `##` 标题开头 |
+| 29 | **左右卡片间距过大** | 使用 `gap: 2rem` → 1920px 屏幕上横向空间浪费，内容稀疏 | 双栏用 `gap: 1.5rem`；三栏用 `gap: 1.2rem` |
+| 30 | **终端内容不足** | `<NcTerminal />` 行数 < 4 → 窗口大面积空白，视觉空洞 | 最少填充到 6 行；内容短时用 `# 注释` 行补充上下文 |
 
 ---
 
@@ -61,8 +69,10 @@
 ### 组件调用
 
 - **数组 props 加 `:`**：`:labels`, `:data`, `:colors`, `:datasets`
-- **颜色值用 CSS 变量**：`:colors="['var(--nc-success)', 'var(--nc-accent)']"`
+- **颜色值用十六进制**：`:colors="['#22d3ee', '#a855f7']"`（图表组件不支持 CSS 变量）
 - **`<NcBarChart />` 的 `data` 接收百分比数值**（0-100），不是小数
+- **避免使用 `::metrics::` slot**：改用 `default` 布局 + 自定义 flex 容器
+- **避免使用 `comparison` 布局**：改用 `default` 布局 + 自定义 flex 容器
 
 ### B站录屏准备
 
@@ -77,6 +87,9 @@
 - [ ] 颜色编码一致（绿=正面/默会，红=负面，橙=中性）
 - [ ] `nc-text-success` 用于默会知识/价值判断（**不是** `nc-text-accent`）
 - [ ] `nc-text-danger` 仅用于负面/下降（**不是**中性数据）
+- [ ] 图表颜色使用十六进制值（**不是** CSS 变量）
+- [ ] 避免使用 `::metrics::` slot（改用 flex 容器）
+- [ ] 避免使用 `comparison` 布局（改用自定义 flex）
 - [ ] 动画策略已实施（保留/降级/禁用，按阶段二确认）
 - [ ] 数据来源数量一致（文案/计划/实现三方统一，≥6 个）
 - [ ] 目录名纯 ASCII（无中文字符）
@@ -89,3 +102,8 @@
 - [ ] CJK 行高 ≥ 1.75（`.slidev-layout`）
 - [ ] Mermaid 中文补丁生效（`svg text` font-family 含 CJK 字体）
 - [ ] `fonts.provider: none` 已设置
+- [ ] 内容垂直居中 CSS 已添加（修复 #26）
+- [ ] 卡片顶部边距 `margin-top: 1.5rem` 已设置（修复 #27）
+- [ ] **每张幻灯片有 `#` 或 `##` 标题**（修复 #28）
+- [ ] 卡片间距使用 `gap: 1.5rem`（双栏）或 `1.2rem`（三栏）（修复 #29）
+- [ ] `<NcTerminal />` 至少 6 行（修复 #30）
