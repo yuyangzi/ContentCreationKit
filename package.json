@@ -5,7 +5,8 @@
     "slidev:build": "slidev build"
   },
   "devDependencies": {
-    "@slidev/cli": "52.0.0",
-    "@enyineer/slidev-theme-neocarbon": "1.0.8"
+    "@enyineer/slidev-theme-neocarbon": "1.0.8",
+    "@playwright/test": "^1.61.1",
+    "@slidev/cli": "52.0.0"
   }
 }
