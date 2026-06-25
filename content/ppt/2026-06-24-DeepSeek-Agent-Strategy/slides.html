@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepSeek 招不到人——AI 人才战争进入下半场</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-grid: rgba(255, 255, 255, 0.03);
+      --panel: rgba(20, 26, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #9aa5b8;
+      --text-muted: #5c6b7f;
+      --accent-orange: #ff9d3d;
+      --accent-blue: #4db6ff;
+      --accent-green: #4ade80;
+      --accent-purple: #a78bfa;
+      --accent-red: #ff6b5c;
+      --accent-pink: #e85b7a;
+      --accent-cyan: #22d3ee;
+      --slide-padding-x: 80px;
+      --slide-padding-y: 60px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+      color: var(--text-primary);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 80% 20%, rgba(77, 182, 255, 0.08), transparent 40%),
+        linear-gradient(to bottom, #07111f, #0a1525),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    #app {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      padding: var(--slide-padding-y) var(--slide-padding-x);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .slide.is-active {
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+    }
+
+    .slide.is-exit {
+      opacity: 0;
+    }
+
+    .slide-content {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .page-indicator {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Typography */
+    .eyebrow {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      margin-bottom: 16px;
+    }
+
+    .slide-title {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .slide-subtitle {
+      font-size: 28px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .cover-title {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .cover-subtitle {
+      font-size: 28px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .big-number {
+      font-size: 96px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-right: 16px;
+    }
+
+    .badge-orange { background: rgba(255, 157, 61, 0.15); color: var(--accent-orange); border: 1px solid rgba(255, 157, 61, 0.3); }
+    .badge-blue { background: rgba(77, 182, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(77, 182, 255, 0.3); }
+    .badge-green { background: rgba(74, 222, 128, 0.15); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
+    .badge-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); border: 1px solid rgba(167, 139, 250, 0.3); }
+    .badge-red { background: rgba(255, 107, 92, 0.15); color: var(--accent-red); border: 1px solid rgba(255, 107, 92, 0.3); }
+    .badge-pink { background: rgba(232, 91, 122, 0.15); color: var(--accent-pink); border: 1px solid rgba(232, 91, 122, 0.3); }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .chip-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Arrows */
+    .arrow-down {
+      width: 32px;
+      height: 32px;
+      border-right: 3px solid var(--text-secondary);
+      border-bottom: 3px solid var(--text-secondary);
+      transform: rotate(45deg);
+      margin: 16px auto;
+    }
+
+    .arrow-right {
+      width: 32px;
+      height: 32px;
+      border-right: 3px solid var(--accent-green);
+      border-bottom: 3px solid var(--accent-green);
+      transform: rotate(-45deg);
+      margin: auto 24px;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 20px 24px;
+      border-left: 4px solid var(--accent-green);
+      background: rgba(74, 222, 128, 0.06);
+      border-radius: 0 12px 12px 0;
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .callout-orange { border-left-color: var(--accent-orange); background: rgba(255, 157, 61, 0.06); }
+
+    /* Animations */
+    [data-animate] {
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-animate="fade-up"] { transform: translateY(40px); }
+    [data-animate="fade-left"] { transform: translateX(40px); }
+    [data-animate="fade-right"] { transform: translateX(-40px); }
+    [data-animate="scale-in"] { transform: scale(0.9); }
+
+    [data-animate].is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .no-animation [data-animate] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    /* Utility */
+    .text-orange { color: var(--accent-orange); }
+    .text-blue { color: var(--accent-blue); }
+    .text-green { color: var(--accent-green); }
+    .text-purple { color: var(--accent-purple); }
+    .text-red { color: var(--accent-red); }
+    .text-pink { color: var(--accent-pink); }
+    .text-muted { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .gap-8 { gap: 32px; }
+    .flex-1 { flex: 1; }
+
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+    .mt-8 { margin-top: 32px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mb-6 { margin-bottom: 24px; }
+
+    .text-center { text-align: center; }
+    .code { font-family: 'Fira Code', 'SF Mono', monospace; color: var(--accent-cyan); }
+  </style>
+  
+</head>
+<body>
+  <div id="app">
+    
+    <section class="slide" data-index="0" data-transition="fade" style="display:flex;opacity:1;">
+      <div class="slide-content">
+        <div class="flex gap-8 items-center" style="height: 100%;">
+  <div class="flex-1" data-animate="fade-right">
+    <span class="eyebrow">战略分析</span>
+    <h1 class="cover-title">DeepSeek 招不到人</h1>
+    <p class="cover-subtitle">AI 人才战争进入下半场</p>
+  </div>
+  <div class="flex-1" data-animate="fade-left">
+    
+    
+    <div class="panel" style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+      
+      <div class="text-center">
+        <div class="text-secondary" style="font-size: 20px; margin-bottom: 12px;">Before</div>
+        <div class="big-number text-red" data-count="50">0</div>
+        <div class="mt-4" style="font-size: 20px; color: var(--text-secondary);">个开放岗位（BOSS直聘）</div>
+        
+        <div class="arrow-down"></div>
+        <div class="text-secondary" style="font-size: 20px; margin-bottom: 12px;">After</div>
+        <div class="chip-stack" style="align-items: center;">
+          
+          <div class="chip">研究员</div>
+          
+          <div class="chip">工程师</div>
+          
+          <div class="chip">产品经理</div>
+          
+        </div>
+        
+      </div>
+      
+    </div>
+    
+  </div>
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">1 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="1" data-transition="fade" >
+      <div class="slide-content">
+        <div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 80px;" data-animate="fade-up">
+  <div style="font-size: 120px; line-height: 1; color: var(--accent-orange); opacity: 0.3; margin-bottom: -40px;">“</div>
+  <blockquote style="font-size: 48px; font-weight: 600; line-height: 1.5; margin: 0;">
+    每天都在面试，缺人缺疯了。
+  </blockquote>
+  
+  <div class="mt-8 text-secondary" style="font-size: 24px;">— 崔添翼 · 前 Jane Street 量化工程师 / ACM ICPC 6 次金牌 / DeepSeek Harness 负责人</div>
+  
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">2 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="2" data-transition="fade" >
+      <div class="slide-content">
+        <div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  
+  <div class="big-number text-orange" style="margin-bottom: 24px; opacity: 0.8;" data-count="1">0</div>
+  
+  <span class="eyebrow"></span>
+  <h1 class="cover-title">郭达雅出走，Harness 才来</h1>
+  
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">3 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="3" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">从出走 to 组建</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  <div style="position: relative; padding-left: 32px;">
+    <div style="position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1);"></div>
+    
+    <div class="flex items-start gap-6" style="margin-bottom: 32px; position: relative;">
+      <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--accent-red); flex-shrink: 0; position: relative; z-index: 1; box-shadow: 0 0 0 6px rgba(7,17,31,0.8);"></div>
+      <div style="flex: 1;">
+        <div style="font-size: 18px; color: var(--accent-red); font-weight: 600; margin-bottom: 4px;">2025.10</div>
+        <h3 style="font-size: 24px; margin-bottom: 8px;">郭达雅决定离职</h3>
+        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">GRPO 算法发明人，V3/R1 核心贡献者，想做 Agent 但优先级不在此</p>
+      </div>
+    </div>
+    
+    <div class="flex items-start gap-6" style="margin-bottom: 32px; position: relative;">
+      <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--accent-orange); flex-shrink: 0; position: relative; z-index: 1; box-shadow: 0 0 0 6px rgba(7,17,31,0.8);"></div>
+      <div style="flex: 1;">
+        <div style="font-size: 18px; color: var(--accent-orange); font-weight: 600; margin-bottom: 4px;">2026.03</div>
+        <h3 style="font-size: 24px; margin-bottom: 8px;">郭达雅加入字节，崔添翼加入 DeepSeek</h3>
+        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">郭达雅加入字节 Seed 任 Agent 方向负责人；前 Jane Street 量化工程师崔添翼加入</p>
+      </div>
+    </div>
+    
+    <div class="flex items-start gap-6" style="margin-bottom: 32px; position: relative;">
+      <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--accent-green); flex-shrink: 0; position: relative; z-index: 1; box-shadow: 0 0 0 6px rgba(7,17,31,0.8);"></div>
+      <div style="flex: 1;">
+        <div style="font-size: 18px; color: var(--accent-green); font-weight: 600; margin-bottom: 4px;">2026.05</div>
+        <h3 style="font-size: 24px; margin-bottom: 8px;">Harness 团队组建</h3>
+        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">从零构建 CodeHarness，内部对标 Claude Code</p>
+      </div>
+    </div>
+    
+  </div>
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">4 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="4" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">5 名核心研究员先后离职</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex gap-6 justify-center" style="flex: 1; align-items: center;">
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-red);" data-animate="fade-up">
+    <div class="badge badge-red" style="margin: 0 auto 16px;">①</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">王炳宣</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">基座模型核心 · 去腾讯混元</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-red);" data-animate="fade-up">
+    <div class="badge badge-red" style="margin: 0 auto 16px;">②</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">罗福莉</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">V3 核心 · 传千万年薪去小米</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-red);" data-animate="fade-up">
+    <div class="badge badge-red" style="margin: 0 auto 16px;">③</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">魏浩然</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">OCR 系列核心 · 去向未公开</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-red);" data-animate="fade-up">
+    <div class="badge badge-red" style="margin: 0 auto 16px;">④</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">阮翀</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">多模态核心 · 去元戎启行</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-orange);" data-animate="fade-up">
+    <div class="badge badge-orange" style="margin: 0 auto 16px;">⑤</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">郭达雅</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">代码/推理核心 · 去字节 Seed</p>
+  </div>
+  
+</div>
+
+
+<div class="callout mt-6" data-animate="fade-up">
+  150 人团队，覆盖 4 条核心技术线
+</div>
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">5 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="5" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">一个人的判断力</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex items-center" style="flex: 1;">
+  <div class="panel flex-1" data-animate="fade-right">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">郭达雅想做 Agent</div>
+    <div class="big-number text-red" data-count="2023">0</div>
+    <div class="mt-6" style="font-size: 22px; color: var(--text-secondary);">方向判断走在公司前面</div>
+  </div>
+
+  <div class="arrow-right" data-animate="scale-in"></div>
+
+  <div class="panel flex-1" style="border-color: rgba(74, 222, 128, 0.3);" data-animate="fade-left">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">DeepSeek 紧急转向</div>
+    <div class="code" style="font-size: 24px; margin-bottom: 16px;">2026.05</div>
+    <div style="font-size: 22px; color: var(--text-secondary);">郭走后 7 个月，Harness 才组建</div>
+  </div>
+</div>
+
+
+<div class="callout mt-6" data-animate="fade-up">
+  顺序是反过来的——人走了，才追。
+</div>
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">6 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="6" data-transition="fade" >
+      <div class="slide-content">
+        <div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  
+  <div class="big-number text-orange" style="margin-bottom: 24px; opacity: 0.8;" data-count="2">0</div>
+  
+  <span class="eyebrow"></span>
+  <h1 class="cover-title">模型是发动机，Harness 才是整车</h1>
+  
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">7 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="7" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">Model + Harness = Agent</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex items-center" style="flex: 1;">
+  <div class="panel flex-1" data-animate="fade-right">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">大模型时代</div>
+    <div class="big-number text-red" data-count="2023">0</div>
+    <div class="mt-6" style="font-size: 22px; color: var(--text-secondary);">训练更大的模型，API 就是产品</div>
+  </div>
+
+  <div class="arrow-right" data-animate="scale-in"></div>
+
+  <div class="panel flex-1" style="border-color: rgba(74, 222, 128, 0.3);" data-animate="fade-left">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">Agent 时代</div>
+    <div class="code" style="font-size: 24px; margin-bottom: 16px;">拼 Harness</div>
+    <div style="font-size: 22px; color: var(--text-secondary);">模型之外的所有基础设施</div>
+  </div>
+</div>
+
+
+<div class="callout mt-6" data-animate="fade-up">
+  发动机 vs 整车：不是同一个工程体系
+</div>
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">8 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="8" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">Harness 覆盖什么？</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex gap-6 justify-center" style="flex: 1; align-items: center;">
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-blue);" data-animate="fade-up">
+    <div class="badge badge-blue" style="margin: 0 auto 16px;">1</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">上下文管理</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">会话状态与记忆</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-purple);" data-animate="fade-up">
+    <div class="badge badge-purple" style="margin: 0 auto 16px;">2</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">长期记忆</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">跨会话持久化</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-cyan);" data-animate="fade-up">
+    <div class="badge badge-cyan" style="margin: 0 auto 16px;">3</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">Subagent 协同</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Multi-Agent 编排</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-green);" data-animate="fade-up">
+    <div class="badge badge-green" style="margin: 0 auto 16px;">4</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">自进化 Agent</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">自我迭代机制</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-orange);" data-animate="fade-up">
+    <div class="badge badge-orange" style="margin: 0 auto 16px;">5</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">工具调用与规划</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Function Calling</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-blue);" data-animate="fade-up">
+    <div class="badge badge-blue" style="margin: 0 auto 16px;">6</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">MCP 协议集成</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">标准化接口层</p>
+  </div>
+  
+</div>
+
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">9 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="9" data-transition="fade" >
+      <div class="slide-content">
+        <div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  
+  <div class="big-number text-orange" style="margin-bottom: 24px; opacity: 0.8;" data-count="3">0</div>
+  
+  <span class="eyebrow"></span>
+  <h1 class="cover-title">48 条新闻，一个人都招不到</h1>
+  
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">10 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="10" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">外面的世界</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex gap-6 justify-center" style="flex: 1; align-items: center;">
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-orange);" data-animate="fade-up">
+    <div class="badge badge-orange" style="margin: 0 auto 16px;">48</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">条/周</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Agent 产品/研究/融资新闻数</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-green);" data-animate="fade-up">
+    <div class="badge badge-green" style="margin: 0 auto 16px;">8×</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">工程师产出</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Claude Code 团队人均季度产出</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-green);" data-animate="fade-up">
+    <div class="badge badge-green" style="margin: 0 auto 16px;">470</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">亿美元年化营收</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Anthropic 5 个月从 90 亿→470亿</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-blue);" data-animate="fade-up">
+    <div class="badge badge-blue" style="margin: 0 auto 16px;">25</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">亿美元</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">Claude Code 单品年化营收</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-purple);" data-animate="fade-up">
+    <div class="badge badge-purple" style="margin: 0 auto 16px;">14.32</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">亿月活</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">微信小微灰度上线</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-orange);" data-animate="fade-up">
+    <div class="badge badge-orange" style="margin: 0 auto 16px;">Open</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">Codex 开放接入</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">第三方模型直连，国产兼容</p>
+  </div>
+  
+</div>
+
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">11 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="11" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">国内三条赛道已开跑</h1>
+</div>
+
+<div class="flex gap-6" style="flex: 1; align-items: stretch;">
+  <div class="panel flex-1" data-animate="fade-right">
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">消费级 Agent</h3>
+    <div class="chip-stack">
+      
+      <div class="chip">微信小微 6.20 灰度上线</div>
+      
+      <div class="chip">14.32 亿月活用户</div>
+      
+      <div class="chip">最广泛消费触点</div>
+      
+    </div>
+  </div>
+
+  <div class="panel flex-1" style="border-color: rgba(255, 107, 92, 0.4); box-shadow: 0 0 40px rgba(255, 107, 92, 0.1);" data-animate="scale-in">
+    
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">金融 Agent</h3>
+    <div class="chip-stack">
+      
+      <div class="chip">蚂蚁国际开源 AMP</div>
+      
+      <div class="chip">全球首个移动端</div>
+      
+      <div class="chip">Agent 支付框架</div>
+      
+    </div>
+    
+  </div>
+
+  <div class="panel flex-1" data-animate="fade-left">
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">开发工具</h3>
+    <div class="chip-stack">
+      
+      <div class="chip">小米 MiMo Code 开源</div>
+      
+      <div class="chip">MIT 协议</div>
+      
+      <div class="chip">AI 编程工具赛道</div>
+      
+    </div>
+  </div>
+</div>
+
+
+<div class="callout callout-orange mt-6" data-animate="fade-up">
+  三条赛道，没有一条在等 DeepSeek
+</div>
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">12 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="12" data-transition="fade" >
+      <div class="slide-content">
+        <div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  
+  <div class="big-number text-orange" style="margin-bottom: 24px; opacity: 0.8;" data-count="4">0</div>
+  
+  <span class="eyebrow"></span>
+  <h1 class="cover-title">抢的是知道要做什么的人</h1>
+  
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">13 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="13" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">崔添翼为什么招不到人？</h1>
+  <p class="slide-subtitle"></p>
+</div>
+
+<div class="flex gap-6 justify-center" style="flex: 1; align-items: center;">
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-purple);" data-animate="fade-up">
+    <div class="badge badge-purple" style="margin: 0 auto 16px;">🧠</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">研究品味</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">知道什么问题值得解决</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-cyan);" data-animate="fade-up">
+    <div class="badge badge-cyan" style="margin: 0 auto 16px;">🔧</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">工程能力</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">实现到生产级别</p>
+  </div>
+  
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-orange);" data-animate="fade-up">
+    <div class="badge badge-orange" style="margin: 0 auto 16px;">🎯</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">产品思维</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">理解用户到底要什么</p>
+  </div>
+  
+</div>
+
+
+<div class="callout mt-6" data-animate="fade-up">
+  这三种能力在同一个人身上同时出现——极度稀缺
+</div>
+
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">14 / 15</span>
+      </div>
+    </section>
+    
+    <section class="slide" data-index="14" data-transition="fade" >
+      <div class="slide-content">
+        <div style="margin-bottom: 32px;" data-animate="fade-up">
+  <span class="eyebrow"></span>
+  <h1 class="slide-title">不是谁会训练，是谁能驯服</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  <ul style="list-style: none;">
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">1.</span>
+      <span>大模型时代抢研究员 → Agent 时代抢能『驯马』的人</span>
+    </li>
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">2.</span>
+      <span>Agent = Model + Harness，Harness 才是真正的壁垒</span>
+    </li>
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">3.</span>
+      <span>郭达雅的判断走在了公司前面——他离开的理由变成了公司的方向</span>
+    </li>
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">4.</span>
+      <span>一周 48 条新闻，Claude Code 已经自己写了 7 个月代码</span>
+    </li>
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">5.</span>
+      <span>全员 Agent 写代码——人际协作反而变少了，效率的副作用</span>
+    </li>
+    
+    <li style="padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 26px; display: flex; align-items: flex-start; gap: 16px;">
+      <span style="color: var(--accent-green); font-weight: 700;">6.</span>
+      <span>这不是有钱就能快起来的事</span>
+    </li>
+    
+  </ul>
+</div>
+      </div>
+      <div class="slide-footer">
+        <span class="source">SCMP / 晚点 / 36氪 / Fortune</span>
+        <span class="page-indicator">15 / 15</span>
+      </div>
+    </section>
+    
+  </div>
+
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      let current = 0;
+      const total = slides.length;
+
+      function showSlide(index) {
+        if (index < 0 || index >= total) return;
+        slides[current].classList.remove('is-active');
+        slides[current].style.display = 'none';
+        slides[current].style.opacity = '0';
+        current = index;
+        slides[current].style.display = 'flex';
+        // force reflow
+        void slides[current].offsetWidth;
+        slides[current].classList.add('is-active');
+        slides[current].style.opacity = '1';
+        window.location.hash = 'slide-' + (current + 1);
+        triggerAnimations(slides[current]);
+      }
+
+      function next() { showSlide(current + 1); }
+      function prev() { showSlide(current - 1); }
+
+      function triggerAnimations(slide) {
+        const animated = slide.querySelectorAll('[data-animate]');
+        animated.forEach((el, i) => {
+          el.classList.remove('is-visible');
+          setTimeout(() => {
+            el.classList.add('is-visible');
+          }, 100 + i * 120);
+        });
+
+        const counters = slide.querySelectorAll('[data-count]');
+        counters.forEach(el => {
+          const target = parseInt(el.dataset.count, 10);
+          animateNumber(el, target, 1500);
+        });
+      }
+
+      function animateNumber(el, target, duration) {
+        const start = performance.now();
+        function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+        function step(now) {
+          const p = Math.min((now - start) / duration, 1);
+          el.textContent = Math.floor(target * easeOutQuart(p)).toLocaleString();
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault();
+          next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          prev();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          showSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          showSlide(total - 1);
+        }
+      });
+
+      let touchStartX = 0;
+      document.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      });
+      document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (dx < -50) next();
+        if (dx > 50) prev();
+      });
+
+      // hash support
+      const hashMatch = window.location.hash.match(/slide-(\d+)/);
+      if (hashMatch) {
+        showSlide(Math.max(0, Math.min(total - 1, parseInt(hashMatch[1], 10) - 1)));
+      } else {
+        triggerAnimations(slides[0]);
+      }
+    })();
+  </script>
+</body>
+</html>
