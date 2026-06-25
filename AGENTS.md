@@ -33,7 +33,7 @@ content/reference/ ❌ gitignore
 content/WeChat/   ❌ gitignore
 content/images/   ❌ gitignore
 content/video/    ❌ gitignore
-content/ppt/      ❌ gitignore — Slidev 生成输出
+content/ppt/      ❌ gitignore — HTML 演示文稿输出
 ```
 
 `content/topics/old/` — 已归档过期主题，不参与 `/find-popular-topics` 的饱和检查。
@@ -84,15 +84,7 @@ content/ppt/      ❌ gitignore — Slidev 生成输出
 .opencode/skills/video-generate/.venv/bin/python
 ```
 
-## 可用的 npm 命令
 
-`package.json` 中唯一定义的脚本：
-
-```bash
-npm run slidev:build   # Slidev 演示文稿构建（neocarbon 主题）
-```
-
-依赖在根 `node_modules/`，`.opencode/` 下也有独立 `package.json`（仅 `@opencode-ai/plugin`）。
 
 ## 视频管线（`feat/video-scaffold` 分支）
 
@@ -111,7 +103,7 @@ scenes.json → scenes_with_assets.json → scenes_complete.json → scenes_fina
 - **自定义技能**：`.opencode/skills/` — 14 个技能目录（写作、排版、研究、视频等）
 - `/create-draft` 必须加载 `humanizer` + `writer-style` + `content-research-writer` 组合
 - `/to-wechat` 使用 `wechat-format` skill 的 `scripts/format.py`，默认 `newspaper` 主题
-- `article-to-presentation` 技能使用 Slidev + neocarbon 主题，输出到 `content/ppt/`
+- `article-to-presentation` 技能使用 Python HTML 模板引擎，输出单文件 `slides.html` 到 `content/ppt/`
 - `oh-my-openagent.json` 定义 agent 模型映射（visual-engineering 用 MiniMax-M3，ultrabrain/deep 用 DeepSeek-V4-Pro 等）
 
 ## Agent 配置要点
