@@ -1,0 +1,12 @@
+<div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="cover-title">{{ slide.title }}</h1>
+  <p class="cover-subtitle">{{ slide.subtitle | default('') }}</p>
+  {% if slide.data and slide.data.tags %}
+  <div class="flex gap-4 justify-center mt-8" data-animate="fade-up">
+    {% for tag in slide.data.tags %}
+    <span class="chip">{{ tag }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>

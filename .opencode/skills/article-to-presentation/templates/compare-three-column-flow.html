@@ -1,0 +1,48 @@
+<div style="margin-bottom: 32px;" data-animate="fade-up">
+  {% if slide.badge %}<span class="badge badge-orange">{{ slide.badge }}</span>{% endif %}
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="flex gap-6" style="flex: 1; align-items: stretch;">
+  <div class="panel flex-1" data-animate="fade-right">
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">{{ slide.data.left.title }}</h3>
+    <div class="chip-stack">
+      {% for item in slide.data.left['items'] %}
+      <div class="chip">{{ item }}</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="panel flex-1" style="border-color: rgba(255, 107, 92, 0.4); box-shadow: 0 0 40px rgba(255, 107, 92, 0.1);" data-animate="scale-in">
+    {% if slide.data.center.title %}
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">{{ slide.data.center.title }}</h3>
+    <div class="chip-stack">
+      {% for item in slide.data.center['items'] %}
+      <div class="chip">{{ item }}</div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center">
+      <div class="text-red" style="font-size: 24px; font-weight: 700; margin-bottom: 12px;">{{ slide.data.center.label }}</div>
+      <div class="big-number text-red" data-count="{{ slide.data.center.value }}">0</div>
+      <div class="mt-4 text-secondary" style="font-size: 20px;">{{ slide.data.center.description }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="panel flex-1" data-animate="fade-left">
+    <h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">{{ slide.data.right.title }}</h3>
+    <div class="chip-stack">
+      {% for item in slide.data.right['items'] %}
+      <div class="chip">{{ item }}</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% if slide.data.banner %}
+<div class="callout callout-orange mt-6" data-animate="fade-up">
+  {{ slide.data.banner }}
+</div>
+{% endif %}

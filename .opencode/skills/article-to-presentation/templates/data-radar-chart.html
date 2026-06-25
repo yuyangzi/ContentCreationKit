@@ -1,0 +1,42 @@
+<div style="margin-bottom: 24px;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column;" data-animate="fade-up">
+  <div id="chart-radar-{{ slide.index }}" style="width: 100%; flex: 1;"></div>
+</div>
+
+<script>
+  (function() {
+    var chartDom = document.getElementById('chart-radar-{{ slide.index }}');
+    var myChart = echarts.init(chartDom, 'dark');
+    var series = [];
+    var colors = {{ slide.data.colors | default(['#4db6ff', '#ff6b5c', '#4ade80']) | tojson }};
+    {% for dataset in slide.data.datasets %}
+    series.push({
+      name: {{ dataset.label | tojson }},
+      type: 'radar',
+      symbolSize: 6,
+      lineStyle: { width: 2 },
+      itemStyle: { color: colors[{{ loop.index0 }} % colors.length] },
+      areaStyle: { color: colors[{{ loop.index0 }} % colors.length] + '33' },
+      data: [{ value: {{ dataset['values'] | tojson }}, name: {{ dataset.label | tojson }} }]
+    });
+    {% endfor %}
+    var option = {
+      backgroundColor: 'transparent',
+      legend: { textStyle: { color: '#9aa5b8', fontSize: 14 }, top: 10 },
+      radar: {
+        indicator: {{ slide.data.indicators | tojson }},
+        axisName: { color: '#9aa5b8', fontSize: 14 },
+        splitArea: { areaStyle: { color: ['rgba(255,255,255,0.02)', 'rgba(255,255,255,0.05)'] } },
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } },
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }
+      },
+      series: series
+    };
+    myChart.setOption(option);
+    window.addEventListener('resize', function() { myChart.resize(); });
+  })();
+</script>

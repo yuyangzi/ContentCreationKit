@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --bg-grid: rgba(255, 255, 255, 0.03);
+      --panel: rgba(20, 26, 42, 0.85);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text-primary: #ffffff;
+      --text-secondary: #9aa5b8;
+      --text-muted: #5c6b7f;
+      --accent-orange: #ff9d3d;
+      --accent-blue: #4db6ff;
+      --accent-green: #4ade80;
+      --accent-purple: #a78bfa;
+      --accent-red: #ff6b5c;
+      --accent-pink: #e85b7a;
+      --accent-cyan: #22d3ee;
+      --slide-padding-x: 80px;
+      --slide-padding-y: 60px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+      color: var(--text-primary);
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 80% 20%, rgba(77, 182, 255, 0.08), transparent 40%),
+        linear-gradient(to bottom, #07111f, #0a1525),
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+    }
+
+    #app {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+      padding: var(--slide-padding-y) var(--slide-padding-x);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .slide.is-active {
+      display: flex;
+      flex-direction: column;
+      opacity: 1;
+    }
+
+    .slide.is-exit {
+      opacity: 0;
+    }
+
+    .slide-content {
+      flex: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      font-size: 16px;
+      color: var(--text-muted);
+    }
+
+    .page-indicator {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Typography */
+    .eyebrow {
+      display: inline-block;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-orange);
+      margin-bottom: 16px;
+    }
+
+    .slide-title {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 24px;
+    }
+
+    .slide-subtitle {
+      font-size: 28px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .cover-title {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 24px;
+    }
+
+    .cover-subtitle {
+      font-size: 28px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .big-number {
+      font-size: 96px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-right: 16px;
+    }
+
+    .badge-orange { background: rgba(255, 157, 61, 0.15); color: var(--accent-orange); border: 1px solid rgba(255, 157, 61, 0.3); }
+    .badge-blue { background: rgba(77, 182, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(77, 182, 255, 0.3); }
+    .badge-green { background: rgba(74, 222, 128, 0.15); color: var(--accent-green); border: 1px solid rgba(74, 222, 128, 0.3); }
+    .badge-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent-purple); border: 1px solid rgba(167, 139, 250, 0.3); }
+    .badge-red { background: rgba(255, 107, 92, 0.15); color: var(--accent-red); border: 1px solid rgba(255, 107, 92, 0.3); }
+    .badge-pink { background: rgba(232, 91, 122, 0.15); color: var(--accent-pink); border: 1px solid rgba(232, 91, 122, 0.3); }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .chip-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Arrows */
+    .arrow-down {
+      width: 32px;
+      height: 32px;
+      border-right: 3px solid var(--text-secondary);
+      border-bottom: 3px solid var(--text-secondary);
+      transform: rotate(45deg);
+      margin: 16px auto;
+    }
+
+    .arrow-right {
+      width: 32px;
+      height: 32px;
+      border-right: 3px solid var(--accent-green);
+      border-bottom: 3px solid var(--accent-green);
+      transform: rotate(-45deg);
+      margin: auto 24px;
+    }
+
+    /* Callouts */
+    .callout {
+      padding: 20px 24px;
+      border-left: 4px solid var(--accent-green);
+      background: rgba(74, 222, 128, 0.06);
+      border-radius: 0 12px 12px 0;
+      font-size: 20px;
+      line-height: 1.6;
+    }
+
+    .callout-orange { border-left-color: var(--accent-orange); background: rgba(255, 157, 61, 0.06); }
+
+    /* Animations */
+    [data-animate] {
+      opacity: 0;
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-animate="fade-up"] { transform: translateY(40px); }
+    [data-animate="fade-left"] { transform: translateX(40px); }
+    [data-animate="fade-right"] { transform: translateX(-40px); }
+    [data-animate="scale-in"] { transform: scale(0.9); }
+
+    [data-animate].is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    .no-animation [data-animate] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    /* Utility */
+    .text-orange { color: var(--accent-orange); }
+    .text-blue { color: var(--accent-blue); }
+    .text-green { color: var(--accent-green); }
+    .text-purple { color: var(--accent-purple); }
+    .text-red { color: var(--accent-red); }
+    .text-pink { color: var(--accent-pink); }
+    .text-muted { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-center { justify-content: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-4 { gap: 16px; }
+    .gap-6 { gap: 24px; }
+    .gap-8 { gap: 32px; }
+    .flex-1 { flex: 1; }
+
+    .mt-4 { margin-top: 16px; }
+    .mt-6 { margin-top: 24px; }
+    .mt-8 { margin-top: 32px; }
+    .mb-4 { margin-bottom: 16px; }
+    .mb-6 { margin-bottom: 24px; }
+
+    .text-center { text-align: center; }
+    .code { font-family: 'Fira Code', 'SF Mono', monospace; color: var(--accent-cyan); }
+  </style>
+  {% if echarts_needed %}
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  {% endif %}
+</head>
+<body>
+  <div id="app">
+    {% for slide in slides %}
+    <section class="slide" data-index="{{ loop.index0 }}" data-transition="{{ slide.transition | default('fade') }}" {% if loop.first %}style="display:flex;opacity:1;"{% endif %}>
+      <div class="slide-content">
+        {% include slide.template %}
+      </div>
+      <div class="slide-footer">
+        <span class="source">{{ slide.source | default('') }}</span>
+        <span class="page-indicator">{{ loop.index }} / {{ loop.length }}</span>
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      let current = 0;
+      const total = slides.length;
+
+      function showSlide(index) {
+        if (index < 0 || index >= total) return;
+        slides[current].classList.remove('is-active');
+        slides[current].style.display = 'none';
+        slides[current].style.opacity = '0';
+        current = index;
+        slides[current].style.display = 'flex';
+        // force reflow
+        void slides[current].offsetWidth;
+        slides[current].classList.add('is-active');
+        slides[current].style.opacity = '1';
+        window.location.hash = 'slide-' + (current + 1);
+        triggerAnimations(slides[current]);
+      }
+
+      function next() { showSlide(current + 1); }
+      function prev() { showSlide(current - 1); }
+
+      function triggerAnimations(slide) {
+        const animated = slide.querySelectorAll('[data-animate]');
+        animated.forEach((el, i) => {
+          el.classList.remove('is-visible');
+          setTimeout(() => {
+            el.classList.add('is-visible');
+          }, 100 + i * 120);
+        });
+
+        const counters = slide.querySelectorAll('[data-count]');
+        counters.forEach(el => {
+          const target = parseInt(el.dataset.count, 10);
+          animateNumber(el, target, 1500);
+        });
+      }
+
+      function animateNumber(el, target, duration) {
+        const start = performance.now();
+        function easeOutQuart(t) { return 1 - Math.pow(1 - t, 4); }
+        function step(now) {
+          const p = Math.min((now - start) / duration, 1);
+          el.textContent = Math.floor(target * easeOutQuart(p)).toLocaleString();
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          e.preventDefault();
+          next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          prev();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          showSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          showSlide(total - 1);
+        }
+      });
+
+      let touchStartX = 0;
+      document.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+      });
+      document.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (dx < -50) next();
+        if (dx > 50) prev();
+      });
+
+      // hash support
+      const hashMatch = window.location.hash.match(/slide-(\d+)/);
+      if (hashMatch) {
+        showSlide(Math.max(0, Math.min(total - 1, parseInt(hashMatch[1], 10) - 1)));
+      } else {
+        triggerAnimations(slides[0]);
+      }
+    })();
+  </script>
+</body>
+</html>

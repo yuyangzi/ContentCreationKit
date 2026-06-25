@@ -1,0 +1,22 @@
+<div style="margin-bottom: 32px;" data-animate="fade-up">
+  {% if slide.badge %}<span class="badge badge-{{ slide.badge_color | default('orange') }}">{{ slide.badge }}</span>{% endif %}
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+  <p class="slide-subtitle">{{ slide.subtitle | default('') }}</p>
+</div>
+
+<div class="flex gap-6 justify-center" style="flex: 1; align-items: center;">
+  {% for card in slide.data.cards %}
+  <div class="panel text-center" style="min-width: 220px; border-top: 3px solid var(--accent-{{ card.color | default('blue') }});" data-animate="fade-up">
+    <div class="badge badge-{{ card.color | default('blue') }}" style="margin: 0 auto 16px;">{{ card.badge }}</div>
+    <h3 style="font-size: 24px; margin-bottom: 12px;">{{ card.title }}</h3>
+    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">{{ card.description }}</p>
+  </div>
+  {% endfor %}
+</div>
+
+{% if slide.data.callout %}
+<div class="callout mt-6" data-animate="fade-up">
+  {{ slide.data.callout }}
+</div>
+{% endif %}

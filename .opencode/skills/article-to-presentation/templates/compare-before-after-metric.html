@@ -1,0 +1,27 @@
+<div class="text-center" style="margin-bottom: 40px;" data-animate="fade-up">
+  {% if slide.badge %}<span class="badge badge-orange">{{ slide.badge }}</span>{% endif %}
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="flex items-center justify-center gap-8" style="flex: 1;">
+  <div class="panel text-center" style="min-width: 280px;" data-animate="fade-right">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">{{ slide.data.before.label }}</div>
+    <div class="big-number text-red" data-count="{{ slide.data.before.value }}">0</div>
+    <div class="mt-4 text-muted">{{ slide.data.before.description | default('') }}</div>
+  </div>
+
+  <div class="arrow-right" data-animate="scale-in"></div>
+
+  <div class="panel text-center" style="min-width: 280px; border-color: rgba(74, 222, 128, 0.3);" data-animate="fade-left">
+    <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">{{ slide.data.after.label }}</div>
+    <div class="big-number text-green" data-count="{{ slide.data.after.value }}">0</div>
+    <div class="mt-4 text-muted">{{ slide.data.after.description | default('') }}</div>
+  </div>
+</div>
+
+{% if slide.data.callout %}
+<div class="callout mt-8" data-animate="fade-up">
+  {{ slide.data.callout }}
+</div>
+{% endif %}

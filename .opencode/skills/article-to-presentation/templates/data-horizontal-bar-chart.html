@@ -1,0 +1,45 @@
+<div style="margin-bottom: 24px;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column;" data-animate="fade-up">
+  <div id="chart-hbar-{{ slide.index }}" style="width: 100%; flex: 1;"></div>
+</div>
+
+<script>
+  (function() {
+    var chartDom = document.getElementById('chart-hbar-{{ slide.index }}');
+    var myChart = echarts.init(chartDom, 'dark');
+    var option = {
+      backgroundColor: 'transparent',
+      grid: { top: 30, right: 60, bottom: 30, left: 120 },
+      xAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
+        axisLabel: { color: '#9aa5b8', fontSize: 14 }
+      },
+      yAxis: {
+        type: 'category',
+        data: {{ slide.data.labels | tojson }},
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+        axisLabel: { color: '#fff', fontSize: 16 }
+      },
+      series: [{
+        type: 'bar',
+        barWidth: '50%',
+        itemStyle: {
+          borderRadius: [0, 6, 6, 0],
+          color: new echarts.graphic.LinearGradient(1, 0, 0, 0, [
+            { offset: 0, color: '{{ slide.data.color | default('#4db6ff') }}' },
+            { offset: 1, color: '{{ slide.data.color | default('#4db6ff') }}66' }
+          ])
+        },
+        label: { show: true, position: 'right', color: '#fff', fontSize: 16 },
+        data: {{ slide.data['values'] | tojson }}
+      }]
+    };
+    myChart.setOption(option);
+    window.addEventListener('resize', function() { myChart.resize(); });
+  })();
+</script>

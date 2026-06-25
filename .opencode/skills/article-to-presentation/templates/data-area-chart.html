@@ -1,0 +1,54 @@
+<div style="margin-bottom: 24px;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column;" data-animate="fade-up">
+  <div id="chart-area-{{ slide.index }}" style="width: 100%; flex: 1;"></div>
+</div>
+
+<script>
+  (function() {
+    var chartDom = document.getElementById('chart-area-{{ slide.index }}');
+    var myChart = echarts.init(chartDom, 'dark');
+    var series = [];
+    var colors = {{ slide.data.colors | default(['#4db6ff', '#ff6b5c', '#4ade80']) | tojson }};
+    {% for dataset in slide.data.datasets %}
+    series.push({
+      name: {{ dataset.label | tojson }},
+      type: 'line',
+      smooth: true,
+      symbolSize: 8,
+      lineStyle: { width: 3 },
+      itemStyle: { color: colors[{{ loop.index0 }} % colors.length] },
+      areaStyle: {
+        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: colors[{{ loop.index0 }} % colors.length] + '66' },
+          { offset: 1, color: colors[{{ loop.index0 }} % colors.length] + '00' }
+        ])
+      },
+      data: {{ dataset['values'] | tojson }}
+    });
+    {% endfor %}
+    var option = {
+      backgroundColor: 'transparent',
+      legend: { textStyle: { color: '#9aa5b8', fontSize: 14 }, top: 10 },
+      grid: { top: 60, right: 40, bottom: 60, left: 60 },
+      xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: {{ slide.data.labels | tojson }},
+        axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+        axisLabel: { color: '#9aa5b8', fontSize: 14 }
+      },
+      yAxis: {
+        type: 'value',
+        splitLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
+        axisLabel: { color: '#9aa5b8', fontSize: 14 }
+      },
+      series: series
+    };
+    myChart.setOption(option);
+    window.addEventListener('resize', function() { myChart.resize(); });
+  })();
+</script>

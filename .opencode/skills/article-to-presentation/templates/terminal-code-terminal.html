@@ -1,0 +1,20 @@
+<div style="margin-bottom: 24px;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; flex-direction: column; padding: 0; overflow: hidden;" data-animate="fade-up">
+  <div style="display: flex; align-items: center; gap: 8px; padding: 16px 20px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.08);">
+    <span style="width: 12px; height: 12px; border-radius: 50%; background: #ff5f56;"></span>
+    <span style="width: 12px; height: 12px; border-radius: 50%; background: #ffbd2e;"></span>
+    <span style="width: 12px; height: 12px; border-radius: 50%; background: #27c93f;"></span>
+    <span style="margin-left: 12px; color: var(--text-secondary); font-size: 14px; font-family: 'Fira Code', monospace;">{{ slide.data.title | default('terminal') }}</span>
+  </div>
+  <div style="flex: 1; padding: 24px; font-family: 'Fira Code', 'SF Mono', monospace; font-size: 18px; line-height: 1.8; overflow: auto;">
+    {% for line in slide.data.lines %}
+    <div style="color: {% if line.startswith('#') %}var(--text-muted){% elif line.startswith('$') %}var(--accent-green){% elif line.startswith('✓') %}var(--accent-green){% elif line.startswith('✗') %}var(--accent-red){% else %}var(--text-primary){% endif %}; margin-bottom: 6px;">
+      {{ line }}
+    </div>
+    {% endfor %}
+  </div>
+</div>

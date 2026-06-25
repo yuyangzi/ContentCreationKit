@@ -1,0 +1,23 @@
+<div class="flex gap-8 items-center" style="height: 100%;">
+  <div class="flex-1" data-animate="fade-right">
+    <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+    <h1 class="slide-title">{{ slide.title }}</h1>
+    <p class="slide-subtitle">{{ slide.subtitle | default('') }}</p>
+    {% if slide.data.bullets %}
+    <ul class="mt-6" style="font-size: 22px; color: var(--text-secondary); line-height: 1.8; padding-left: 24px;">
+      {% for bullet in slide.data.bullets %}
+      <li>{{ bullet }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  <div class="flex-1" data-animate="fade-left">
+    <div class="panel" style="min-height: 400px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+      {% if slide.data.image %}
+      <img src="{{ slide.data.image }}" alt="" style="max-width: 100%; max-height: 480px; border-radius: 12px;">
+      {% else %}
+      <div class="text-muted" style="font-size: 20px;">图片占位</div>
+      {% endif %}
+    </div>
+  </div>
+</div>

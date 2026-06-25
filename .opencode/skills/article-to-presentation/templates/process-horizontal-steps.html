@@ -1,0 +1,19 @@
+<div style="margin-bottom: 32px;" data-animate="fade-up">
+  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <h1 class="slide-title">{{ slide.title }}</h1>
+</div>
+
+<div class="panel" style="flex: 1; display: flex; align-items: center; justify-content: center;" data-animate="fade-up">
+  <div class="flex items-center gap-4">
+    {% for step in slide.data.steps %}
+    <div class="text-center" style="width: 180px;">
+      <div class="badge badge-{{ step.color | default('blue') }}" style="margin: 0 auto 16px;">{{ loop.index }}</div>
+      <h3 style="font-size: 20px; margin-bottom: 8px;">{{ step.title }}</h3>
+      <p style="font-size: 16px; color: var(--text-secondary); line-height: 1.5;">{{ step.description }}</p>
+    </div>
+    {% if not loop.last %}
+    <div style="width: 40px; height: 2px; background: rgba(255,255,255,0.1);"></div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>

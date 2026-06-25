@@ -1,0 +1,32 @@
+<div class="flex gap-8 items-center" style="height: 100%;">
+  <div class="flex-1" data-animate="fade-right">
+    <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+    <h1 class="cover-title">{{ slide.title }}</h1>
+    <p class="cover-subtitle">{{ slide.subtitle | default('') }}</p>
+  </div>
+  <div class="flex-1" data-animate="fade-left">
+    {% include 'visual-' + slide.visual + '.html' ignore missing %}
+    {% if not slide.visual.startswith('visual-') %}
+    <div class="panel" style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+      {% if slide.data and slide.data.before %}
+      <div class="text-center">
+        <div class="text-secondary" style="font-size: 20px; margin-bottom: 12px;">Before</div>
+        <div class="big-number text-red" data-count="{{ slide.data.before.value }}">0</div>
+        <div class="mt-4" style="font-size: 20px; color: var(--text-secondary);">{{ slide.data.before.label }}</div>
+        {% if slide.data.after %}
+        <div class="arrow-down"></div>
+        <div class="text-secondary" style="font-size: 20px; margin-bottom: 12px;">After</div>
+        <div class="chip-stack" style="align-items: center;">
+          {% for item in slide.data.after %}
+          <div class="chip">{{ item }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="text-muted" style="font-size: 20px;">信息图占位</div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</div>
