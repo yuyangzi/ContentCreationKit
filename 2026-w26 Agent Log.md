@@ -1,3 +1,25 @@
+## 2026-06-25
+
+- article-to-presentation HTML 引擎重构：方案设计与实现
+  - /before-dev 分析 Gamma/Manus Slides 架构，propose 3 方案
+  - 保留/删除/重构清单输出，spec 写入 docs/superpowers/specs/
+  - 用户 4 张慢学AI截图确认多页/多布局/图表需求，接受 ECharts CDN
+  - 完整实现 29 个模板、parser、renderer、prompts、generate.py
+  - 删除 @slidev/cli / neocarbon 依赖，归档旧 Slidev 文档
+  - 更新 AGENTS.md / README.md
+  - 验证渲染成功（/tmp/test-slides.html 16KB）
+  - CHUNK: HTML 引擎重构 spec + plan
+
+- article-to-presentation 流程优化：砍 plan 和 Playwright，纳入 agent
+  - 读取 ses_101085e69ffe7n5PkguWhnIxP2 分析实际执行流程
+  - 发现 Metis 审查耗时 ~6min，占流程一半
+  - 三项决策：context-cover + visual-cover 串行、validate_slides.py 替代审查、阶段二缩为 1 问
+  - SKILL.md 重写为 4 阶段简化流程
+  - context-cover.md / visual-cover.md 更新精确 data schema + 陷阱警告
+  - 创建 validate_slides.py（33 条 schema 规则）
+  - 删除 prompts/ 目录（合并到 agents），更新 references/README.md
+  - CHUNK: validate_slides.py 校验脚本
+
 ## 2026-06-22
 
 - AI压缩执行力 PPT: 从 Reveal.js 设计到 Slidev 方案转型
