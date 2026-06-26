@@ -1,5 +1,6 @@
 ---
 description: 审核参考资料
+model: opencode/deepseek-v4-flash-free
 ---
 
 # 审核参考资料

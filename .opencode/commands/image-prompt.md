@@ -1,5 +1,6 @@
 ---
 description: 文章图片生成提示词
+model: opencode/deepseek-v4-flash-free
 ---
 
 # 生图提示词

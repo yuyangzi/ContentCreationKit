@@ -1,5 +1,6 @@
 ---
 description: 文章内容审核
+model: opencode/deepseek-v4-flash-free
 ---
 
 # 文章内容审查

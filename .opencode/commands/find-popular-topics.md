@@ -1,5 +1,6 @@
 ---
 description: 查找内容创作的热门主题
+model: deepseek/deepseek-v4-pro
 ---
 
 # 查找热门主题
