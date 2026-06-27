@@ -55,3 +55,40 @@
 - [36Kr《Open AI 突然官宣，全量下放，剧烈战略转向后，GPT 5.5 Instant 明日全民免费》](https://www.36kr.com/p/3867635704108297)（2026.06.25）
 - [36Kr《OpenAI 曝出第一颗芯片叫「辣椒」，AI 自己设计，9 个月流片》](https://www.36kr.com/p/3867736555705603)（2026.06.25）
 - [36Kr《奥特曼私人提款机曝光，OpenAI 埋 6650 亿暗雷》](https://www.36kr.com/p/3867046995694596)（2026.06.24）
+
+## 2026-06-27 更新
+
+### GPT-5.6 突袭发布 + Mythos 5 解禁——美国政府"一客一审"
+
+GPT-5.5 Instant 免费才过两天，6 月 26 日 OpenAI 发布 GPT-5.6 三件套（Sol/Terra/Luna），但特朗普政府要求"每客必审"——首批仅 20 家公司能用。同一天 Anthropic 的 Mythos 5 也在被政府封禁两周后"有条件复活"。
+
+**新增热度来源**：
+
+| 平台 | 热度 |
+|------|------|
+| 知乎 | 77 万热度，"如何评价 OpenAI 发布 GPT-5.6 系列模型" |
+| 微博 | 34.7 万热度，#OpenAI 发布 GPT5.6# |
+| 36Kr | 多篇头条覆盖（GPT-5.6 来了、GPT-5.6 紧急叫停、Mythos 5 被解禁） |
+| The Verge | "Anthropic's Mythos 5 is back" |
+| Axios | OpenAI 新模型系列报道 |
+
+### 核心增量信息
+
+1. **模型分层正式落地**：Sol（旗舰推理）、Terra（多模态全能）、Luna（轻量高效），三层定价体系对应不同使用场景
+2. **美国政府接管发布节奏**：GPT-5.6 System Card 自评生物/化学/网络安全三项"High"——这是首次有模型在多个维度同时被标 High。特朗普 6.2 EO 的 30 天窗口还没走完，政府已经实质上从前沿模型发布的"旁观者"变成"守门人"
+3. **Mythos 5 的镜像叙事**：Anthropic 的 Mythos 5 同样被美国政府封禁两周后"有条件复活"——两大前沿实验室同时被华盛顿拿捏，这已经不是个例，而是新常态
+4. **"发布≠可用"成为现实**：首批仅 20 家公司获准使用 Sol 模型，AI 的可用性不再是技术问题而是政治许可问题
+
+### 选题深化方向
+
+- **"一客一审"时代的 AI**：美国政府如何从自愿框架走向事实性许可制？这对中国 AI 公司意味着什么？
+- **OpenAI 的六月风暴完整版**：芯片（辣芯）→ 免费（GPT-5.5）→ 暗雷（6650 亿）→ 政府审批（GPT-5.6），四条消息拼出一幅完整的"防御地图"
+- **当你的模型太强**：GPT-5.6 因为太强被政府限制，这到底是荣耀还是诅咒？对比 Anthropic 被军方列入"太危险"黑名单的遭遇
+
+### 关键链接
+
+- [OpenAI System Card](https://deploymentsafety.openai.com/gpt-5-6-preview)
+- [Axios: OpenAI's new model family](https://www.axios.com/2026/06/26/openai-gpt-sol-terra-luna-trump)
+- [The Verge: Anthropic's Mythos 5 is back](https://www.theverge.com/958458)
+- [36Kr: GPT-5.6 来了！OpenAI 发布 Sol/Terra/Luna 三件套](https://www.36kr.com/p/3870682553383817)
+- [知乎讨论](https://www.zhihu.com/question/2054058863066886644)
