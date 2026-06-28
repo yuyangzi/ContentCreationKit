@@ -89,7 +89,7 @@ ContentCreationKit/
 │       └── plans/             # 实施计划
 ├── AGENTS.md                  # 代理工作指南（新会话先读此文件）
 ├── oh-my-openagent.json       # Agent 模型配置
-├── StyleRule.md               # 编辑风格规则（11 条）
+├── StyleRule.md               # 编辑风格规则（5 条）
 └── yuyang.jpg                 # 公众号二维码
 ```
 
