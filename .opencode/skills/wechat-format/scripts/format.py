@@ -296,8 +296,11 @@ def _build_image_index(search_roots: list[Path]) -> None:
         if not search_root.exists():
             continue
         for p in search_root.rglob("*"):
-            if p.is_file() and not p.is_symlink():
-                _image_index[p.name] = p
+            try:
+                if p.is_file() and not p.is_symlink():
+                    _image_index[p.name] = p
+            except OSError:
+                pass
     _image_index_built = True
 
 
