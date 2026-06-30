@@ -144,25 +144,33 @@
   font-size: 24px;
   font-weight: 700;
   line-height: 1.28;
-  /* color、margin 等属性以 compare-three-column-flow 现有内联值为准对齐 */
+  color: var(--text-secondary);
+  margin-bottom: 24px;
 }
-
 .column-title--lg {
   font-size: 28px;
+  margin-bottom: 20px;
 }
 ```
 
-**实施时确认**：读取 `compare-three-column-flow.html:9` 和 `layout-two-column-text.html:8` 的完整内联样式，提取 color / font-weight / line-height / margin 等所有属性，确保视觉零回归。若两处属性有差异，以视觉更接近当前的一组为准，差异项显式标注。
+**实施时注意**：
+
+1. **弹性的 margin-bottom**：`.column-title`（三栏，24px）使用 24px；`.column-title--lg`（双栏，28px）使用 20px，分别对齐当前内联值。
+2. **动态颜色**：`layout-two-column-text.html` 的 `<h3>` 使用 Jinja2 模板变量控制颜色（`color: var(--accent-{{ slide.data.left.color | default('red') }})`），此属性不能提取到静态 CSS 类。实施后该模板应保留颜色为内联样式，其他属性由 CSS 类接管：
+   ```html
+   <h3 class="column-title column-title--lg" style="color: var(--accent-{{ slide.data.left.color | default('red') }});">
+   ```
+3. **`compare-three-column-flow.html`** 的颜色为静态 `var(--text-secondary)`，可直接由 `.column-title` 的 `color` 属性覆盖，无需保留内联样式。
 
 #### 3.2 模板替换（5 处）
 
 | 文件 | 行 | 现状 | 目标 |
 |------|----|------|------|
-| `templates/layout-two-column-text.html` | 8 | `<h3 style="font-size: 28px; ...">` | `<h3 class="column-title column-title--lg">` |
-| `templates/layout-two-column-text.html` | 12 | `<h3 style="font-size: 28px; ...">` | `<h3 class="column-title column-title--lg">` |
-| `templates/compare-three-column-flow.html` | 9 | `<h3 style="font-size: 24px; ...">` | `<h3 class="column-title">` |
-| `templates/compare-three-column-flow.html` | 19 | `<h3 style="font-size: 24px; ...">` | `<h3 class="column-title">` |
-| `templates/compare-three-column-flow.html` | 35 | `<h3 style="font-size: 24px; ...">` | `<h3 class="column-title">` |
+| `templates/layout-two-column-text.html` | 8 | `<h3 style="font-size: 28px; margin-bottom: 20px; color: var(--accent-{{ slide.data.left.color \| default('red') }});">` | `<h3 class="column-title column-title--lg" style="color: var(--accent-{{ slide.data.left.color \| default('red') }});">` |
+| `templates/layout-two-column-text.html` | 12 | `<h3 style="font-size: 28px; margin-bottom: 20px; color: var(--accent-{{ slide.data.right.color \| default('green') }});">` | `<h3 class="column-title column-title--lg" style="color: var(--accent-{{ slide.data.right.color \| default('green') }});">` |
+| `templates/compare-three-column-flow.html` | 9 | `<h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">` | `<h3 class="column-title">` |
+| `templates/compare-three-column-flow.html` | 19 | `<h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">` | `<h3 class="column-title">` |
+| `templates/compare-three-column-flow.html` | 35 | `<h3 style="font-size: 24px; margin-bottom: 24px; color: var(--text-secondary);">` | `<h3 class="column-title">` |
 
 ### 4. 风险与回滚
 
