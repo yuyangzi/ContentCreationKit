@@ -1,0 +1,230 @@
+{
+  "title": "DeepSeek V4 的峰谷定价：一场定价权的阳谋",
+  "source": "玉鸯公众号原创",
+  "slides": [
+    {
+      "type": "cover",
+      "visual": "hero-center",
+      "title": "DeepSeek V4 的峰谷定价，是一场定价权的阳谋",
+      "subtitle": "把峰谷定价还原到时间线里看，事情会更清楚",
+      "eyebrow": "战略分析",
+      "data": {
+        "tags": ["战略分析", "定价权"]
+      }
+    },
+    {
+      "type": "process",
+      "visual": "timeline",
+      "title": "两个月，四次价格动作",
+      "subtitle": "从 V4 预览版上线到峰谷定价宣布的完整时间线",
+      "data": {
+        "events": [
+          {
+            "date": "2026.04.24",
+            "title": "V4 预览版上线",
+            "description": "公布初始定价：输入 ¥12 / 输出 ¥24（每百万 tokens）",
+            "color": "blue"
+          },
+          {
+            "date": "2026.05.15",
+            "title": "75% 永久降价",
+            "description": "骤然降价至输入 ¥3 / 输出 ¥6，对手难以跟进",
+            "color": "green"
+          },
+          {
+            "date": "2026.06.05",
+            "title": "峰谷定价发布",
+            "description": "白天峰时 ¥18/¥36，其余 17 小时谷时 ¥3/¥6",
+            "color": "orange"
+          },
+          {
+            "date": "2026.06.28",
+            "title": "峰谷定价生效",
+            "description": "精细化运营需求端，提升集群利用率",
+            "color": "purple"
+          }
+        ]
+      }
+    },
+    {
+      "type": "section",
+      "visual": "chapter",
+      "title": "效率护城河",
+      "subtitle": "DeepSeek V4 凭何掀起价格战",
+      "badge": 1,
+      "data": {
+        "color": "blue"
+      }
+    },
+    {
+      "type": "data",
+      "visual": "metric-cards",
+      "title": "V4 的效率账",
+      "subtitle": "相比 V3.2，V4 用更少的算力做更多的事",
+      "badge": 1,
+      "badge_color": "blue",
+      "data": {
+        "cards": [
+          {
+            "badge": "A",
+            "color": "green",
+            "title": "FLOPs",
+            "description": "仅为 V3.2 的 27%"
+          },
+          {
+            "badge": "B",
+            "color": "green",
+            "title": "KV Cache",
+            "description": "仅为 V3.2 的 10%"
+          },
+          {
+            "badge": "C",
+            "color": "blue",
+            "title": "激活参数",
+            "description": "49B / 1.6T MoE"
+          },
+          {
+            "badge": "D",
+            "color": "cyan",
+            "title": "上下文窗口",
+            "description": "高达 1M tokens"
+          }
+        ],
+        "callout": "V4 架构效率全面超越前代，结构性成本优势已成形"
+      }
+    },
+    {
+      "type": "data",
+      "visual": "big-number",
+      "title": "DSpark 投机解码",
+      "subtitle": "推理加速 60%–85%，进一步拉低边际成本",
+      "data": {
+        "value": 85,
+        "color": "green",
+        "label": "推理加速 (Flash)",
+        "description": "DSpark 投机解码框架，单用户推理速度提升 60-85%"
+      }
+    },
+    {
+      "type": "section",
+      "visual": "chapter",
+      "title": "定价即武器",
+      "subtitle": "降价的逻辑不是补贴，是效率差",
+      "badge": 2,
+      "data": {
+        "color": "orange"
+      }
+    },
+    {
+      "type": "compare",
+      "visual": "before-after-metric",
+      "title": "75% 永久降价",
+      "subtitle": "从 ¥12/¥24 到 ¥3/¥6（输入/输出，每百万 tokens）",
+      "data": {
+        "before": {
+          "label": "原始价",
+          "value": 24,
+          "description": "输出 ¥24/1M tokens"
+        },
+        "after": {
+          "label": "永久折扣",
+          "value": 6,
+          "description": "输出 ¥6/1M tokens"
+        },
+        "callout": "降价 75%"
+      }
+    },
+    {
+      "type": "quote",
+      "visual": "quote-center",
+      "title": "定价逻辑",
+      "subtitle": "把价格压到任何人跟不起的水平，再用峰谷机制精细化运营需求端",
+      "data": {
+        "quote": "把价格压到任何人跟不起的水平，再用峰谷机制精细化运营需求端",
+        "source": "玉鸯"
+      }
+    },
+    {
+      "type": "section",
+      "visual": "chapter",
+      "title": "资本棋局",
+      "subtitle": "融资撑住低价，不是低价导致融资",
+      "badge": 3,
+      "data": {
+        "color": "purple"
+      }
+    },
+    {
+      "type": "data",
+      "visual": "big-number",
+      "title": "$7.4B 融资，$52–59B 估值",
+      "subtitle": "创下 AI 领域最大单轮融资之一",
+      "data": {
+        "value": 74,
+        "color": "orange",
+        "label": "融资 $7.4B",
+        "description": "估值 $52-59B，创 AI 领域最大单轮之一"
+      }
+    },
+    {
+      "type": "layout",
+      "visual": "split-text-image",
+      "title": "AWS 化的野心",
+      "subtitle": "从模型公司向基础设施平台演进",
+      "data": {
+        "image": "",
+        "bullets": [
+          "极致成本效率成为基础设施层",
+          "规模效应持续压低成本",
+          "峰谷定价优化集群利用率",
+          "但缺乏 AWS 的生态锁定"
+        ]
+      }
+    },
+    {
+      "type": "quote",
+      "visual": "quote-center",
+      "title": "终极拷问",
+      "subtitle": "AI 模型到底是像电力一样的商品，还是可以差异化定价的服务？",
+      "data": {
+        "quote": "大模型API到底是一种数字商品，还是一种有差异化的服务？",
+        "source": "玉鸯"
+      }
+    },
+    {
+      "type": "summary",
+      "visual": "key-takeaways",
+      "title": "核心要点",
+      "subtitle": "定价权、效率差与基础设施野心的三位一体",
+      "data": {
+        "items": [
+          {
+            "title": "定价权",
+            "description": "四次价格动作的底层逻辑是把价格压到对手跟不起的水平",
+            "color": "orange"
+          },
+          {
+            "title": "效率护城河",
+            "description": "V4 架构 + DSpark 实现结构性成本代差",
+            "color": "blue"
+          },
+          {
+            "title": "资本支撑",
+            "description": "融资是为了撑住低价策略的执行力，而非补救",
+            "color": "green"
+          },
+          {
+            "title": "基础设施野心",
+            "description": "效仿 AWS 路径，从模型公司向平台演进",
+            "color": "purple"
+          },
+          {
+            "title": "终极命题",
+            "description": "API 是 commodity 还是差异化服务？DeepSeek 同时押注两边",
+            "color": "red"
+          }
+        ]
+      }
+    }
+  ]
+}
