@@ -1,18 +1,17 @@
-<div style="margin-bottom: 32px;" data-animate="fade-up">
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+<div class="slide-header" data-animate="fade-up">
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="slide-title">{{ slide.title }}</h1>
 </div>
 
-<div class="panel" style="flex: 1; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
-  <div style="position: relative; padding-left: 32px;">
-    <div style="position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1);"></div>
+<div class="content-panel content-panel--large" style="flex: 1;" data-animate="fade-up">
+  <div class="timeline">
     {% for event in slide.data.events %}
-    <div class="flex items-start gap-6" style="margin-bottom: 32px; position: relative;">
-      <div style="width: 24px; height: 24px; border-radius: 50%; background: var(--accent-{{ event.color | default('blue') }}); flex-shrink: 0; position: relative; z-index: 1; box-shadow: 0 0 0 6px rgba(7,17,31,0.8);"></div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--accent-{{ event.color | default('blue') }});"></div>
       <div style="flex: 1;">
         <div style="font-size: 18px; color: var(--accent-{{ event.color | default('blue') }}); font-weight: 600; margin-bottom: 4px;">{{ event.date }}</div>
-        <h3 style="font-size: 24px; margin-bottom: 8px;">{{ event.title }}</h3>
-        <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">{{ event.description }}</p>
+        <h3 class="item-title" style="margin-bottom: 8px;">{{ event.title }}</h3>
+        <p class="small-copy">{{ event.description }}</p>
       </div>
     </div>
     {% endfor %}

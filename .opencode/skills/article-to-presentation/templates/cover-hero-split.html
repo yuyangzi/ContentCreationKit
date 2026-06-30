@@ -1,13 +1,13 @@
-<div class="flex gap-8 items-center" style="height: 100%;">
-  <div class="flex-1" data-animate="fade-right">
-    <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+<div class="slide-shell slide-shell--split">
+  <div data-animate="fade-right">
+    <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
     <h1 class="cover-title">{{ slide.title }}</h1>
     <p class="cover-subtitle">{{ slide.subtitle | default('') }}</p>
   </div>
-  <div class="flex-1" data-animate="fade-left">
+  <div data-animate="fade-left">
     {% include 'visual-' + slide.visual + '.html' ignore missing %}
     {% if not slide.visual.startswith('visual-') %}
-    <div class="panel" style="min-height: 400px; display: flex; align-items: center; justify-content: center;">
+    <div class="content-panel content-panel--large" style="min-height: 430px; align-items: center;">
       {% if slide.data and slide.data.before %}
       <div class="text-center">
         <div class="text-secondary" style="font-size: 20px; margin-bottom: 12px;">Before</div>

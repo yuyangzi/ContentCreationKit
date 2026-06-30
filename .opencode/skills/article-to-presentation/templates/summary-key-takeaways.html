@@ -1,16 +1,16 @@
-<div style="margin-bottom: 32px;" data-animate="fade-up">
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+<div class="slide-header" data-animate="fade-up">
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="slide-title">{{ slide.title }}</h1>
 </div>
 
-<div class="flex flex-wrap gap-6" style="flex: 1; align-content: center; justify-content: center;">
+<div class="card-grid" style="flex: 1; align-content: center;">
   {% for item in slide.data['items'] %}
-  <div class="panel" style="width: calc(50% - 12px);" data-animate="fade-up">
+  <div class="content-panel" data-animate="fade-up">
     <div class="flex items-center gap-4" style="margin-bottom: 12px;">
       <span class="badge badge-{{ item.color | default('blue') }}" style="margin: 0;">{{ loop.index }}</span>
-      <h3 style="font-size: 24px;">{{ item.title }}</h3>
+      <h3 class="item-title">{{ item.title }}</h3>
     </div>
-    <p style="font-size: 18px; color: var(--text-secondary); line-height: 1.6;">{{ item.description }}</p>
+    <p class="small-copy">{{ item.description }}</p>
   </div>
   {% endfor %}
 </div>

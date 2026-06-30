@@ -1,12 +1,12 @@
-<div style="margin-bottom: 32px;" data-animate="fade-up">
+<div class="slide-header" data-animate="fade-up">
   {% if slide.badge %}<span class="badge badge-green">{{ slide.badge }}</span>{% endif %}
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="slide-title">{{ slide.title }}</h1>
   <p class="slide-subtitle">{{ slide.subtitle | default('') }}</p>
 </div>
 
-<div class="flex items-center" style="flex: 1;">
-  <div class="panel flex-1" data-animate="fade-right">
+<div class="comparison-grid">
+  <div class="content-panel" data-animate="fade-right">
     <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">{{ slide.data.before.label }}</div>
     <div class="big-number text-red" data-count="{{ slide.data.before.value }}">0</div>
     <div class="mt-6" style="font-size: 22px; color: var(--text-secondary);">{{ slide.data.before.description }}</div>
@@ -14,7 +14,7 @@
 
   <div class="arrow-right" data-animate="scale-in"></div>
 
-  <div class="panel flex-1" style="border-color: rgba(74, 222, 128, 0.3);" data-animate="fade-left">
+  <div class="content-panel" style="border-color: rgba(57, 217, 138, 0.34);" data-animate="fade-left">
     <div class="text-secondary" style="font-size: 20px; margin-bottom: 16px;">{{ slide.data.after.label }}</div>
     <div class="code" style="font-size: 24px; margin-bottom: 16px;">{{ slide.data.after.code }}</div>
     <div style="font-size: 22px; color: var(--text-secondary);">{{ slide.data.after.description }}</div>

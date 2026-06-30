@@ -1,5 +1,5 @@
-<div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+<div class="slide-shell slide-shell--center" data-animate="fade-up">
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="slide-title">{{ slide.title }}</h1>
   <div class="big-number text-{{ slide.data.color | default('orange') }}" data-count="{{ slide.data.value }}" style="margin: 40px 0;">0</div>
   <p class="slide-subtitle">{{ slide.data.label }}</p>

@@ -1,8 +1,8 @@
-<div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
+<div class="slide-shell slide-shell--center" data-animate="fade-up">
   {% if slide.badge %}
   <div class="big-number text-{{ slide.data.color | default('orange') }}" style="margin-bottom: 24px; opacity: 0.8;" data-count="{{ slide.badge }}">0</div>
   {% endif %}
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="cover-title">{{ slide.title }}</h1>
   {% if slide.subtitle %}
   <p class="cover-subtitle mt-6">{{ slide.subtitle }}</p>

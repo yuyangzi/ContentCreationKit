@@ -1,5 +1,5 @@
-<div class="text-center" style="height: 100%; display: flex; flex-direction: column; justify-content: center;" data-animate="fade-up">
-  <span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
+<div class="slide-shell slide-shell--center" data-animate="fade-up">
+  <span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
   <h1 class="cover-title">{{ slide.title }}</h1>
   <p class="cover-subtitle">{{ slide.subtitle | default('') }}</p>
   {% if slide.data and slide.data.tags %}
