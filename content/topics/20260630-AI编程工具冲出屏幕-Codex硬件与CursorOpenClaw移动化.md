@@ -29,3 +29,23 @@
 - [9to5Mac：Cursor releases iPhone and iPad app following recent acquisition by SpaceX](https://9to5mac.com/2026/06/29/cursor-releases-iphone-and-ipad-app-following-recent-acquisition-by-spacex/)
 - [9to5Mac：OpenClaw just launched an official app for iPhone](https://9to5mac.com/2026/06/29/openclaw-just-launched-an-official-app-for-iphone-details-here/)
 - [9to5Mac：OpenAI teases Codex-branded hardware collaboration](https://9to5mac.com/2026/06/29/openai-teases-codex-branded-hardware-collaboration-coming-heres-what-to-expect/)
+
+## 2026-06-30 更新
+
+### Codex Micro 真身：一个Macro Pad，不是AI手机
+
+6月30日，OpenAI在AI工程师世界博览会上正式展示了Codex Micro硬件真容。此前外界期待已久的"AI原生硬件"没有出现——Codex Micro实际上是一个与Work Louder联名的Macro Pad，配备13个机械按键、一个摇杆和一个触摸传感器。Work Louder是一家以客制化键盘闻名的外设公司，曾为Figma推出过Creator Micro联名款。
+
+这与Sam Altman和Jony Ive正在秘密打造的"真正的AI原生硬件"是两条并行路线：
+- **B端/开发者线**：Codex Micro主打"生产力桌面"——一键呼叫Codex、旋钮调节AI创造力阈值、手不离键盘完成代码补全/纠错/版本回溯
+- **C端/大众线**：Altman与Ive合作的面向消费者的AI原生设备仍在开发中
+
+OpenAI内部透露，Codex已被市场、法务、财务、传播等非工程团队广泛使用，Codex Micro将其从开发者工具升级为企业效率平台的一个物理触点。
+
+### 马斯克发Cursor手机版，撞档OpenClaw
+
+同日，马斯克在X上发布了Cursor iOS App的更新版本，与OpenClaw的官方iPhone App同期撞档。两个AI编程工具同时杀入手机，标志AI编程的入口之战从桌面蔓延到移动端。
+
+**新增来源链接：**
+- [36氪：刚刚，Codex首款硬件曝光——一个键盘？](https://www.36kr.com/p/3875025035482120)（2026-06-30）
+- [36氪：马斯克发Cursor手机版，撞档OpenClaw，AI编程App入口战打响了](https://www.36kr.com/p/3875504164417793)（2026-06-30）
