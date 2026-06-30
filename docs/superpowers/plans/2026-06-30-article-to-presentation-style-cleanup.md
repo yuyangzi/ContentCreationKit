@@ -259,17 +259,17 @@ git commit -m "refactor: 14 个模板 class=eyebrow → class=slide-kicker"
 
 Run:
 ```bash
-grep -rln 'slide\.eyebrow | default' .opencode/skills/article-to-presentation/templates/ | wc -l
+grep -rln '\{\{ slide\.eyebrow' .opencode/skills/article-to-presentation/templates/ | wc -l
 grep -rln 'slide\.kicker | default(slide\.eyebrow' .opencode/skills/article-to-presentation/templates/ | wc -l
 ```
 
 Expected:
 ```
-0       # 第一条：已无顶层 slide.eyebrow | default('') 表达式
+0       # 第一条：无旧表达式 {{ slide.eyebrow（不会匹配 fallback 内层）
 27      # 第二条：27 个模板都用 fallback 表达式
 ```
 
-> 注：fallback 表达式内层仍含 `slide.eyebrow`，但它是嵌套在 `default()` 内的，不是顶层直接引用。第一条 grep 检查的是顶层直接表达式 `slide.eyebrow | default('')`。
+> 说明：旧表达式 `{{ slide.eyebrow | default('') }}` 以 `{{ slide.eyebrow` 开头；新表达式 `{{ slide.kicker | default(slide.eyebrow | default('')) }}` 以 `{{ slide.kicker` 开头。grep 模式 `'{{ slide\.eyebrow'` 只能匹配旧表达式。
 
 - [ ] **Step 3: Commit**
 
@@ -280,271 +280,6 @@ git commit -m "refactor: 27 个模板 slide.eyebrow → fallback 表达式兼容
 
 ---
 
-### Task 2: 14 个模板的 `class="eyebrow"` → `class="slide-kicker"`
-
-**Files:**
-- Modify: 14 个 HTML 模板（清单见下）
-
-**Interfaces:**
-- Consumes: Task 1 已删除 `.eyebrow` CSS 别名，仅保留 `.slide-kicker`。
-- Produces: 27 个模板统一使用 `class="slide-kicker"`。
-
-**14 个模板清单（精确行号）：**
-
-| # | 文件 | 行 |
-|---|------|----|
-| 1 | `.opencode/skills/article-to-presentation/templates/data-area-chart.html` | 2 |
-| 2 | `.opencode/skills/article-to-presentation/templates/data-bar-chart.html` | 2 |
-| 3 | `.opencode/skills/article-to-presentation/templates/data-doughnut-chart.html` | 2 |
-| 4 | `.opencode/skills/article-to-presentation/templates/data-horizontal-bar-chart.html` | 2 |
-| 5 | `.opencode/skills/article-to-presentation/templates/data-line-chart.html` | 2 |
-| 6 | `.opencode/skills/article-to-presentation/templates/data-mixed-chart.html` | 2 |
-| 7 | `.opencode/skills/article-to-presentation/templates/data-pie-chart.html` | 2 |
-| 8 | `.opencode/skills/article-to-presentation/templates/data-radar-chart.html` | 2 |
-| 9 | `.opencode/skills/article-to-presentation/templates/table-comparison-table.html` | 2 |
-| 10 | `.opencode/skills/article-to-presentation/templates/compare-three-column-flow.html` | 3 |
-| 11 | `.opencode/skills/article-to-presentation/templates/layout-split-text-image.html` | 3 |
-| 12 | `.opencode/skills/article-to-presentation/templates/layout-two-column-text.html` | 2 |
-| 13 | `.opencode/skills/article-to-presentation/templates/layout-full-image.html` | 9 |
-| 14 | `.opencode/skills/article-to-presentation/templates/terminal-code-terminal.html` | 2 |
-
-- [ ] **Step 1: 批量替换 14 个模板的 CSS 类名**
-
-对每个文件，将 `class="eyebrow"` 替换为 `class="slide-kicker"`。所有 14 个文件的改动完全一致：
-
-修改前：
-```html
-<span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
-```
-
-修改后：
-```html
-<span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
-```
-
-> 注：本 Task 只改 CSS 类名，不改 `{{ slide.eyebrow }}` 数据键（那是 Task 3 的工作）。
-
-- [ ] **Step 2: 验证替换结果**
-
-Run:
-```bash
-grep -rn 'class="eyebrow"' .opencode/skills/article-to-presentation/templates/
-grep -rn 'class="slide-kicker"' .opencode/skills/article-to-presentation/templates/ | wc -l
-```
-
-Expected:
-```
-# 第一条命令无输出（已无 class="eyebrow"）
-# 第二条命令输出：27
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .opencode/skills/article-to-presentation/templates/
-git commit -m "refactor: 14 个模板 class=eyebrow → class=slide-kicker"
-```
-
----
-
-### Task 3: 27 个模板的 `{{ slide.eyebrow }}` → fallback 表达式
-
-**Files:**
-- Modify: 27 个 HTML 模板（全部 `templates/*.html`，不含 `base.html`）
-
-**Interfaces:**
-- Produces: 27 个模板统一使用 `{{ slide.kicker | default(slide.eyebrow | default('')) }}`。
-
-**27 个模板分布：** 所有 `templates/` 目录下的 `.html` 文件（不含 `base.html`），每个文件有且仅有 1 处 `{{ slide.eyebrow | default('') }}`。
-
-| 行号 | 模板数 | 模板举例 |
-|------|--------|----------|
-| 第 2 行 | 19 | data-*.html、layout-simple-text、summary-* 等 |
-| 第 3 行 | 5 | compare-three-column-flow、layout-split-text-image 等 |
-| 第 5 行 | 1 | section-chapter |
-| 第 9 行 | 1 | layout-full-image |
-
-- [ ] **Step 1: 批量替换 27 个模板的数据键表达式**
-
-对每个文件，将：
-```
-{{ slide.eyebrow | default('') }}
-```
-改为：
-```
-{{ slide.kicker | default(slide.eyebrow | default('')) }}
-```
-
-> **表达式语义**：先读 `slide.kicker`，如果未定义或为空则回退到 `slide.eyebrow`，如果仍未定义则回退到空字符串。兼容 agent 已切换输出 `kicker` 字段的场景和存量 slides.json 仍用 `eyebrow` 字段的场景。
-
-修改前：
-```html
-<span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
-```
-
-修改后：
-```html
-<span class="slide-kicker">{{ slide.kicker | default(slide.eyebrow | default('')) }}</span>
-```
-
-- [ ] **Step 2: 验证替换结果**
-
-Run:
-```bash
-grep -rln 'slide\.eyebrow | default' .opencode/skills/article-to-presentation/templates/ | wc -l
-grep -rln 'slide\.kicker | default(slide\.eyebrow' .opencode/skills/article-to-presentation/templates/ | wc -l
-```
-
-Expected:
-```
-0       # 第一条：已无旧的直接表达式
-27      # 第二条：27 个模板都用 fallback 表达式
-```
-
-> 注：第一条命令检查 `slide.eyebrow | default('')`（直接表达式），而非 fallback 内层。fallback 表达式中仍包含 `slide.eyebrow`，但嵌套在 `default()` 内。
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .opencode/skills/article-to-presentation/templates/
-git commit -m "refactor: 27 个模板 slide.eyebrow → fallback 表达式兼容 kicker"
-```
-
----
-
-### Task 2: 14 个模板的 `class="eyebrow"` → `class="slide-kicker"`
-
-**Files:**
-- Modify: 14 个 HTML 模板（见下方清单）
-
-**Interfaces:**
-- Consumes: Task 1 已删除 `.eyebrow` CSS 别名。
-- Produces: 27 个模板统一使用 `class="slide-kicker"`。
-
-**14 个模板清单（精确行号）：**
-
-| # | 文件 | 行 |
-|---|------|----|
-| 1 | `.opencode/skills/article-to-presentation/templates/data-area-chart.html` | 2 |
-| 2 | `.opencode/skills/article-to-presentation/templates/data-bar-chart.html` | 2 |
-| 3 | `.opencode/skills/article-to-presentation/templates/data-doughnut-chart.html` | 2 |
-| 4 | `.opencode/skills/article-to-presentation/templates/data-horizontal-bar-chart.html` | 2 |
-| 5 | `.opencode/skills/article-to-presentation/templates/data-line-chart.html` | 2 |
-| 6 | `.opencode/skills/article-to-presentation/templates/data-mixed-chart.html` | 2 |
-| 7 | `.opencode/skills/article-to-presentation/templates/data-pie-chart.html` | 2 |
-| 8 | `.opencode/skills/article-to-presentation/templates/data-radar-chart.html` | 2 |
-| 9 | `.opencode/skills/article-to-presentation/templates/table-comparison-table.html` | 2 |
-| 10 | `.opencode/skills/article-to-presentation/templates/compare-three-column-flow.html` | 3 |
-| 11 | `.opencode/skills/article-to-presentation/templates/layout-split-text-image.html` | 3 |
-| 12 | `.opencode/skills/article-to-presentation/templates/layout-two-column-text.html` | 2 |
-| 13 | `.opencode/skills/article-to-presentation/templates/layout-full-image.html` | 9 |
-| 14 | `.opencode/skills/article-to-presentation/templates/terminal-code-terminal.html` | 2 |
-
-- [ ] **Step 1: 批量替换 14 个模板的 CSS 类名**
-
-对每个文件，将 `class="eyebrow"` 替换为 `class="slide-kicker"`。所有 14 个文件的改动完全一致：
-
-修改前：
-```html
-<span class="eyebrow">{{ slide.eyebrow | default('') }}</span>
-```
-
-修改后：
-```html
-<span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
-```
-
-> 注：本 Task 只改 CSS 类名，不改 `{{ slide.eyebrow }}` 数据键（那是 Task 3 的工作）。
-
-- [ ] **Step 2: 验证替换结果**
-
-Run:
-```bash
-grep -rn 'class="eyebrow"' .opencode/skills/article-to-presentation/templates/
-grep -rn 'class="slide-kicker"' .opencode/skills/article-to-presentation/templates/ | wc -l
-```
-
-Expected:
-```
-# 第一条命令无输出（已无 class="eyebrow"）
-# 第二条命令输出：27（全部 27 个模板都用 slide-kicker）
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .opencode/skills/article-to-presentation/templates/
-git commit -m "refactor: 14 个模板 class=eyebrow → class=slide-kicker"
-```
-
----
-
-### Task 3: 27 个模板的 `{{ slide.eyebrow }}` → fallback 表达式
-
-**Files:**
-- Modify: 27 个 HTML 模板（全部 `templates/*.html`，不含 `base.html`）
-
-**Interfaces:**
-- Produces: 27 个模板统一使用 `{{ slide.kicker | default(slide.eyebrow | default('')) }}`，兼容新 `kicker` 字段和存量 `eyebrow` 字段。
-
-**27 个模板清单：**
-
-所有 `templates/` 目录下的 `.html` 文件（不含 `base.html`），每个文件有且仅有 1 处 `{{ slide.eyebrow | default('') }}`。
-
-| 行号 | 模板数 | 模板举例 |
-|------|--------|----------|
-| 第 2 行 | 19 | data-*.html、layout-simple-text、summary-* 等 |
-| 第 3 行 | 5 | compare-three-column-flow、layout-split-text-image 等 |
-| 第 5 行 | 1 | section-chapter |
-| 第 9 行 | 1 | layout-full-image |
-
-- [ ] **Step 1: 批量替换 27 个模板的数据键表达式**
-
-对每个文件，将：
-```
-{{ slide.eyebrow | default('') }}
-```
-改为：
-```
-{{ slide.kicker | default(slide.eyebrow | default('')) }}
-```
-
-> **表达式语义**：先读 `slide.kicker`，如果未定义或为空则回退到 `slide.eyebrow`，如果仍未定义则回退到空字符串。
-
-**每个文件的改动示例：**
-
-修改前：
-```html
-<span class="slide-kicker">{{ slide.eyebrow | default('') }}</span>
-```
-
-修改后：
-```html
-<span class="slide-kicker">{{ slide.kicker | default(slide.eyebrow | default('')) }}</span>
-```
-
-- [ ] **Step 2: 验证替换结果**
-
-Run:
-```bash
-grep -rln 'slide\.eyebrow | default' .opencode/skills/article-to-presentation/templates/ | wc -l
-grep -rln 'slide\.kicker | default(slide\.eyebrow' .opencode/skills/article-to-presentation/templates/ | wc -l
-```
-
-Expected:
-```
-0       # 第一条：已无旧的直接顶层表达式
-27      # 第二条：27 个模板都用 fallback 表达式
-```
-
-> 注：第一条检查的是 `slide.eyebrow | default('')` 作为顶层直接引用。fallback 表达式中仍包含 `slide.eyebrow`，但嵌套在 `default()` 内层。
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .opencode/skills/article-to-presentation/templates/
-git commit -m "refactor: 27 个模板 slide.eyebrow → fallback 表达式兼容 kicker"
-```
 
 ---
 
@@ -587,7 +322,7 @@ git commit -m "refactor: 27 个模板 slide.eyebrow → fallback 表达式兼容
 
 Run:
 ```bash
-grep -n "border-radius: 12px\|border-radius: 10px" \
+grep -nE "border-radius: (12|10)px" \
   .opencode/skills/article-to-presentation/templates/layout-split-text-image.html \
   .opencode/skills/article-to-presentation/templates/table-comparison-table.html
 ```
@@ -904,8 +639,8 @@ grep -n "\.eyebrow" .opencode/skills/article-to-presentation/templates/base.html
 # 2. 模板层：无 class="eyebrow"
 grep -rn 'class="eyebrow"' .opencode/skills/article-to-presentation/templates/
 
-# 3. 模板层：无顶层 slide.eyebrow 直接引用（fallback 内层除外）
-grep -rln 'slide\.eyebrow | default' .opencode/skills/article-to-presentation/templates/ | wc -l
+# 3. 模板层：无旧表达式 {{ slide.eyebrow（不匹配 fallback 内层）
+grep -rln '\{\{ slide\.eyebrow' .opencode/skills/article-to-presentation/templates/ | wc -l
 
 # 4. 外部文档：SKILL.md、agents、design spec 中无 eyebrow
 grep -rn "eyebrow" \
@@ -931,7 +666,7 @@ Expected:
 
 Run:
 ```bash
-grep -rn "border-radius: 12px\|border-radius: 10px" \
+grep -rnE "border-radius: (12|10)px" \
   .opencode/skills/article-to-presentation/templates/
 ```
 
