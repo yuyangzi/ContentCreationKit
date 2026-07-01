@@ -49,3 +49,25 @@
 - [知乎：如何评价Anthropic最新发布的Claude Sonnet5？](https://www.zhihu.com/question/2055567821904547893)（130万热度）
 - [9to5Mac: Anthropic upgrades Claude with new Sonnet 5 model](https://9to5mac.com/2026/06/30/anthropic-upgrades-claude-with-new-sonnet-5-model-details-here/)
 - [9to5Mac: Claude Fable 5 cleared to return as US lifts Anthropic's export control](https://9to5mac.com/2026/06/30/claude-fable-5-cleared-to-return-as-us-lifts-anthropics-export-control-restriction/)
+
+## 2026-07-01 更新
+
+### Fable 5 正式解禁 + Anthropic 隐写术"木马门"实锤后回滚
+
+7月1日，两条叙事并行升级：
+
+**Fable 5 全球解禁**：美国政府在经过三周审查后解除对Fable 5的出口管制。Anthropic确认即日起逐步恢复全球用户访问。新智元报道标题直呼"刚刚，Fable 5全球解禁"。Fable 5是Anthropic目前最强的模型——解禁意味其Agent能力重新向全球开发者开放，对Cursor、Codex等AI编程工具的竞争格局有实质性影响。
+
+**隐写术被实锤 + 承诺回滚**：安全专家Alexander Hanff的爆料经多方验证，实锤了Anthropic通过修改系统提示词中的日期格式和Unicode字符来秘密标记中国用户。面对舆论风暴，Anthropic一反之前的态度，**承认了隐写术行为**并宣布将于明日（7月2日）回滚相关代码。36氪/新智元、机器之心、智东西等多篇报道跟进。
+
+### 新增创作角度：信任危机的"商业模式反思"
+
+一边是Fable 5/Sonnet 5的能力狂飙，一边是隐写术"偷偷打标签"的信任崩塌——Anthropic正陷入"能力最强、信任最差"的品牌撕裂。这引发一个深层问题：**AI公司如何在"用户信任"和"合规压力"之间找到平衡？** 隐写术事件是否会倒逼AI行业的透明度标准？
+
+### 新增来源
+
+- [36氪：刚刚，Fable 5全球解禁](https://www.36kr.com/p/3876404636184832)
+- [36氪：实锤了，Claude Code偷查用户](https://www.36kr.com/p/3876461674917892)（机器之心）
+- [36氪：Anthropic承认了，Claude Code木马门被抓包，明天回滚](https://www.36kr.com/p/3876746033934341)（新智元）
+- [36氪：中国用户被针对，Anthropic承认私藏"木马"](https://www.36kr.com/p/3876769582182406)（智东西）
+- [The Verge: Anthropic's long-sidelined Fable 5 is greenlit to return](https://www.theverge.com/958964)
