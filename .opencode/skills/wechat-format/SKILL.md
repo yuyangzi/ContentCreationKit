@@ -123,11 +123,11 @@ python3 {baseDir}/scripts/format.py \
 
 ### 输出说明
 
-排版输出目录（`--output` 参数）：`content/wechat/{文章名}/`，包含：
+排版输出目录（`--output` 参数）：`content/WeChat/{文章名}/`，包含：
 - `article.html`：纯微信兼容 HTML（内联样式，可直接复制）
 - `preview.html`：手机预览页面（含复制按钮）
 
-同时将原始 Markdown 复制一份到 `content/wechat/{时间戳}-{主题名}.md`。
+同时将原始 Markdown 复制一份到 `content/WeChat/{时间戳}-{主题名}.md`。
 
 ### 参数说明
 
@@ -135,7 +135,7 @@ python3 {baseDir}/scripts/format.py \
 - `--input` / `-i`：Markdown 文件路径（必须）
 - `--gallery`：打开主题画廊（推荐）
 - `--theme` / `-t`：直接指定主题名
-- `--output` / `-o`：输出目录（默认 `content/wechat`）
+- `--output` / `-o`：输出目录（默认 `content/WeChat`）
 - `--recommend`：推荐主题 ID 列表
 - `--no-open`：不自动打开浏览器
 - `--format`：输出格式 wechat/html/plain

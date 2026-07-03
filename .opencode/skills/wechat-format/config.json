@@ -1,8 +1,8 @@
 {
-  "output_dir": "content/wechat",
+  "output_dir": "content/WeChat",
   "vault_root": ".",
   "settings": {
-    "default_theme": "terracotta",
+    "default_theme": "newspaper",
     "auto_open_browser": true
   },
   "image_search_paths": [
