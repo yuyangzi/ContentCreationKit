@@ -2,44 +2,37 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "hephaestus": {
-      "model": "Volcengine-Plan/Kimi-K2.6",
-      "enabled": true
+      "model": "Volcengine-Plan/Kimi-K2.7-Code"
     },
     "oracle": {
-      "model": "Volcengine-Plan/DeepSeek-V4-Pro",
-      "enabled": true
+      "model": "Volcengine-Plan/DeepSeek-V4-Pro"
     },
     "librarian": {
-      "model": "opencode/deepseek-v4-flash-free",
-      "enabled": true
+      "model": "opencode/deepseek-v4-flash-free"
     },
     "explore": {
-      "model": "opencode/deepseek-v4-flash-free",
-      "enabled": true
+      "model": "opencode/deepseek-v4-flash-free"
     },
     "multimodal-looker": {
-      "model": "Volcengine-Plan/ark-code-latest",
-      "enabled": true
+      "model": "Volcengine-Plan/ark-code-latest"
     },
     "prometheus": {
-      "model": "deepseek/deepseek-v4-pro",
-      "enabled": true
+      "model": "deepseek/deepseek-v4-pro"
     },
     "metis": {
-      "model": "opencode/deepseek-v4-flash-free",
-      "enabled": true
+      "model": "opencode/deepseek-v4-flash-free"
     },
     "momus": {
-      "model": "opencode/deepseek-v4-flash-free",
-      "enabled": true
+      "model": "opencode/deepseek-v4-flash-free"
     },
     "atlas": {
-      "model": "Volcengine-Plan/MiniMax-M3",
-      "enabled": true
+      "model": "Volcengine-Plan/MiniMax-M3"
+    },
+    "sisyphus-junior": {
+      "model": "Volcengine-Plan/ark-code-latest"
     },
     "sisyphus": {
-      "model": "deepseek/deepseek-v4-pro",
-      "enabled": true
+      "model": "deepseek/deepseek-v4-pro"
     }
   },
   "categories": {
