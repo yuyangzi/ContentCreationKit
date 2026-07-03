@@ -23,7 +23,10 @@ description: Markdown → 微信兼容 HTML 排版引擎。当用户需要将文
 
 ## 排版容器语法
 
-支持以下容器语法，根据内容类型自动推荐套用：
+> ⚠️ **注意**：这些容器语法需要在 Markdown 源文件中手动编写（写作阶段即可使用），
+> 排版引擎会自动识别并渲染为对应的微信兼容 HTML。当前不会自动判断内容类型来套用。
+
+支持以下容器语法：
 
 ```markdown
 :::dialogue[采访实录]
@@ -96,7 +99,7 @@ Stay hungry, stay foolish.
 | 教程/操作指南 | github, sspai, bytedance |
 | 文艺/观点 | terracotta, sunset-amber, lavender-dream |
 
-### 第 5 步：打开主题画廊
+### 第 5 步（可选）：打开主题画廊
 
 ```bash
 python3 {baseDir}/scripts/format.py \
@@ -133,7 +136,7 @@ python3 {baseDir}/scripts/format.py \
 
 **format.py**：
 - `--input` / `-i`：Markdown 文件路径（必须）
-- `--gallery`：打开主题画廊（推荐）
+- `--gallery`：打开主题画廊（可选）
 - `--theme` / `-t`：直接指定主题名
 - `--output` / `-o`：输出目录（默认 `content/WeChat`）
 - `--recommend`：推荐主题 ID 列表
