@@ -28,7 +28,7 @@ model: opencode/deepseek-v4-flash-free
      b. 在内容转折处添加 `---` 分隔线或 `##` 小标题
    - 不改措辞，只改段落边界和段落结构
 3. 使用 `scripts/format.py` 以 `newspaper` 主题排版。本公众号深度分析类文章统一使用 `newspaper` 主题。
-4. 以 `{时间戳}-{主题名}.md` 的文件名保存到 `content/WeChat/` 目录。
+4. 以 `{时间戳}-{文章名}.md` 的文件名保存到 `content/WeChat/` 目录。
 5. 告知用户排版完成，打开预览页面（preview.html）点击「复制到微信」按钮，即可粘贴到公众号后台发布。
 
 ### 可选模式（当用户明确要求换主题时）
@@ -39,9 +39,17 @@ model: opencode/deepseek-v4-flash-free
 
 ## 输出
 
-- `content/WeChat/{时间戳}-{主题名}.md`：公众号排版后的文章文件
+- `content/WeChat/{时间戳}-{文章名}.md`：公众号排版后的文章文件
 - `content/WeChat/{时间戳}-{文章名}/article.html`：微信兼容的 HTML 文件（可直接复制到公众号后台）
 - `content/WeChat/{时间戳}-{文章名}/preview.html`：手机预览页面
+
+## 注意事项
+
+- **frontmatter 自动剥离**：文章的 YAML frontmatter（title/date 等元数据）在排版时会被自动剥离，不会出现在最终 HTML 中
+- **图片处理**：
+  - 文章中的本地图片会自动复制到输出目录的 `images/` 子目录
+  - 支持标准 Markdown 图片语法 `![alt](path)` 和 Obsidian wikilink 语法 `![[image.jpg]]`
+  - 推荐将图片放在 `content/article/images/` 目录下
 
 ## 约束
 

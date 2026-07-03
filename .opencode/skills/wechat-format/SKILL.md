@@ -130,7 +130,7 @@ python3 {baseDir}/scripts/format.py \
 - `article.html`：纯微信兼容 HTML（内联样式，可直接复制）
 - `preview.html`：手机预览页面（含复制按钮）
 
-同时将原始 Markdown 复制一份到 `content/WeChat/{时间戳}-{主题名}.md`。
+同时将原始 Markdown 复制一份到 `content/WeChat/{时间戳}-{文章名}.md`。
 
 ### 参数说明
 
