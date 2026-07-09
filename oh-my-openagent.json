@@ -14,7 +14,7 @@
       "model": "opencode/deepseek-v4-flash-free"
     },
     "multimodal-looker": {
-      "model": "Volcengine-Plan/ark-code-latest"
+      "model": "Volcengine-Plan/Doubao-Seed-2.0-pro"
     },
     "prometheus": {
       "model": "deepseek/deepseek-v4-pro"
@@ -29,7 +29,7 @@
       "model": "Volcengine-Plan/MiniMax-M3"
     },
     "sisyphus-junior": {
-      "model": "Volcengine-Plan/ark-code-latest"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "sisyphus": {
       "model": "deepseek/deepseek-v4-pro"
@@ -49,7 +49,7 @@
       "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "quick": {
-      "model": "Volcengine-Plan/ark-code-latest"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "unspecified-low": {
       "model": "Volcengine-Plan/DeepSeek-V4-Flash"
@@ -58,7 +58,7 @@
       "model": "Volcengine-Plan/MiniMax-M3"
     },
     "writing": {
-      "model": "Volcengine-Plan/ark-code-latest"
+      "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     }
   },
   "team_mode": {
