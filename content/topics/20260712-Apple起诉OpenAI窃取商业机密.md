@@ -27,3 +27,24 @@
 - [The Verge: Apple sues OpenAI for allegedly stealing hardware secrets](https://www.theverge.com/964350)
 - [9to5Mac: Apple sues OpenAI, accuses ex-employees of stealing trade secrets](https://9to5mac.com/2026/07/10/apple-sues-openai-trade-secret-theft/)
 - [9to5Mac: OpenAI responds to Apple's trade secret theft lawsuit](https://9to5mac.com/2026/07/10/openai-responds-to-apples-trade-secret-theft-lawsuit/)
+
+## 2026-07-12 更新
+
+7月11日，更多案件细节浮出水面，跨平台讨论热度持续发酵。
+
+**新披露细节**：
+- Apple向加州联邦法院提交了41页起诉书，指控OpenAI在面试Apple员工时要求"带实物零件当道具"来展示技术细节
+- 诉讼涉及商业机密包括：金属加工工艺、产品规划路线图、AI硬件设计架构
+- 案件牵涉到"AI iPhone"的终极控制权之争——Apple担心OpenAI自研AI硬件侵蚀其终端护城河
+- 此前Apple曾考虑与OpenAI合作，用其技术增强Apple Intelligence，如今关系全面恶化
+
+**跨平台传播**：
+- 中文科技媒体（36氪、InfoQ）均以头条报道，InfoQ标题直接点出"苹果甩出41页PDF怒告OpenAI"
+- BBC、CNBC、The Verge等全球头部媒体全面跟进
+- 事件从"AI人才争夺战"升级为"AI硬件路线图之战"
+
+**新增来源**：
+- [BBC: Apple sues OpenAI, its employees claiming theft of trade secrets](https://www.bbc.com/news/articles/cy8w379e091o)
+- [CNBC: Apple sues OpenAI alleging trade secret theft](https://www.cnbc.com/2026/07/10/apple-openai-lawsuit-trade-secrets.html)
+- [36氪: 为了"AI iPhone"，苹果正式起诉OpenAI](https://www.36kr.com/p/3890808260197121)
+- [InfoQ: 苹果甩出41页PDF怒告OpenAI"偷师"其核心机密](https://www.infoq.cn/article/Rzh9umgPl90MgGolBcWm)
