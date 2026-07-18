@@ -20,8 +20,8 @@ model: opencode/deepseek-v4-flash-free
 
 ## 步骤
 
-1. 派遣 1个`librarian` Agent及自身并行开始审查。
-2. 等待 subagent 的执行结果与自身的审查结果汇总
+1. 派遣 2个`librarian` Agent并行开始审查。
+2. 等待 subagent 的执行结果并汇总
 3. 综合审查结果给出分析建议
 
 ## 输出
