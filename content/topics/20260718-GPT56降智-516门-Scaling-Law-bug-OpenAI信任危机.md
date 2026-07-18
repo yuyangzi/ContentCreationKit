@@ -43,3 +43,26 @@
 这是GPT-5.5"516限制"事件的延续与升级——从"思考到一半就断"到"平台可以随时调整你的推理预算"，OpenAI的信任危机从产品体验蔓延到了商业模式底层。
 
 **来源**：36Kr - 新智元：《GPT-5.6 Sol一夜变笨，思考预算960砍到128，没智力固定的模型了？》https://www.36kr.com/p/3896320634685318
+
+## 2026-07-18 更新
+
+### 大空头万字檄文 + Brockman 集权 + IPO 倒计时：OpenAI 的多重风暴
+
+7月中旬，OpenAI的信任危机从产品层面蔓延到金融层面，三条线索同时指向同一个问题：这家公司值$8520亿吗？
+
+**线索一：大空头发表1.5万字长文，标题直指"OpenAI必将崩溃"**
+
+36氪头条报道，一位知名做空者发表万字长文，系统性论证OpenAI商业模式不可持续。核心论点包括：ChatGPT市场份额首次跌破50%（Sensor Tower数据）、企业客户续费率下滑、推理成本居高不下。文章引发全球股市讨论——"AI泡沫论"找到了最具体的靶标。
+
+**线索二：Brockman 全面集权，IPO 压力下的组织收缩**
+
+Fidji Simo（产品与商业负责人）因慢性病（POTS）于7月10日退出。Greg Brockman（OpenAI联合创始人兼总裁）接管了ChatGPT产品、企业团队、市场拓展和算力运营——基本掌控了公司除研究外的全部业务线。OpenAI已于6月8日秘密提交IPO申请，估值$8520亿。但在市场份额跌破50%、信任危机持续发酵的背景下，这个估值面临严峻考验。
+
+**线索三：信任危机的"三级跳"**
+
+回顾过去一个月：GPT-5.5"516限制"（产品体验降级）→ GPT-5.6 juice value从960砍到128（推理预算暗调）→ Scaling Law论文被曝bug（理论根基动摇）。现在加上了大空头做空和IPO前夕的权力集中——OpenAI的信任危机正在从产品、理论、金融三个层面同时加压。
+
+**来源**：
+- [36氪："OpenAI必将崩溃，全球股市恐遭清算"，大空头1.5万字长文引争论](https://www.36kr.com/p/3899383821305476)
+- [CNBC: OpenAI power consolidates under co-founder Greg Brockman ahead of IPO](https://www.cnbc.com/2026/07/10/openai-power-consolidates-under-co-founder-greg-brockman-ahead-of-ipo.html)
+- [Seeking Alpha: OpenAI's Greg Brockman steps out of the shadows as IPO nears](https://seekingalpha.com/news/4598693-openai-s-greg-brockman-steps-out-of-the-shadows-as-ipo-nears)
