@@ -48,3 +48,27 @@
 - [CNBC: Apple sues OpenAI alleging trade secret theft](https://www.cnbc.com/2026/07/10/apple-openai-lawsuit-trade-secrets.html)
 - [36氪: 为了"AI iPhone"，苹果正式起诉OpenAI](https://www.36kr.com/p/3890808260197121)
 - [InfoQ: 苹果甩出41页PDF怒告OpenAI"偷师"其核心机密](https://www.infoq.cn/article/Rzh9umgPl90MgGolBcWm)
+
+## 2026-07-18 更新
+
+### 诉讼新细节：Jony Ive 的 $65 亿收购案悬了
+
+7月17日，The Verge 发表深度分析文章《Apple's plot to crush OpenAI》，揭示了诉讼背后更深层的商业博弈。
+
+**新披露的关键细节**：
+
+- 诉讼文件显示，前Apple VP Tang Tan（24年Apple老将，负责iPhone/iWatch设计）被指控在面试OpenAI求职者时要求他们"带实物零件当道具"——包括电池、逻辑板、原型机等物理硬件
+- 工程师Chang Liu被指控利用安全漏洞下载了1000+页机密工程设计文档
+- 诉讼将Jony Ive的硬件公司io Products列为共同被告——而OpenAI正计划以$65亿收购该公司以启动消费硬件业务
+
+**商业影响**：
+
+- Polymarket数据显示，OpenAI在2026年内发布消费硬件的概率已暴跌至26%
+- 此前OpenAI与Jony Ive的合作被视为"AI iPhone"的最强候选——这场诉讼可能直接切断OpenAI的硬件路线
+- Apple的诉讼策略不仅是维权，更是在"AI硬件"这个新兴赛道建立法律护城河——通过诉讼冻结竞争对手的硬件人才和知识产权流动
+
+**更深层的叙事**：这不只是两家公司的官司。这是关于"AI时代的硬件应该由谁来定义"的战争。Apple用40年建立的硬件帝国，正在用诉讼保卫边界；而OpenAI试图用$65亿买下Jony Ive来跨越这条边界。
+
+**来源**：
+- [The Verge: Apple's plot to crush OpenAI（深度分析）](https://www.theverge.com/967244)
+- [Polymarket: OpenAI consumer hardware in 2026](https://polymarket.com)
