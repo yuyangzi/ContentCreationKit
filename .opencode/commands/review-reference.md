@@ -1,6 +1,6 @@
 ---
 description: 审核参考资料
-model: opencode/deepseek-v4-flash-free
+model: Volcengine-Plan/DeepSeek-V4-Flash
 ---
 
 # 审核参考资料

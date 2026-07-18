@@ -1,5 +1,6 @@
 ---
 description: 审核内容创作的主题
+model: deepseek/deepseek-v4-pro
 ---
 
 # 审核主题

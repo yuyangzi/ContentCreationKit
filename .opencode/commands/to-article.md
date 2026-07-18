@@ -1,5 +1,6 @@
 ---
 description: 草稿转文章
+model: opencode/deepseek-v4-flash-free
 ---
 
 # 草稿转文章
