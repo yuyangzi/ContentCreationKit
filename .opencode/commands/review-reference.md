@@ -27,7 +27,14 @@ model: Volcengine-Plan/DeepSeek-V4-Flash
 ## 输出
 
 - 修正意见清单（在对话中呈现）
-- 经确认后可更新 `content/reference/` 下的资料文件
+- 经用户确认后，**新建** `content/reference/{YYYYMMDD}-{主题名}-v{N+1}.md`（N 为当前版本号），保留旧版本文件不删
+
+## reference 命名空间规范
+
+- `/review-topics` 输出 → `content/reference/{YYYYMMDD}-{主题名}-v1.md`（首次审核问答）
+- `/review-reference` 每次确认后 → 在原文件名基础上**新建** `-v{N+1}.md`，**不覆盖**旧版本
+- 老文件（如 `-审核记录` 后缀）保留不动，不强制迁移
+- 示例演进：`Kimi-K3-v1.md` → `Kimi-K3-v2.md`（首次 review-reference） → `Kimi-K3-v3.md`（再次 review-reference）
 
 ## 约束
 

@@ -22,7 +22,7 @@ model: deepseek/deepseek-v4-pro
 1. 使用 `recursive-research` skill 和搜索类 MCP 工具，深度收集与主题相关的背景信息。
 2. 使用 `grill-me` skill 结合背景信息对主题内容进行反复拷问和细节确认，一轮只问一个关键问题，直到没有任何模糊点。
 3. 如果发现有需要补全的信息同样使用 `recursive-research` skill 和搜索类 MCP 工具进行搜索。
-4. 将确认的问答记录和收集的信息整理到 `content/reference/` 目录，文件名为 `{时间戳}-{主题名}.md`。
+4. 将确认的问答记录和收集的信息整理到 `content/reference/` 目录，文件名为 `{YYYYMMDD}-{主题名}-v1.md`（首次审核）。后续 `/review-reference` 阶段每次生成新版本 `-v2.md`、`-v3.md` ...。
 5. 给出修正意见供我审核，等待用户确认。
 6. （可选项）根据用户确认的修正意见，询问是否对 topic 文件执行结构性操作：
 
@@ -38,7 +38,7 @@ model: deepseek/deepseek-v4-pro
 
 ## 输出
 
-- `content/reference/{时间戳}-{主题名}.md`：包含审核问答记录和背景研究资料
+- `content/reference/{YYYYMMDD}-{主题名}-v1.md`：包含审核问答记录和背景研究资料
 - （可选）更新后的 `content/topics/` 文件
 
 ## 约束
