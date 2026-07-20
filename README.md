@@ -136,7 +136,9 @@ ContentCreationKit/
 | 命令 | 描述 | 前置条件 | 输出 |
 |------|------|----------|------|
 | `/find-popular-topics` | 从知乎、微博、36氪等平台挖掘热门话题，自动跳过 `archive/` 中已饱和主题 | 无 | `content/topics/{ts}-{topic}.md` |
+| `/merge-topics` | 合并 ≥2 个内容高度重叠的 topic(走 grill-me 拷问 + 用户确认),reference 由后续 review-topics 重做 | `content/topics/` 有 ≥2 个待合并 topic | 合并后的新 topic 文件 |
 | `/review-topics` | 对主题进行深度拷问和背景研究，支持主题合并模式 | 已完成 `/find-popular-topics`，或已有确认主题 | `content/reference/{ts}-{topic}.md` |
+| `/archive-topic` | 归档过期或被替代的 topic(支持单文件/--batch/--auto),从 find-popular-topics 候选池排除 | `content/topics/` 有待归档文件 | 归档到 `content/topics/archive/` |
 | `/review-reference` | 派遣 2-4 个 librarian agent 并行验证每条数据，6+ 次 web search 交叉验证 | 已完成 `/review-topics`，`content/reference/` 有资料 | 修正意见（对话中），确认后改文件 |
 | `/create-draft` | 加载 humanizer + writer-style + content-research-writer 生成 AI 去味的中文草稿 | 已完成 `/review-reference`，参考资料已确认 | `content/draft/{ts}-{topic}.md` |
 | `/review-draft` | 逐条检查 StyleRule（6 条核心规则）+ 数据核对 + 逻辑审核 | 已完成 `/create-draft`，`content/draft/` 有草稿 | 审核意见（对话中） |
