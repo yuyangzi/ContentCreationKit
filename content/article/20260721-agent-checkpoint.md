@@ -259,7 +259,9 @@ DeltaChannel 的 reducer（reducer，增量合并器）在**读取时**运行，
 
 `snapshot_frequency` 参数控制完整快照的频率。频率越低，存储越省，但重建状态的查找路径越长。50 是一个平衡点——既不会让查找路径超过 100 步，又能在长对话中维持 20 倍以上的压缩比。
 
-与此同时，社区也在探索将 checkpoint 抽象为跨框架的 Agent 状态持久化标准，例如 langmcp（连接 LangGraph checkpointers 的 MCP 服务）[^agent-checkpoint-mcp]，Google 的 A2A 协议也从 Agent 任务生命周期角度探索了类似的概念——两者的驱动力一致：当 Agent 进入多框架协作的生产阶段，checkpoint 不再是 LangGraph 的一个功能，而是 Agent 基础设施的必选项。
+与此同时，社区也在探索将 checkpoint 抽象为跨框架的 Agent 状态持久化标准，例如 langmcp（连接 LangGraph checkpointers 的 MCP 服务）[^agent-checkpoint-mcp]，Google 的 A2A 协议也从 Agent 任务生命周期角度探索了类似的概念。
+
+两者的驱动力一致：当 Agent 进入多框架协作的生产阶段，checkpoint 不再是 LangGraph 的一个功能，而是 Agent 基础设施的必选项。
 
 ---
 
