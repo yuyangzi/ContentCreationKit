@@ -1,6 +1,6 @@
 ---
 description: 审核参考资料
-model: Volcengine-Plan/DeepSeek-V4-Flash
+model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 ---
 
 # 审核参考资料
