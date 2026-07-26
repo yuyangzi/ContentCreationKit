@@ -28,7 +28,7 @@ LLM的输出是不确定的。同样的prompt，同样的上下文，模型可�
 
 用计算机科学的语言说：while循环的执行图（execution graph）是一个在运行时动态展开的、缺少结构约束的树。每一步都可能分叉到任意方向，而你对分叉逻辑没有任何形式化的控制手段。Prompt engineering是唯一的控制机制，而prompt engineering本质上是自然语言层面的启发式——它不可证明，不可验证，不可组合。
 
-这不仅仅是工程上的不优雅。Wei在2026年的论文"From Agent Loops to Structured Graphs"（arXiv:2604.11378）中用一个统一的调度器框架（scheduler-theoretic framework）把问题形式化了：Agent Loop和Graph Harness是调度器设计的两个维度——ready-set cardinality（就绪集基数，每次调度时有多少候选动作）和policy explicitness（策略显式度，调度逻辑在多大程度上是显式声明的）。裸while循环在policy explicitness维度上趋近于零。
+这不仅仅是工程上的不优雅。Wei在2026年的论文"From Agent Loops to Structured Graphs"（arXiv:2604.11378）中从调度器理论角度提出了一套形式化框架（scheduler-theoretic framework）：Agent Loop和Graph Harness是调度器设计的两个维度——ready-set cardinality（就绪集基数，每次调度时有多少候选动作）和policy explicitness（策略显式度，调度逻辑在多大程度上是显式声明的）。裸while循环在policy explicitness维度上趋近于零。
 
 换句话说，**while循环把"接下来做什么"这个最关键的决定，主要交给了LLM的黑箱推理**。你在控制层面的存在感，约等于零。
 
@@ -64,13 +64,13 @@ DAG在"控制权"上的升级体现在两个层面。
 
 Yue等人在2026年的综述"From Static Templates to Dynamic Runtime Graphs"（arXiv:2603.22386）中提出了ACG（Agentic Computation Graph，智能体计算图）作为统一抽象，将所有Agent工作流（模板化的、动态构建的、自适应的）统一在一个图式框架下描述。这篇综述的价值不在于提出了新东西，而在于证明了一个趋势：无论你的Agent是从静态模板展开还是运行时动态构建，最终的表达形式都是图。
 
-这个"一切都是图"的趋势不止停留在综述层面。Sarker等人的GraphBit论文（arXiv:2605.13848）给出了一个扎眼的实证数据。他们在GAIA benchmark上测了LangGraph和GraphBit的幻觉率——GraphBit的framework-induced hallucinations（框架引入的幻觉，区别于LLM自身的幻觉）是0%，而LangGraph是约47%。
+这个"一切都是图"的趋势不止停留在综述层面。Sarker等人的GraphBit论文（arXiv:2605.13848）给出了一个扎眼的实证数据。他们在GAIA benchmark（68个 curated 任务）上测了LangGraph和GraphBit在不同任务类型下的框架引入幻觉率（framework-induced hallucinations，区别于LLM自身的幻觉）——GraphBit在确定性引擎编排下为0%，而LangGraph整体约为47%（no-tool任务0%，local文档任务15.8%，web任务69.0%）。
 
-这个数字需要仔细读。47%是framework-induced，不是总幻觉率。意思是，在LangGraph的编排中，约有47%的错误路由是框架层面的图结构设计导致的——Agent本来应该走A路径，但因为图的拓扑设计不够精确，被引导到了B路径。GraphBit用Rust实现的类型化DAG，通过编译期类型检查消除了这层不确定性。
+这个数字需要仔细读。47%是framework-induced，不是总幻觉率，且主要集中在web任务上。意思是，在LangGraph的编排中，相当一部分错误路由是框架层面的图结构设计导致的——Agent本来应该走A路径，但因为图的拓扑设计不够精确，被引导到了B路径。GraphBit用Rust实现的类型化DAG，通过编译期类型检查消除了这层不确定性。
 
-**"0% framework-induced hallucinations"这个说法，翻译成人话就是：图本身不会产生幻觉——图的拓扑是确定性的，幻觉只可能来自于LLM节点内部的推理，不来自于图的结构**。
+**"0% framework-induced hallucinations"这个说法的含义是：图的拓扑不引入额外幻觉——框架的确定性执行引擎消除了路由层的不确定性，幻觉只可能来自于LLM节点内部的推理，不来自于图的结构**。
 
-GraphBit的这个结论，恰好印证了DAG背后的编程思维——声明式——在AI场景下的具体体现。你不再描述"怎么做"，你描述"结构是什么"——节点之间的依赖关系、并发约束、数据流向。系统根据拓扑自动决定执行顺序和调度策略。
+GraphBit的这个结论，恰好印证了DAG背后的编程思维（声明式）在AI场景下的具体体现。你不再描述"怎么做"，你描述"结构是什么"——节点之间的依赖关系、并发约束、数据流向。系统根据拓扑自动决定执行顺序和调度策略。
 
 但DAG也有一个硬伤：**不能回退**。你只能在拓扑允许的方向上前进，不能回到已经走过的节点重新执行。对于需要试错、重试、动态调整策略的复杂Agent任务来说，这是一个结构性的限制。
 
@@ -92,7 +92,7 @@ LangGraph的运行时机制是为这种"可探索性"设计的。它用Pregel式
 
 Wei的调度器框架（arXiv:2604.11378）在这里提供了一个理论解释。他把LangGraph式的有环图归类为"structured graphs with explicit scheduling policy"——这是一种policy explicitness达到高水平、同时ready-set cardinality也保持高位（因为环路允许回到历史状态）的设计。在调度器设计空间中，这是目前表达能力最强的配置。
 
-和DAG的声明式不同，有环图的编程思维进入了一种我称为**Graph原生**的模式：**你控制图的结构（节点和边的定义），系统控制图的遍历**。哪些边在什么条件下被激活、什么时候回退、什么时候终止，这些不再需要你手写代码——框架替你处理了。
+和DAG的声明式不同，有环图的编程思维进入了一种我称为**Graph原生**的模式：**你控制图的结构（节点和边的定义），系统控制图的遍历**。哪些边在什么条件下被激活、什么时候回退、什么时候终止，这些不再需要你手写调度代码——框架在遍历层面替你处理了。
 
 ---
 
@@ -102,15 +102,13 @@ Wei的调度器框架（arXiv:2604.11378）在这里提供了一个理论解释�
 
 有环图在计算机科学里有一个更正式的名字：有向有环图（directed cyclic graph）。它的理论根基是Petri网（1962年，Carl Adam Petri提出的并发系统建模工具），而Petri网的数学基础又可以追溯到图灵机和lambda演算的时代。BSP模型是Leslie Valiant在1990年提出的。Checkpoint/replay在分布式系统里用了三十年以上。
 
-但概念的老旧不意味着组合的老旧。Uber的调度系统用了DAG，CI/CD pipeline用了DAG，编译器用了DAG——但它们用DAG解决的问题和Agent Runtime用DAG解决的问题不是同一个问题。
+但概念的老旧不意味着组合的老旧。Uber的调度系统用了DAG，CI/CD pipeline也用了DAG——但它们用DAG解决的问题和Agent Runtime用DAG解决的问题不是同一个问题。
 
 传统DAG系统要解决的是：给定一个确定性的任务拓扑，如何最优地调度资源？
 
 Agent Runtime的DAG要解决的是：给定一个部分确定的结构框架，如何在LLM的不确定性输出和人的控制需求之间，找到一种可管理的平衡？
 
 **两个问题有不同的解**。
-
-Han在2026年发表的"Agent-Oriented Programming"（doi:10.5281/zenodo.19640249）中把Agent-Oriented Programming定位为LLM时代的新编程范式，定义了SAF（Semantic Agent Framework，语义化智能体框架）七元模型。这篇论文的一个核心论点是：Agent编程需要的抽象不是"让代码运行得更快"，而是"让不确定的智能行为变得可预测、可组合、可审计"。
 
 **Graph在Agent Runtime中的应用，不是发明了新东西，而是把旧概念移到了一个新问题的正确位置上**。1990年的BSP解决的是大规模并行计算中的同步问题，2026年的BSP解决的是LLM不确定性下的step-by-step可控性问题——同样的数学工具，不同的工程上下文。
 
@@ -124,7 +122,7 @@ Han在2026年发表的"Agent-Oriented Programming"（doi:10.5281/zenodo.19640249
 |------|------------------------|-------------|-------------------|
 | **谁控制执行路径** | 开发者通过prompt + 状态转移表间接控制 | 开发者定义拓扑，系统决定调度 | 开发者定义图结构，系统决定图遍历 |
 | **回退/重试** | 需要手写逻辑 | 不支持（无环限制） | 原生支持（checkpoint/replay） |
-| **并发安全** | 需要手写锁/同步 | DAG拓扑自动保证 | BSP + reducer保证确定性并发 |
+| **并发安全** | 需要手写锁/同步 | DAG拓扑保证执行顺序，节点内仍需同步 | BSP + reducer保证确定性并发 |
 | **可审计性** | 低（执行路径不可预知） | 中（拓扑可静态验证） | 高（每步有checkpoint） |
 | **表达能力** | 低（状态爆炸） | 中（无环限制） | 高（但可能死循环） |
 | **复杂度代价** | 低 | 中 | 高（BSP、checkpoint、reducer都需要理解） |
@@ -146,7 +144,7 @@ Graph原生编程再进一步：你不用写条件逻辑，也不用穷举所有
 
 但Graph不是万能药。
 
-有环图的第一个硬伤是**死循环**。DAG可以通过静态检测保证无环，但有环图恰恰允许了环路的存在。LangGraph的解决方案是设置最大迭代次数——这是一个工程上的兜底，不是理论上的解决。Gharzeddine和Saab在"Complete Cyclic Subtask Graphs"（arXiv:2604.22820）中分析了有环图在什么条件下有助于任务恢复、什么条件下反而增加协调开销。核心发现是：环路的收益和代价之间存在一个非线性拐点（超过一定环路密度后，新增环路的边际收益急剧下降，而协调开销线性增长）。
+有环图的第一个硬伤是**死循环**。DAG可以通过静态检测保证无环，但有环图恰恰允许了环路的存在。LangGraph的解决方案是设置最大迭代次数——这是一个工程上的兜底，不是理论上的解决。Gharzeddine和Saab在"Complete Cyclic Subtask Graphs"（arXiv:2604.22820）中分析了有环图在什么条件下有助于任务恢复、什么条件下反而增加协调开销。核心发现是：环路对任务性能的影响存在三个不同区间——环路密度较低时有助于任务恢复，但超过一定密度后协调开销反超收益。
 
 第二个局限是，**Graph不是对所有任务都更优**。Dennis等人的"In-Context Prompting Obsoletes Agent Orchestration for Procedural Tasks"（arXiv:2604.27891v2）对比了LangGraph编排和全量prompt在一次完成（in-context prompting）方案在流程化任务上的表现。结论是：对于结构清晰、步骤固定的任务，把所有信息一次性塞进prompt，效果优于构建复杂的图编排。Graph的优势体现在需要动态决策、多轮试错、条件分支复杂的任务上，而不是所有任务。
 
@@ -160,9 +158,7 @@ Graph并没有消灭循环。Graph给循环穿上了拓扑约束的紧身衣。
 
 ## 编程范式的悄然转向
 
-回到那篇掘金文章提出的质疑：Graph是旧概念换皮吗？
-
-从计算机科学的概念史看，是。从Agent工程的问题域看，不是。
+那篇掘金文章认为Graph是旧概念换皮。这个判断在计算机科学的概念史上成立，在Agent工程的问题域里不成立。
 
 每一次编程范式的变迁，本质上都是"可控性模型"的升级。结构化编程（goto → function）把控制流从任意跳转变成了可预测的调用图。面向对象（function → class）把状态管理的复杂度封装进了对象的边界内部。函数式编程（mutation → immutability）通过消除副作用来消除一整类并发bug。**每一次都是丢掉一些控制自由度，换回一些可推理、可验证、可组合性**。
 
@@ -185,7 +181,6 @@ Graph可能是第一个答案。不太可能是最后一个。
 - Dex Mareno, 2026-07-01, "Every AI Agent Framework Became a Graph in 2026 — and the Hard Part Is Still Unsolved", dreaming.press, [https://dreaming.press/posts/every-ai-agent-framework-became-a-graph.html](https://dreaming.press/posts/every-ai-agent-framework-became-a-graph.html)
 - Dennis et al., 2026, "In-Context Prompting Obsoletes Agent Orchestration for Procedural Tasks", arXiv:2604.27891v2
 - Gharzeddine & Saab, 2026, "Complete Cyclic Subtask Graphs for Tool-Using LLM Agents", arXiv:2604.22820
-- Han, 2026, "Agent-Oriented Programming: Foundations of a Semantic Paradigm for the LLM Era", doi:10.5281/zenodo.19640249, [https://zenodo.org/records/19640249](https://zenodo.org/records/19640249)
 - LangGraph官方文档, docs.langchain.com, [https://docs.langchain.com/oss/python/langgraph/graph-api](https://docs.langchain.com/oss/python/langgraph/graph-api)
 - Tony Bai（译介，Carlos E. Perez 原文）, "Loop Engineering才火两个月，硅谷已经卷出'Graph Engineering'了", tonybai.com
 - Microsoft, 2026-04, "Microsoft Agent Framework v1.0", graph-based Workflow API
