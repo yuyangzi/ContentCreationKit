@@ -1,6 +1,6 @@
 ---
 description: 文章图片生成提示词
-model: opencode/deepseek-v4-flash-free
+model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 ---
 
 # 生图提示词

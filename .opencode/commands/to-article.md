@@ -1,6 +1,6 @@
 ---
 description: 草稿转文章
-model: opencode/deepseek-v4-flash-free
+model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 ---
 
 # 草稿转文章

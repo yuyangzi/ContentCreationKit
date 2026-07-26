@@ -8,13 +8,13 @@
       "model": "Volcengine-Plan/DeepSeek-V4-Pro"
     },
     "librarian": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "opencode/ling-3.0-flash-free"
     },
     "explore": {
       "model": "opencode/deepseek-v4-flash-free"
     },
     "multimodal-looker": {
-      "model": "Volcengine-Plan/Doubao-Seed-2.0-pro"
+      "model": "Volcengine-Plan/Doubao-Seed-2.1-turbo"
     },
     "prometheus": {
       "model": "deepseek/deepseek-v4-pro"
@@ -23,7 +23,7 @@
       "model": "opencode/deepseek-v4-flash-free"
     },
     "momus": {
-      "model": "opencode/deepseek-v4-flash-free"
+      "model": "opencode/ling-3.0-flash-free"
     },
     "atlas": {
       "model": "Volcengine-Plan/MiniMax-M3"

@@ -42,3 +42,23 @@
 - The Verge: OpenAI is making big claims as it rolls out ChatGPT Health to everyone: https://www.theverge.com/ai-artificial-intelligence/970115/openai-chatgpt-health-launch-claims
 - TechCrunch: OpenAI makes ChatGPT Health available to all U.S. users: https://techcrunch.com/2026/07/23/openai-makes-chatgpt-health-available-to-all-u-s-users/
 - arXiv 预印本 (Google SymptomAI): submitted May 5, 2026
+
+## 2026-07-25 更新
+
+Google SymptomAI 的研究在发布后持续引发讨论，新的解读角度出现：
+
+**与医生基线的直接对比：AI 主动问诊 top-5 准确率 73% vs 医生 60%**
+
+TechTimes 等媒体进一步解读了 SymptomAI 研究中的医生对照组数据：在相同病例下，人类医生的 top-5 诊断准确率约为 60%，而 AI 主动追问模式的 top-5 准确率达到约 73%。这一对比的意义在于——此前 AI 诊断研究多与"被动问答模式"或"影像学专科"比较，而 SymptomAI 首次在"症状问诊"这一全科医生最核心的能力上，展示了 AI 超越普通临床医生水平的潜力。
+
+**交互范式的颠覆：从"用户描述症状"到"AI 主动追问"**
+
+更深层的变化是交互范式。当前所有消费级 AI 问诊产品（包括 ChatGPT Health）都采用"用户说、AI 答"的被动模式——用户描述什么，AI 就基于什么回答。而 SymptomAI 证明了一个反直觉的结论：**给 AI 越少信息（让它自己追问），最终诊断越准确**。这意味着未来的 AI 医疗产品可能不再是"聊天机器人"，而是"问诊 Agent"——它主导对话、收集信息、形成判断。
+
+**监管悖论的新维度**
+
+ChatGPT Health 上线后，关于"AI 能不能说自己比医生强"的讨论持续升温。OpenAI 官方口径在"超临床医生水平"和"不用于诊断"之间摇摆，反映出 AI 医疗面临的深层矛盾：技术上已经能做到，但法律和监管上不允许宣称。SymptomAI 的研究（作为 Google 的学术研究而非产品）绕开了这个问题，但一旦类似能力产品化，监管真空将更加凸显。
+
+**新增来源**：
+
+- TechTimes: Google AI Outdiagnoses Doctors in Study of Nearly 14,000 Real Patients: https://www.techtimes.com/articles/321455/20260724/google-ai-outdiagnoses-doctors-study-nearly-14000-real-patients.htm
