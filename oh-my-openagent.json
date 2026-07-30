@@ -32,7 +32,7 @@
       "model": "Volcengine-Plan/DeepSeek-V4-Flash"
     },
     "sisyphus": {
-      "model": "deepseek/deepseek-v4-pro"
+      "model": "deepseek/deepseek-v4-flash"
     }
   },
   "categories": {

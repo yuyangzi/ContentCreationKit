@@ -1,6 +1,6 @@
 ---
 description: 文章内容审核
-model: opencode/deepseek-v4-flash-free
+model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 ---
 
 # 文章内容审查
