@@ -1,6 +1,6 @@
 ---
 description: 草稿转文章
-model: Volcengine-Plan/Doubao-Seed-2.1-turbo
+model: deepseek/deepseek-v4-flash
 ---
 
 # 草稿转文章

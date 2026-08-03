@@ -1,6 +1,6 @@
 ---
 description: 审核文章草稿
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash
 ---
 
 # 审核草稿

@@ -1,6 +1,6 @@
 ---
 description: 归档过期或已被替代的 topic 文件
-model: opencode/deepseek-v4-flash-free
+model: deepseek/deepseek-v4-flash
 ---
 
 # 归档主题
