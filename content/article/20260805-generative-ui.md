@@ -1,10 +1,10 @@
 # 当界面不再持久：生成式 UI 如何改写 Agent 与人的交互边界
 
-> **导读**：上一篇文章讲了 AG-UI 协议——Agent 后端和前端的通信标准。但协议只是管道。管道里流的是什么？当 Agent 不仅能发文本，还能发组件描述、发完整界面时，"通信"这个词本身就不够用了。本文讨论生成式 UI 的架构哲学：三种控制模式、短暂性界面的意义、以及这对前端开发范式意味着什么。
+> **导读**：上一篇文章讲了 AG-UI 协议——Agent 后端和前端的通信标准。但协议只是管道。管道里流的是什么？当 Agent 不仅能发文本，还能发组件描述、发完整界面时，"通信"这个词本身就不够用了。本文讨论生成式 UI 的架构哲学：三种控制模式、短暂性界面的意义，以及前端开发范式的转变。
 
 ---
 
-2025 年 6 月，Andrej Karpathy 在推特上回应了一个 LLM 的 GUI 演示，附了一句耐人寻味的评价："像一辆无马车厢——它在新的范式里精确地复制了旧的界面。"他要说的不是这个 Demo 做得不好，而是我们正处在一个尴尬的过渡期：Agent 已经能动态生成界面了，但这些界面看起来还是我们熟悉的样子（按钮、表单、图表），和三十年前的 GUI 没什么区别。
+2025 年 6 月，Andrej Karpathy 在推特上回应了一个 LLM 的 GUI 演示，附了一句评价："像一辆无马车厢——它在新的范式里精确地复制了旧的界面。"他要说的不是这个 Demo 做得不好，而是我们正处在一个过渡期：Agent 已经能动态生成界面了，但这些界面看起来还是我们熟悉的样子（按钮、表单、图表），和三十年前的 GUI 没什么区别。
 
 这正是生成式 UI 这个领域的核心张力所在。技术能力已经越过了临界点，但我们对"界面应该长什么样"的想象，仍然被旧范式的引力牢牢抓住。
 
@@ -16,11 +16,11 @@
 
 这不是设计选择，是技术债。LLM 默认输出文本，前端默认渲染文本，两者之间没有中间地带。于是信息被迫坍缩成线性文字流——哪怕是需要表格对比的数据、需要可视化的趋势、需要分步确认的操作流程。
 
-Google Research 在 2025 年 11 月发表的论文 *Generative UI: LLMs are Effective UI Generators* 里做了一个实验：让用户对比 AI 生成的纯 Markdown 回答和 AI 生成的交互式 HTML 界面。结果不太令人意外——用户对 HTML 界面的偏好率高达 83%。
+Google Research 在 2025 年 11 月发表的论文 *Generative UI: LLMs are Effective UI Generators* 里做了一个实验：让用户对比 AI 生成的纯 Markdown 回答和 AI 生成的交互式 HTML 界面。结果不太令人意外：用户对 HTML 界面的偏好率高达 83%。
 
 83% 不是一个需要精细解读的数字。它说的是一句大白话：当信息本身具有结构时，用结构化界面呈现天然比用纯文本好。表格比段落更擅长对比，图表比数字更擅长趋势，表单比指令更擅长引导操作。聊天框的问题不在于它"不够好"，而在于它在很多场景里往往就是错误的媒介。
 
-于是生成式 UI 要回答的问题变得清晰了：**当 Agent 不只是"回答问题"，而是"完成任务"时，它需要什么形态的界面与之匹配？**
+于是生成式 UI 要回答的问题变得清晰了：当 Agent 不只是"回答问题"而是"完成任务"时，界面形态需要与之匹配。
 
 ---
 
@@ -34,7 +34,7 @@ CopilotKit 在 2026 年的开发者指南里提出了一个实用的分类框架
 
 这是最保守的一端。前端团队把所有可能用到的组件提前建好（图表、表单、审批卡片、进度面板），Agent 的任务只是从目录里挑一个、填上数据。Agent 不决定布局，不决定样式，甚至不决定"这个场景该用什么组件"——它只是给某个已注册的工具调用返回一个组件选择。
 
-你在 CopilotKit 里用 `useFrontendTool` 做的事，就是这个模式。工程上它几乎零风险：没有代码生成，没有沙箱，没有安全审计的额外负担。代价是每出现一个新的答案形态，就需要一个新组件——目录靠 PR 增长，不靠 prompt。
+你在 CopilotKit 里用 `useFrontendTool` 做的事，就是这个模式。工程上它几乎零风险：没有代码生成，没有沙箱，没有安全审计的额外负担。代价是每出现一个新的答案形态，就需要一个新组件——目录靠 PR 增长，不靠 prompt。据 CopilotKit 官方自述，已有超过 10% 的财富 500 强公司在用它做 Agent 的 UI 层。
 
 这种模式适合答案形态有界的场景：客服面板、财务仪表盘、预设的工作流审批。一旦布局空间是开放的，它的约束就会变成瓶颈。
 
@@ -118,13 +118,13 @@ Open-UI 提出了一个聪明的混合方案：在声明式目录里注册一个
 
 2. **"生成式 UI 等于让 LLM 直接输出 HTML。"** 开放式 HTML 生成确实存在，但它不是唯一的、也不该是默认的模式。声明式生成（Agent 编排组件目录）在 2026 年的生产采用率明显高于开放式——它更安全、更省 token、更容易保证视觉一致性。
 
-3. **"生成式 UI 是前端工程师的替代品。"** 正好相反。它把前端工程师的工作从"写每个页面的 JSX"推向了"设计 Agent 能安全使用的组件目录、建立验证流水线、管理前后端状态同步"——不是更少的工作，是更上游的工作，这需要比传统前端更深的设计系统和架构能力。
+3. **"生成式 UI 是前端工程师的替代品。"** 正好相反。它不是减少前端工作，而是把工作推向上游——具体的转变留待下一节讨论。
 
 ---
 
 ## 短暂性的哲学：当界面用完就消失
 
-前面讨论的是"怎么生成"，但更深层的问题是：**这些被生成出来的界面，应该活多久？**
+前面讨论的是"怎么生成"，但更深层的问题是界面的生命周期——这些被生成出来的界面应该活多久。
 
 传统 UI 的世界观里，界面是建筑物。你花几个月设计、开发、测试，然后它上线，稳定运行，成为产品的一部分。用户学习它，习惯它，依赖它。持久性是默认假设。
 
@@ -134,7 +134,7 @@ Google 论文把这种模式叫做"无限短暂界面"（infinite ephemeral inte
 
 设计界对这个概念的反应比工程界更早。Nielsen Norman Group 在 2024 年就提出了"结果导向设计"（outcome-oriented design）的概念：设计师的角色从"画组件"变成"定义约束和护栏"——哪些信息必须展示、哪些可以展示、哪些绝对不能展示。界面不再是最终交付物，界面变成了 AI 在约束条件下即时组装的临时产物。
 
-"短暂界面"在学术上可以追溯到 2013 年。Döring、Sylvester 和 Schmidt 在论文 *A Design Space for Ephemeral User Interfaces* 里讨论过用易逝材料（水、火、肥皂泡）构建的界面——这些界面不是为了持久，而是在当下的交互瞬间有意义。当时这还是一种实验艺术，没有 AI 什么事。现在 AI 把这个概念从材料实验推向了软件工程的日常。
+"短暂界面"在学术上可以追溯到 2013 年。Döring、Sylvester 和 Schmidt 在论文 *A Design Space for Ephemeral User Interfaces* 里讨论过用易逝材料（水、火、肥皂泡）构建的界面——这些界面不是为了持久，而是在当下的交互瞬间有意义。现在 AI 把这个概念从材料实验推向了软件工程的日常。
 
 但短暂性不只是哲学概念，它有具体的工程含义。
 
@@ -146,7 +146,7 @@ Google 论文把这种模式叫做"无限短暂界面"（infinite ephemeral inte
 
 ## 前端工程师变成了什么
 
-如果 Agent 能选组件、编排布局、甚至写界面了，前端工程师的价值在哪？
+如果 Agent 能选组件、编排布局、甚至写界面，前端工程师的角色需要重新定义。
 
 这个问题在 2025-2026 年的社区讨论里反复出现，回答也在逐渐收敛。一致的方向是：**前端工程师的角色向上移动了。**
 
@@ -163,7 +163,7 @@ Brad Frost（Atomic Design 的作者）在 2025 年底的一次讨论中把这�
 
 状态管理的位置也变了。传统的 SPA 里，状态在前端。Agent 驱动的应用里，状态需要在前端和 Agent 上下文之间双向流动。CopilotKit 的 shared state、AG-UI 的 STATE_DELTA 事件、A2UI 的 updateDataModel——这些机制解决的是同一个问题：让 Agent 的世界模型和用户看到的界面保持同步。
 
-有一种说法把这个转型总结得很到位：**从写 UI 变成引导 UI 的生成**。听起来像降级，其实是升级——你不是在做更少的事，你是在做更上游的事。
+有一种说法把这个转型总结得很到位：**从写 UI 变成引导 UI 的生成**。听起来像降级，其实是升级：你不是在做更少的事，你是在做更上游的事。
 
 ---
 
@@ -177,15 +177,15 @@ A2UI、Open-JSON-UI、MCP Apps 是载荷。它们定义 UI 描述的具体格式
 
 这个分层的妙处在于互操作性。同一个 Agent 可以用 AG-UI 管道，同时输出 A2UI 载荷给自己的应用，输出 MCP Apps 载荷给 ChatGPT——管道不变，载荷根据目标宿主切换。
 
-截至 2026 年 6 月，支持 AG-UI 集成的框架已覆盖大部分主流 Agent 生态：LangGraph、CrewAI、Google ADK、Microsoft Agent Framework、Claude Agent SDK、LlamaIndex 等。OpenAI Agent SDK 和 AWS Bedrock Agents 的集成也在推进中。据 CopilotKit 官方自述，已有超过 10% 的财富 500 强公司在用它做 Agent 的 UI 层（该数据为厂商自报，未见独立第三方统计）。
+截至 2026 年 6 月，支持 AG-UI 集成的框架已覆盖大部分主流 Agent 生态：LangGraph、CrewAI、Google ADK、Microsoft Agent Framework、Claude Agent SDK、LlamaIndex 等。OpenAI Agent SDK 和 AWS Bedrock Agents 的集成也在推进中。
 
 MCP Apps 则在解决另一个问题：如果你的 Agent 需要出现在别人的宿主里（比如 ChatGPT 或 Claude Desktop），你怎么把界面送进去？答案是 `ui://` 资源引用：MCP 工具的返回结果里带一个 UI 资源的 URI，宿主在沙箱化的 iframe 里渲染它。这种方式和 AG-UI 不是竞争关系——同一个 Agent 可以同时通过 AG-UI 连接自有应用、通过 MCP Apps 分发到外部宿主。
 
 ---
 
-"生成式 UI"听起来像一个终结态——界面的终极形态。但实际上，2026 年的生成式 UI 更像一个中间态。我们正在把 AI 的能力嫁接到现有的 UI 范式上，出来的产物（生成的表单、动态的图表、临时的仪表盘）仍然在模仿"持久界面"的样子。
+"生成式 UI"听起来像一个终结态：界面的终极形态。但实际上，2026 年的生成式 UI 更像一个中间态。我们正在把 AI 的能力嫁接到现有的 UI 范式上，出来的产物（生成的表单、动态的图表、临时的仪表盘）仍然在模仿"持久界面"的样子。
 
-真正值得问的不是"Agent 能不能生成 UI"，而是"当 Agent 能生成 UI 之后，我们还需要'UI'这个概念吗"。也许未来的交互形态根本不会走"界面"这条路——可能是纯语音、可能是空间手势、可能是某种我们还没有名字的东西。生成式 UI 作为概念，本身可能就是马车在想象汽车时能画出的最远的图景。
+真正值得问的不是"Agent 能不能生成 UI"，而是"当 Agent 能生成 UI 之后，我们还需要'UI'这个概念吗"。未来的交互形态未必还会走"界面"这条路——可能是纯语音、可能是空间手势、可能是某种我们还没有名字的东西。生成式 UI 作为概念，本身可能就是马车在想象汽车时能画出的最远的图景。
 
 但在这个过渡期里，理解它的架构哲学仍然重要。不是因为当前的方案是最终答案，而是因为它暴露了旧范式裂缝的位置——持久性不再是默认假设，控制权正在重新分配，前端工程师的工作内容正在从"我写什么界面"变成"我让 Agent 用什么语言描述界面"。
 
@@ -206,5 +206,4 @@ MCP Apps 则在解决另一个问题：如果你的 Agent 需要出现在别人�
 - Medium (iSolutions), "Ephemeral UI in AI-Generated, On-Demand Interfaces", 2025.03 — [https://isolutions.medium.com/ephemeral-ui-in-ai-generated-on-demand-interfaces-81dbc8cd4579](https://isolutions.medium.com/ephemeral-ui-in-ai-generated-on-demand-interfaces-81dbc8cd4579)
 - Google Cloud, "What is Generative UI? Building Agent-Powered Interfaces" — [https://cloud.google.com/discover/generative-ui](https://cloud.google.com/discover/generative-ui)
 - MarkTechPost, "Beyond the Chatbox: Generative UI, AG-UI, and the Stack Behind Agent-Driven Interfaces", 2026.01 — [https://www.marktechpost.com/2026/01/29/beyond-the-chatbox-generative-ui-ag-ui-and-the-stack-behind-agent-driven-interfaces](https://www.marktechpost.com/2026/01/29/beyond-the-chatbox-generative-ui-ag-ui-and-the-stack-behind-agent-driven-interfaces)
-- Towards AI, "The Fluid Interface: A Paradigm Shift to Agent-Driven Experience" — [https://pub.towardsai.net/the-fluid-interface](https://pub.towardsai.net/the-fluid-interface)
 - Roger Wong, "Generative UI and the Ephemeral Interface", 2025.11 — [https://rogerwong.me/2025/11/generative-ui-and-the-ephemeral-interface](https://rogerwong.me/2025/11/generative-ui-and-the-ephemeral-interface)
