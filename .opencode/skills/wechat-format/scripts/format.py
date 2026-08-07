@@ -286,6 +286,41 @@ def fix_cjk_bold_punctuation(text: str) -> str:
 _image_index: dict[str, Path] = {}
 _image_index_built = False
 
+# 跳过的大型/非内容目录（避免在慢速挂载盘上全量递归遍历，如 .venv/.git/node_modules）
+_SKIP_DIRS = {
+    ".git", ".svn", ".hg",
+    ".venv", "venv", ".env", "env",
+    "node_modules", "__pycache__", ".pytest_cache", ".mypy_cache",
+    ".ruff_cache", ".tox", ".nox", ".cache", ".next", ".nuxt",
+    "dist", "build", "target", "out",
+    ".worktrees", ".obsidian", ".trash",
+}
+
+
+def _iter_files(root: Path):
+    """迭代目录树，跳过 _SKIP_DIRS 中的重型目录。
+
+    用 os.scandir 而非 pathlib.rglob：scandir 的 is_dir()/is_file() 直接使用
+    目录项元数据（dir entry），不额外发起 stat 系统调用，在慢速挂载盘上快得多。
+    """
+    stack = [root]
+    while stack:
+        cur = stack.pop()
+        try:
+            with os.scandir(cur) as it:
+                for entry in it:
+                    name = entry.name
+                    try:
+                        if entry.is_dir(follow_symlinks=False):
+                            if name not in _SKIP_DIRS:
+                                stack.append(Path(entry.path))
+                        elif entry.is_file(follow_symlinks=False):
+                            yield Path(entry.path)
+                    except OSError:
+                        continue
+        except OSError:
+            continue
+
 
 def _build_image_index(search_roots: list[Path]) -> None:
     """惰性构建文件名→路径索引，一次构建，多次查询"""
@@ -295,12 +330,8 @@ def _build_image_index(search_roots: list[Path]) -> None:
     for search_root in search_roots:
         if not search_root.exists():
             continue
-        for p in search_root.rglob("*"):
-            try:
-                if p.is_file() and not p.is_symlink():
-                    _image_index[p.name] = p
-            except OSError:
-                pass
+        for p in _iter_files(search_root):
+            _image_index[p.name] = p
     _image_index_built = True
 
 
