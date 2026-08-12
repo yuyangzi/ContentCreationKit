@@ -62,7 +62,7 @@ content/ppt/      ❌ gitignore — HTML 演示文稿输出
 ### 数据验证工作流
 
 ```
-review-reference → 派遣 2-4 个 librarian agent 并行验证 → 同时执行 6+ 次 web search 交叉验证
+review-reference → 派遣 2-4 个 fact-check agent 并行验证 → 同时执行 6+ 次 web search 交叉验证
   → 综合输出修正意见清单 → 用户确认 → 执行修改
 ```
 
