@@ -18,7 +18,7 @@ description: 查找内容创作的热门主题
 
 ## 步骤
 
-1. **全源搜索**：派遣 1 个 `librarian` Agent 一次性完成全平台检索（中文 + 全球）。在 prompt 中附带"已探索话题索引"，要求优先提出新方向。覆盖平台：
+1. **全源搜索**：派遣 1 个 `research` Agent 一次性完成全平台检索（中文 + 全球）。在 prompt 中附带"已探索话题索引"，要求优先提出新方向。覆盖平台：
    - 中文平台：知乎热搜、微博热搜、36氪热榜、掘金热榜、InfoQ 资讯、少数派热榜、B站科技榜、抖音热搜、爱范儿快讯、澎湃热榜、腾讯新闻热点
    - 全球平台：BraveSearch（web/news/video）、Tavily Search、The Verge、9to5Mac、BBC News 等
    - Agent 自动做跨平台去重归并（同一事件的中英文源合并为一条候选）

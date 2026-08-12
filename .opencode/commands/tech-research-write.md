@@ -26,7 +26,7 @@ model: deepseek/deepseek-v4-pro
 
 | 阶段 | 加载 Skill |
 |------|-----------|
-| 阶段一（信息收集） | 无需加载（使用 librarian agent + web search） |
+| 阶段一（信息收集） | 无需加载（使用 research agent + web search） |
 | 阶段二（grill-me 拷问） | `grill-me` |
 | 阶段三（生成草稿） | `writer-style`（技术深读模式）+ `humanizer` + `content-research-writer` |
 
@@ -36,12 +36,12 @@ model: deepseek/deepseek-v4-pro
 
 1. **确认知识点**：向用户确认要研究的技术知识点，明确范围边界（如 "只讲 KV Cache 原理，不讲 FlashAttention"）。如果用户未指定边界，主动询问范围。
 
-2. **派遣 librarian agent 并行搜索**（至少 3 个，**同时发起**，`run_in_background=true`）：
+2. **派遣 research agent 并行搜索**（至少 3 个，**同时发起**，`run_in_background=true`）：
    - Agent 1 — 核心原理：搜索论文原文（arXiv）、官方文档、权威教程，提取核心概念与工作机制
    - Agent 2 — 最佳实践：搜索工程落地经验、常见误区、性能优化技巧、GitHub 上的实际使用案例
    - Agent 3 — 最新进展：搜索该知识点的最新变体、相关改进、社区讨论、替代方案对比
 
-3. **补充 web search**：对 librarian 未覆盖的盲区，使用 Tavily / BingSearch / ExaSearch 补搜。优先搜索中文社区（知乎、掘金、InfoQ）对应该知识点的讨论，了解国内读者的认知基础和常见困惑。
+3. **补充 web search**：对 research 未覆盖的盲区，使用 Tavily / BingSearch / ExaSearch 补搜。优先搜索中文社区（知乎、掘金、InfoQ）对应该知识点的讨论，了解国内读者的认知基础和常见困惑。
 
 4. **整理研究摘要**：将所有收集到的信息整合为结构化摘要，在对话中呈现给用户。摘要包含：
    - **核心概念**：一句话定义 + 工作机制简述（含公式/伪代码，如适用）
@@ -103,7 +103,7 @@ model: deepseek/deepseek-v4-pro
 
 **必须遵守：**
 
-- 阶段一的 librarian agent 必须并行派遣，不能串行（`run_in_background=true`）
+- 阶段一的 research agent 必须并行派遣，不能串行（`run_in_background=true`）
 - 阶段二的 grill-me 至少 3 轮，每轮只问一个问题
 - 所有技术数据必须可追溯到原始来源（论文、官方文档、权威博客）
 - 草稿必须符合 `StyleRule.md` 六条规则
