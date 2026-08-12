@@ -32,7 +32,7 @@ model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 
 **deep-tech 模式**：并行 3 个 fact-check（team_mode）：
 
-| Librarian | 焦点 | 验证内容 |
+| fact-check | 焦点 | 验证内容 |
 |-----------|------|----------|
 | fact-check-1 | 架构机制准确性 | arXiv 编号、技术细节、对比表数据 |
 | fact-check-2 | 商业数据时效性 | 价格、融资、估值、市值、参数量 |
