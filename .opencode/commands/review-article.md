@@ -15,8 +15,8 @@ model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 
 读取文章 frontmatter 的 `mode` 字段：
 
-- `mode = deep-tech` → 启用 **deep-tech 专项检查（步骤 7）** + **3 个并行 librarian 验证**
-- `mode = standard` 或缺失 → 跳过步骤 7，单 librarian 验证
+- `mode = deep-tech` → 启用 **deep-tech 专项检查（步骤 7）** + **3 个并行 fact-check 验证**
+- `mode = standard` 或缺失 → 跳过步骤 7，单 fact-check 验证
 
 ## 前置条件
 
@@ -30,15 +30,15 @@ model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 
 ## 加载 Skill
 
-**deep-tech 模式**：并行 3 个 librarian（team_mode）：
+**deep-tech 模式**：并行 3 个 fact-check（team_mode）：
 
 | Librarian | 焦点 | 验证内容 |
 |-----------|------|----------|
-| librarian-1 | 架构机制准确性 | arXiv 编号、技术细节、对比表数据 |
-| librarian-2 | 商业数据时效性 | 价格、融资、估值、市值、参数量 |
-| librarian-3 | 叙事张力 | 逻辑、过渡、哲学升华、局限性诚实 |
+| fact-check-1 | 架构机制准确性 | arXiv 编号、技术细节、对比表数据 |
+| fact-check-2 | 商业数据时效性 | 价格、融资、估值、市值、参数量 |
+| fact-check-3 | 叙事张力 | 逻辑、过渡、哲学升华、局限性诚实 |
 
-**standard 模式**：单 librarian 或 2 个 librarian（与现状一致）。
+**standard 模式**：单 fact-check 或 2 个 fact-check（与现状一致）。
 
 ## 步骤
 
@@ -97,7 +97,7 @@ model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 
 ### 7. deep-tech 专项检查（deep-tech 模式强制）
 
-仅当 `mode = deep-tech` 时执行，3 个并行 librarian 协同验证：
+仅当 `mode = deep-tech` 时执行，3 个并行 fact-check 协同验证：
 
 - [ ] **arXiv 编号准确性**：每个 arXiv 编号可在 arxiv.org 检索到，标题匹配
 - [ ] **技术对比公平性**：横向对比不抬高自家贬低对手，数据来源一致
@@ -135,7 +135,7 @@ model: Volcengine-Plan/Doubao-Seed-2.1-turbo
 - 8 个检查节按顺序逐项检查，不能跳过或笼统带过
 - 每项检查需给出具体问题位置（引用原文），不笼统说"已通过"
 - **deep-tech 模式**：必须完成步骤 7 的所有 7 个子项
-- **deep-tech 模式**：3 个 librarian 并行验证后必须综合分析
+- **deep-tech 模式**：3 个 fact-check 并行验证后必须综合分析
 - **conservative 模式**：核对 `changes.md` 与文章实际改动是否一致
 
 **禁止操作：**
