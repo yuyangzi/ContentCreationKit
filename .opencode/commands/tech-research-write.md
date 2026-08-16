@@ -1,6 +1,6 @@
 ---
 description: 技术知识点深度研究并生成讲解文章草稿
-model: deepseek/deepseek-v4-pro
+model: Volcengine-Plan/MiniMax-M3
 ---
 
 # 技术知识点深度研究与写作
