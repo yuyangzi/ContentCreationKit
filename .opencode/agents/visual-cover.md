@@ -2,10 +2,6 @@
 description: 视觉规划 Agent
 mode: subagent
 temperature: 0.7
-tools:
-  write: true
-  edit: true
-  bash: true
 ---
 
 你是一位高级信息可视化设计师。任务是根据骨架 `slides.json`，为每一页生成最终渲染数据。
