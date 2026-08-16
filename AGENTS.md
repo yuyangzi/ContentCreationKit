@@ -38,6 +38,66 @@ content/ppt/      ❌ gitignore — HTML 演示文稿输出
 
 `content/topics/archive/` — 已归档过期主题，不参与 `/find-popular-topics` 的饱和检查。
 
+## 已发布技术文章索引（content/article/）
+
+> 写技术文章前先查此索引，避免重复选题、便于续写系列。文件名 `agent-*.md` = 技术深读系列（deep-tech 模式）；`*-changes.md` 是润色改动清单（流程副产物，非文章）。
+
+### Agent 技术深读系列（0717–0811 主力线，可继续扩展）
+
+- `20260717-Claude-Code记忆系统-减法哲学` — 文件系统 vs 向量库做记忆，减法哲学与帕累托前沿
+- `20260718-Agent-Loop工程` — loop 停止条件、独立 evaluator 防自评分、reward hacking
+- `20260721-agent-checkpoint` — 断点续跑（LangGraph interrupt/Checkpointer）、生产化常见坑
+- `20260722-agent-hook` — 回调/事件总线，OpenTelemetry tracing 底层机制
+- `20260723-agent-harness` — Agent 生产骨架构建指南（沙箱、子代理、验证）
+- `20260726-agent-memory-management` — "向量检索≠记忆"，记忆三层进化（Mem0/Letta 对比）
+- `20260729-agent-composite-intent-orchestration` — 复合意图与四级编排：ReAct→LLMCompiler→Orchestrator-Worker→Hierarchical Multi-Agent
+- `20260801-多Agent通信` — MCP 无状态化 vs A2A Task 生命周期，协议分层分工
+- `20260802-ag-ui` — AG-UI 协议：Agent 与前端的事件流通信（27 种事件/7 类）
+- `20260805-generative-ui` — 生成式 UI 三种模式：静态/声明式/开放式
+- `20260807-agent-tool-hallucination` — 工具幻觉三分类、精度悬崖（51 工具→2%）、LiveMCPBench、四层防御
+- `20260809-agent-context-management` — 上下文=会生长的山：MemGPT/Letta 分页、KV Cache 内存墙
+- `20260810-Agent的Human-in-the-Loop` — 审批疲劳、风险分层 T1–T4、异步审批不阻塞
+- `20260811-late-chunking` — 颠倒切分与编码顺序解决跨块上下文丢失（需 mean pooling 模型）
+
+### RAG 检索线
+
+- `20260728-RAG召回效果评测验证与调优方案` — chunking/embedding 选型、Recall@K 评测基线
+- `20260811-late-chunking` — 见上（姊妹篇，同属检索优化线）
+
+### 学习路线图系列（教程型）
+
+- `20260614-总纲` / `阶段一-运行时心脏`（手写 Agent Loop）/ `阶段二-RAG与LangChain`
+- `20260722-阶段三-LangGraph与MCP`（状态机、interrupt、MCP server/client）
+
+### 模型技术拆解
+
+- `20260614-MiMo-Code-vs-Claude-Code` — 两种编程 Agent 架构路线分化
+- `20260623-Apple-Core-AI` — 设备端大模型框架深度解读
+- `20260708-DeepSeek推理芯片` — 软件优化到极限后转向硅片（昇腾 950DT day-0 协同设计）
+- `20260719-Kimi-K3` — 2.8T MoE 技术拆解（AttnRes、Quantile Balancing、Per-Head Muon）
+- `20260720-Kimi-K3算力熔断` — 最强开源模型撞上商业化天花板
+
+### 编程与开发效率
+
+- `20260630-AI编程工具冲出屏幕` — Codex 硬件、Cursor/OpenClaw 移动化
+- `20260702-AI速度鸿沟` — 写代码快 10 倍，软件交付没提速（PR 审查带宽打穿）
+- `20260702-Karpathy那条没有代码的Gist` — 知识编译优于知识检索
+- `20260726-AI又造新词-Graph替代Loop` — 编程范式从 Loop 转向 Graph（可观测/可恢复）
+
+### 产业与商业分析（新闻评论型，逐篇一行）
+
+- `20260612-AI价格战` Token 经济学拐点 / `20260616-Token-Jevons悖论` 越便宜花越多 / `20260629-DeepSeekV4峰谷定价` 定价权阳谋 / `20260710-AI模型价格战生态战` / `20260720-你的AI账单到底在买什么` 有用智能每美元计量革命
+- `20260628-DeepSeek加速-微软Lindy用脚投票` 推理提速 85% / `20260617-超级App-Agent化` 微信AI专属卡与支付宝阿宝 / `20260624-AI免费困局与字节破局` 豆包烧钱 Seedance 赚钱 / `20260712-大模型公司集体背叛英伟达` 自研芯片经济账 / `20260711-AI的命是电给的` 能源与水资源
+- `20260620-中国开源模型全球崛起` / `20260618-国产大模型进入综合效率时代` / `20260703-阿里腾讯字节AI总攻路线图` / `20260613-华为全栈Agent战略` 鸿蒙盘古昇腾 / `20260715-WAIC2026-三个信号` 手机变Agent/模型进系统/芯片追算力 / `20260624-DeepSeek全球急招Agent人才` 从大模型到 Agent 转向
+
+### 监管、安全与信任
+
+- `20260613-Claude-Fable-5-Jailbreak` 越狱是每个大模型的阿喀琉斯之踵 / `20260625-AI监管加速-三轨并行` / `20260626-AI之毒-信任崩塌` / `20260628-美国AI立法双轨` GAIA 法案与事故报告法 / `20260629-算法裁判` 学术信任危机 / `20260701-AI投毒元年` 学术炸弹到 pip install / `20260708-中国AI拟人化监管执行` 大厂集体下架聊天机器人 / `20260709-Claude隐写术检测中国用户` / `20260719-AI内容治理强制标注时代` / `20260721-gpt56-sol` Sol 作弊与越权安全红线 / `20260724-HuggingFace遭AI-Agent完全自主攻击` 网络安全新纪元
+
+### 社会与人文（分析评论型）
+
+- `20260615-从AGI到ASI` / `20260616-LLM写作与人的价值` / `20260618-AI压缩了执行力放大了判断力` / `20260619-AI的决策半径正在变大` / `20260622-AI-Agent落地大考` 个体 5 倍提效组织不到 20% / `20260626-Loop范式` 人类再一次退后 / `20260627-AI-Agent常驻办公时代` / `20260704-制造者悖论` 技术阶层上移 / `20260706-Meta的AI双标战` / `20260707-Agent规模化=分布式系统×LLM不确定性` / `20260709-世界模型两种哲学` / `20260714-AI认知分裂症` J-space 模型内外不一 / `20260716-AI短剧泡沫破裂前夜` / `20260730-卖脸盗脸失业` AI短剧对真人演员三重冲击 / `20260729-美国拟限制中国开源AI模型` Kimi-K3 引爆意识形态大战 / `20260802-韩日印媲美DeepSeek争夺战` 鉴抄大会结构性困境
+
 ## 数据验证规则（从踩坑中总结）
 
 **每个数据点都必须核实。不信任模型训练数据。**
@@ -94,15 +154,9 @@ review-reference → 派遣 2-4 个 fact-check agent 并行验证 → 同时执�
 
 ## Python 环境
 
-两个 Python venv，脚本必须从对应 venv 执行：
-
-```bash
-# 根目录（通用脚本）
-.venv/bin/python
-
-# video-generate 技能
-.opencode/skills/video-generate/.venv/bin/python
-```
+- 大部分技能脚本（image-generate、wechat-format、article-to-presentation 等）直接用系统 `python3` 运行，无 venv 依赖
+- **video-generate 技能**需要专属 venv（Unix 路径 `.opencode/skills/video-generate/.venv/bin/python`），首次使用需按该技能 SKILL.md 创建：`python3 -m venv .venv && pip install -r requirements.txt`
+- `.venv/` 在 `.gitignore` 中，不提交；脚本依赖 sibling imports，需在项目根目录或以技能脚本目录为工作目录运行
 
 ## 主题合并模式（review-topics 阶段高频操作）
 
@@ -150,24 +204,24 @@ scenes.json → scenes_with_assets.json → scenes_complete.json → scenes_fina
 
 ## 配图生成经验（image-generate 技能）
 
-- **模型**：Doubao Seedream 4.5（Volces Ark API，OpenAI 兼容接口）
-- **输出格式**：API 返回 JPEG，早期脚本校验仅接受 PNG 已修复
-- **尺寸**：2048×2048 方形图，prompt 中的"16:9 宽幅"无法通过 API 尺寸参数控制
-- **水印**：右下角自动添加平台"AI生成"水印
-- **流程**：/image-prompt 生成 2-3 组 prompt（写实摄影/矢量插画/3D 渲染三种风格）→ 选一组调用 image-generate 生成 → 存 `content/images/`
+- **模型**：Doubao Seedream 4.5，默认 `doubao-seedream-4-5-251128`（Volces Ark API，OpenAI 兼容接口）
+- **输出格式**：固定 PNG，脚本校验 PNG 文件头（`\x89PNG`），非 PNG 报错退出
+- **尺寸**：`size` 参数 `1K`/`2K`/`4K`（默认 `2K`，由 Ark 平台定义，非标准像素）
+- **水印**：`extra_body={"watermark": true}`，由 Ark 平台添加
+- **prompt 经 stdin 管道传入**（避免 shell 注入），文件名自动清理非 `[a-zA-Z0-9_\-中文]` 字符
+- **流程**：/image-prompt 生成 2-3 组 prompt（写实摄影/矢量插画/3D 渲染）→ 选一组调用 image-generate → 存 `content/images/`；`/to-wechat` 应在图片生成后执行以嵌入封面
 
 ## 命令与技能
 
-- **命令定义**：`.opencode/commands/` — 10 个 `.md` 文件
-- **自定义技能**：`.opencode/skills/` — 14 个技能目录（写作、排版、研究、视频等）
+- **命令定义**：`.opencode/commands/` — 13 个 `.md` 文件（含 `/tech-research-write`、`/merge-topics`、`/archive-topic`、`/self-style`）
+- **自定义技能**：`.opencode/skills/` — 12 个技能目录（写作、排版、研究、视频等）
+- `/tech-research-write`：技术知识点深读入口（研究摘要 → grill-me 拷问 → 草稿），多数 `agent-*` 技术深读文章由此产出
 - `/create-draft` 必须加载 `humanizer` + `writer-style` + `content-research-writer` 组合
 - `/to-wechat` 使用 `wechat-format` skill 的 `scripts/format.py`，默认 `newspaper` 主题
 - `article-to-presentation` 技能使用 Python HTML 模板引擎，输出单文件 `slides.html` 到 `content/ppt/`
-- `oh-my-openagent.json` 定义 agent 模型映射（visual-engineering 用 MiniMax-M3，ultrabrain/deep 用 DeepSeek-V4-Pro 等）
 
 ## Agent 配置要点
 
-- `opencode.jsonc.backup` 包含完整 MCP 配置（Tavily、BraveSearch、BingSearch、Jina、ExaSearch、TrendsHub、Playwright）——但备份文件可能过期，以运行时的实际配置为准
-- `.omo/run-continuation/` 存储会话 continuation JSON，由系统自动管理
+- `opencode.jsonc.bak` 包含 MCP 配置备份（Tavily、BraveSearch、BingSearch、Jina、ExaSearch、TrendsHub、Playwright）——但备份文件可能过期，以运行时的实际配置为准
 - `.worktrees/` 在 `.gitignore` 中（git worktree 支持）
-- `oh-my-openagent.json` 定义 agent 模型映射（visual-engineering 用 MiniMax-M3，ultrabrain/deep 用 DeepSeek-V4-Pro 等）
+- `oh-my-openagent.json.bak` 定义 agent 模型映射（visual-engineering 用 MiniMax-M3，ultrabrain/deep 用 DeepSeek-V4-Pro 等）
