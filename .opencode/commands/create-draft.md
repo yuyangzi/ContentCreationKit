@@ -1,6 +1,6 @@
 ---
 description: 创建草稿
-model: deepseek/deepseek-v4-pro
+model: opencode-go/deepseek-v4-pro
 ---
 
 # 创建草稿

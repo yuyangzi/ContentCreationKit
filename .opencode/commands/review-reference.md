@@ -1,6 +1,6 @@
 ---
 description: 审核参考资料
-model: Volcengine-Plan/Doubao-Seed-2.1-turbo
+model: opencode-go/minimax-m3
 ---
 
 # 审核参考资料

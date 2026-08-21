@@ -1,6 +1,6 @@
 ---
 description: 合并多个高度重叠的 topic 文件
-model: deepseek/deepseek-v4-pro
+model: opencode-go/deepseek-v4-pro
 ---
 
 # 合并主题

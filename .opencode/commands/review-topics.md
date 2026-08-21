@@ -1,6 +1,6 @@
 ---
 description: 审核内容创作的主题
-model: deepseek/deepseek-v4-pro
+model: opencode-go/minimax-m3
 ---
 
 # 审核主题

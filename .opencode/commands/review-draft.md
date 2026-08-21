@@ -1,6 +1,6 @@
 ---
 description: 审核文章草稿
-model: Volcengine-Plan/DeepSeek-V4-Flash
+model: opencode-go/deepseek-v4-flash
 ---
 
 # 审核草稿

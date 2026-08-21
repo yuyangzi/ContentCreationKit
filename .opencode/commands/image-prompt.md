@@ -1,6 +1,6 @@
 ---
 description: 文章图片生成提示词
-model: Volcengine-Plan/Doubao-Seed-2.1-turbo
+model: opencode-go/qwen3.7-plus
 ---
 
 # 生图提示词
