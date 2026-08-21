@@ -16,7 +16,7 @@
 bytes = 2 × L × h_kv × d × s × p
 ```
 
-L 是层数，h_kv 是 KV 头数（MQA 或 GQA 下，这个数会比注意力头数小），d 是每个头的维度，s 是当前序列长度，p 是精度（FP16 时是 2 字节）。前面的 2 是因为 K 和 V 各占一份。
+L 是层数，h_kv 是 KV 头数（MQA：Multi-Query Attention；GQA：Grouped Query Attention，Llama-3 用 GQA，这个数会比注意力头数小），d 是每个头的维度，s 是当前序列长度，p 是精度（FP16 时是 2 字节）。前面的 2 是因为 K 和 V 各占一份。
 
 拿 Llama-3-8B 举例：32 层、8 个 KV 头、head_dim 128、FP16 精度。32K 上下文时，KV cache 占用 4,294,967,296 字节，刚好 4 GB。128K 上下文下是 16 GB，和模型权重本身打平。
 
@@ -52,15 +52,15 @@ prefill 结束，decode 阶段开始。每生成一个 token，账本就多一�
 
 - **page（页） → KV block**
 - **page table（页表） → block table**
-- **TLB → block cache（GPU kernel 内缓存）**
+- **TLB（Translation Lookaside Buffer）→ block cache（GPU kernel 内缓存）**
 - **进程 → 一次推理请求**
 - **fork 时的 copy-on-write → beam search 共享同一组物理 block，谁要写就复制一份再写**
 
 把 KV cache 切成固定大小的 block（vLLM 默认 16 个 token 一个 block），每个 block 独立分配在物理显存里的任意位置。每个请求维护一张 block table，记录"第几个逻辑 block 映射到哪块物理 block"。逻辑顺序由 block table 维护，物理位置可以分散。
 
-回到之前的 50 token 请求。它需要 4 个 block（16 × 4 = 64），最后一个 block 只填了 2 个 token，还有 14 个 token 的空位。**浪费被限制在了一个 block 内部**：vLLM 的整体利用率是 50/64 ≈ 78%，而在传统连续分配下只有 50/2048 ≈ 2.4%。
+回到之前的 50 token 请求。它需要 4 个 block（16 × 4 = 64），最后一个 block 只填了 2 个 token，还有 14 个 token 的空位。**浪费被限制在了一个 block 内部**：在这个例子里，利用率是 50/64 ≈ 78%，而在传统连续分配下只有 50/2048 ≈ 2.4%。
 
-论文里给的数据更直接：vLLM 比 FasterTransformer 在 ShareGPT 上吞吐最高 22 倍，比 Orca 高 2.7 到 8 倍，长序列场景优势更明显。代价是 PagedAttention 的 attention kernel 本身比 FasterTransformer 的连续版本慢 20-26%，因为 block 不连续，访存模式更散。但端到端对比下，显存利用率上去了，能并发的请求数大幅增加，整体吞吐仍然胜出。
+论文里给的数据更直接：vLLM 比 FasterTransformer 在 ShareGPT 上吞吐最高 22 倍，比 Orca（Max 预留基线）高 2.7 到 8 倍，长序列场景优势更明显。代价是 PagedAttention 的 attention kernel 本身比 FasterTransformer 的连续版本慢 20-26%，因为 block 不连续，访存模式更散；短序列、小并发场景下，这个代价会吃掉部分吞吐优势。但端到端对比下，显存利用率上去了，能并发的请求数大幅增加，整体吞吐仍然胜出。
 
 beam search 的共享问题也顺手解决了。多个候选序列的 block table 可以指向同一组物理 block，谁要修改这块数据（追加新 token），谁就触发 copy-on-write，把共享的那份复制一份再写。
 
@@ -90,25 +90,27 @@ from vllm import LLM
 llm = LLM(model="...", enable_prefix_caching=True)
 ```
 
-vLLM v1 之后默认开启且几乎零开销。
+vLLM v1 之后默认开启，hash 计算开销显著降低。
 
-vLLM 论文里给了一组数据：一个 341 token 的 few-shot 前缀，启用 prefix cache 后吞吐达到原来 Orca 的 3.58 倍。
+vLLM 论文里给了一组数据：一个 341 token 的 few-shot 前缀，启用 prefix cache 后吞吐达到原来 Orca（Oracle 上界基线）的 3.58 倍。
 
 还有一种更细的方案是 SGLang 的 RadixAttention。它用 radix tree（基数树）来组织前缀缓存，树的边可以携带可变长度的 token 序列，能在更细的粒度上匹配最长公共前缀。和 vLLM 的 block 粒度 hash 表相比，radix tree 粒度更细，命中率可能更高。SGLang 论文里给的数据是 RadixAttention 配合 cache-aware 调度，整体吞吐最高 6.4 倍，延迟最多降低 3.7 倍。
 
-两种方案的核心差异：**vLLM 是 block 粒度的 hash 表，SGLang 是 token 粒度的 radix 树**。前者实现简单，匹配速度快；后者粒度细，理论命中率更高。生产上选哪个，取决于请求的多样性和工程上的取舍。
+两种方案的核心差异：**vLLM 是 block 粒度的 hash 表，SGLang 是 token 粒度的 radix 树**。前者实现简单，匹配速度快；后者粒度细，理论命中率更高，但树操作引入工程复杂度代价。生产上选哪个，取决于请求的多样性和工程上的取舍。
 
-到这里，KV cache 的故事基本讲完。一个请求进来、算账、记账，第二个请求进来、查账。PagedAttention 解决了"账本怎么放得不浪费"，前缀缓存解决了"账本怎么不被重复算"。
+需要看到的是，前缀缓存本身不是免费午餐。hash 冲突概率极低但理论上存在，模型权重更新后旧缓存会全部失效，前缀缓存占用的显存本身要参与全局调度、挤压新请求空间。淘汰策略上，vLLM 按 block 粒度驱逐，SGLang 按 radix 子树驱逐，这是两种方案在工程取舍上的另一个分水岭。
+
+到这里，KV cache 这条主线基本讲完。一个请求进来、算账、记账，第二个请求进来、查账。PagedAttention 解决了"账本怎么放得不浪费"，前缀缓存解决了"账本怎么不被重复算"。
 
 ## 五、这条路还在往哪走
 
 PagedAttention 和前缀缓存是 2023 年的工作。之后的几年里，KV cache 的故事沿着三条线索继续展开。
 
-**第一条线索是压缩。** KIVI 这篇工作发现，Key 矩阵的数值在通道维度上分布不均，Value 矩阵的数值在 token 维度上分布不均，所以可以用非对称的 2-bit 量化：Key 按通道量化、Value 按 token 量化。在不微调模型的前提下，KV cache 的峰值内存压缩 2.6 倍，吞吐提升 2.35-3.47 倍。更激进的 KVQuant 把 KV 压到 3-bit，困惑度退化不到 0.1，让 LLaMA-7B 在单张 A100-80GB 上能跑 1M token 的上下文。
+**第一条线索是压缩。** KIVI 这篇工作发现，Key 矩阵的数值在通道维度上分布不均，Value 矩阵的数值在 token 维度上分布不均，所以可以用非对称的 2-bit 量化：Key 按通道量化、Value 按 token 量化。在不微调模型的前提下，峰值内存（含模型权重）压缩 2.6 倍，吞吐提升 2.35-3.47 倍。更激进的 KVQuant 把 KV 压到 3-bit，困惑度退化不到 0.1，让 LLaMA-7B 在单张 A100-80GB 上能跑 1M token 的上下文。
 
 **第二条线索是分离式推理。** prefill 阶段和 decode 阶段的计算特征完全不同：prefill 是 compute-bound（计算密集），decode 是 memory-bound（访存密集）。把它们放在同一张卡上互相干扰，效率不高。Moonshot AI 的 Mooncake 架构把 prefill 和 decode 部署到不同节点，KV 缓存通过高速网络在节点之间流转，把 Kimi 实际处理的请求量提升 75%。
 
-**第三条线索是架构级革新。** 2026 年发布的 DeepSeek V4 在注意力机制本身上动手：引入 CSA（Compressed Sparse Attention），先把每 m 个 token 的 KV 压缩成一条，再做稀疏检索；引入 HCA（Heavily Compressed Attention）做更激进的压缩。结果是 1M 上下文下，KV cache 压到 V3.2 架构的约 1/10，推理 FLOPs 降到原来的 27%。
+**第三条线索是架构级革新。** 2026 年发布的 DeepSeek V4 在注意力机制本身上动手：引入 CSA（Compressed Sparse Attention），先把每 m 个 token 的 KV 压缩成一条，再做稀疏检索；引入 HCA（Heavily Compressed Attention）做更激进的压缩。结果是 1M 上下文下，KV cache 压到 V3.2 架构的约 1/10，V4-Pro 的单 token 推理 FLOPs 降到 V3.2 的 27%。
 
 压缩让单位 KV 占用更小，分离式推理让不同阶段的资源各得其所，架构革新让注意力本身的计算模式更高效。三条线索同时推进，KV cache 才从 2023 年那个"挤爆显存的麻烦"，变成 2026 年推理优化的主战场。
 
@@ -116,9 +118,9 @@ PagedAttention 和前缀缓存是 2023 年的工作。之后的几年里，KV ca
 
 文章开头的那个 4 GB 的账本，现在有了完整的解释。
 
-它一开始是 prefill 阶段算出来的、用来给 decode 阶段每步查询的 K/V 矩阵。然后在第一个请求的生命周期里，它按 PagedAttention 的方式被切成 16 token 一块、塞进 block table 维护的物理显存里。等到第二个请求进来，system prompt 和历史对话的那部分被 hash 命中，账本的相应部分直接被复用。最后，如果服务器同时跑太多请求，LRU 策略会把最久没被命中的 block 淘汰掉，腾出空间给新请求。
+它一开始是 prefill 阶段算出来的、用来给 decode 阶段每步查询的 K/V 矩阵。然后在第一个请求的生命周期里，它按 PagedAttention 的方式被切成 16 token 一块、塞进 block table 维护的物理显存里。等到第二个请求进来，system prompt 和历史对话的那部分被 hash 命中，账本的相应部分直接被复用。最后，如果服务器同时跑太多请求，LRU（Least Recently Used）策略会把最久没被命中的 block 淘汰掉，腾出空间给新请求。
 
-KV cache 一直是那个 KV cache，4 GB 一直是那 4 GB。但围绕它展开的工程创新，让一个 GPU 集群能同时服务的并发长对话数量大幅提升。
+KV cache 一直是那个 KV cache，但它的形态可以被分页、被共享、被压缩、被换出。围绕它展开的工程创新，让一个 GPU 集群能同时服务的并发长对话数量大幅提升。
 
 这套打法的内核，是把 GPU 显存当成一种"可以被分页、被共享、被压缩、被换出"的可调度资源。当 KV cache 还只是模型推理的副产物时，它是被动消耗；当它被当作一等公民来设计时，它就成了整个推理系统调度优化的支点。
 
@@ -132,6 +134,6 @@ KV cache 一直是那个 KV cache，4 GB 一直是那 4 GB。但围绕它展开�
 - Liu et al. *KIVI: A Tuning-Free Asymmetric 2bit Quantization for KV Cache*. 2024. https://arxiv.org/abs/2402.02750
 - Hooper et al. *KVQuant: Towards 10 Million Context Length LLM Inference via KV Cache Quantization*. 2024. https://arxiv.org/abs/2401.18079
 - Moonshot AI. *Mooncake: A KVCache-centric Disaggregated Architecture for LLM Serving*. 2024. https://arxiv.org/abs/2407.00079
-- DeepSeek-AI. *DeepSeek-V4 Technical Report*. 2026. https://arxiv.org/abs/2606.19348
+- DeepSeek-AI. *DeepSeek-V4: Towards Highly Efficient Million-Token Context Intelligence*. 2026. https://arxiv.org/abs/2606.19348
 - vLLM Automatic Prefix Caching 官方文档. https://docs.vllm.ai/en/latest/features/automatic_prefix_caching
 - Llama 3 模型配置. https://huggingface.co/meta-llama/Meta-Llama-3-8B
