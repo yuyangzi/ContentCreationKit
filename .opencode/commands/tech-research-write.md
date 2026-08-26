@@ -1,6 +1,6 @@
 ---
 description: 技术知识点深度研究并生成讲解文章草稿
-model: opencode-go/minimax-m3
+model: opencode-go/longcat-2.0
 ---
 
 # 技术知识点深度研究与写作
