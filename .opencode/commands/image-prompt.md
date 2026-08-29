@@ -1,6 +1,6 @@
 ---
 description: 文章图片生成提示词
-model: opencode-go/qwen3.7-plus
+model: opencode-go/qwen3.8-flash
 ---
 
 # 生图提示词
