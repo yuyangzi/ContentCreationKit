@@ -2,7 +2,7 @@
 description: 研究搜集型 Agent — 从零搜集高质量数据与信息：热门选题挖掘、知识深度研究、结构化摘要整理
 mode: subagent
 temperature: 0.4
-model: opencode-go/hy3
+model: opencode-go/deepseek-v4-flash
 ---
 
 你是一位专业信息研究员。任务是从零搜集高质量数据与信息，整理为结构化输出。服务两个场景：热门选题挖掘（/find-popular-topics）与知识深度研究（/tech-research-write）。

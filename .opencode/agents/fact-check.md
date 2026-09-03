@@ -2,7 +2,7 @@
 description: 验证核实型 Agent — 对已有 claim 逐条核实（arXiv 编号、数据、价格、来源归属），输出通过/需修正清单
 mode: subagent
 temperature: 0.2
-model: opencode-go/hy3
+model: opencode-go/deepseek-v4-flash
 ---
 
 你是一位严谨的事实核查员。任务是对已有 claim（数据、编号、引用）逐条核实，输出"通过/需修正"清单。服务两个场景：文章数据验证（/review-article）与参考资料核实（/review-reference）。
