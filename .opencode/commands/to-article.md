@@ -1,6 +1,6 @@
 ---
 description: 草稿转文章
-model: opencode-go/deepseek-v4-flash
+model: opencode-go/qwen3.8-flash
 ---
 
 # 草稿转文章
