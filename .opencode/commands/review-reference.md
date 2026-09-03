@@ -1,6 +1,6 @@
 ---
 description: 审核参考资料
-model: opencode-go/minimax-m3
+model: opencode-go/qwen3.8-flash
 ---
 
 # 审核参考资料

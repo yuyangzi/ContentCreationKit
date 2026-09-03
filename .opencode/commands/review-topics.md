@@ -1,6 +1,6 @@
 ---
 description: 审核内容创作的主题
-model: opencode-go/minimax-m3
+model: opencode-go/longcat-2.0
 ---
 
 # 审核主题
