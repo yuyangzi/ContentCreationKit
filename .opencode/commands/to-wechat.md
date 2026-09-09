@@ -1,6 +1,6 @@
 ---
 description: 文章转公众号排版
-model: opencode-go/deepseek-v4-flash
+model: amd/DeepSeek-V4-Flash
 ---
 
 # 转公众号排版
