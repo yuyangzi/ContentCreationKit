@@ -1,6 +1,6 @@
 ---
 description: 文章内容审核
-model: opencode-go/qwen3.8-flash
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # 文章内容审查

@@ -1,6 +1,6 @@
 ---
 description: 合并多个高度重叠的 topic 文件
-model: opencode-go/longcat-2.0
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # 合并主题

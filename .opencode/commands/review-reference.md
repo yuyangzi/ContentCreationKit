@@ -1,6 +1,6 @@
 ---
 description: 审核参考资料
-model: opencode-go/qwen3.8-flash
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # 审核参考资料

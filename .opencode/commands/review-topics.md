@@ -1,6 +1,6 @@
 ---
 description: 审核内容创作的主题
-model: opencode-go/longcat-2.0
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # 审核主题

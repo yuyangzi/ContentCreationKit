@@ -1,6 +1,7 @@
 ---
 description: 视觉规划 Agent
 mode: subagent
+model: opencode-go/deepseek-v4.1-flash
 temperature: 0.7
 ---
 

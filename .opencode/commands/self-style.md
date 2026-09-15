@@ -1,6 +1,6 @@
 ---
 description: 个人写作风格总结
-model: opencode-go/deepseek-v4-flash
+model: opencode-go/deepseek-v4.1-flash
 ---
 
 # 指令
