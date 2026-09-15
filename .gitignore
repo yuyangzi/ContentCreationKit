@@ -23,6 +23,7 @@ __pycache__/
 
 .omo/
 .superpowers/
+.opencode/category-router/
 
 ## 内容文件夹（本地内容，不纳入版本控制）
 
