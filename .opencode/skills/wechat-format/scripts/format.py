@@ -20,6 +20,7 @@ import uuid
 import webbrowser
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from urllib.parse import urlparse
 
 import markdown
 
@@ -406,46 +407,30 @@ def copy_markdown_images(text: str, input_dir: Path, output_dir: Path) -> str:
     return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", replace_md_img, text)
 
 
-def extract_links_as_footnotes(html: str) -> tuple[str, str]:
-    """提取外部链接转为脚注格式
+_ANCHOR_RE = re.compile(
+    r'<a\s[^>]*?(?<![-\w])href\s*=\s*"([^"]*)"[^>]*>(.*?)</a>',
+    re.DOTALL,
+)
 
-    返回: (处理后的 HTML, 脚注 HTML)
+
+def unwrap_external_links(html: str) -> str:
+    """把 http(s) 外链 anchor 拆成链接文字；mp.weixin 内链保留为 <a>。
+
+    - 仅处理 http(s)；# 锚点、mailto:、相对路径原样保留
+    - host 为 mp.weixin.qq.com 或 *.mp.weixin.qq.com 时保留 anchor
     """
-    footnotes = []
-    counter = [0]
-    ph_sup = FOOTNOTE_PLACEHOLDERS["footnote_sup"]
-    ph_section = FOOTNOTE_PLACEHOLDERS["footnote_section"]
-    ph_title = FOOTNOTE_PLACEHOLDERS["footnote_title"]
-    ph_item = FOOTNOTE_PLACEHOLDERS["footnote_item"]
 
     def replace_link(match):
-        full = match.group(0)
         href = match.group(1)
         text = match.group(2)
+        if not href.lower().startswith(("http://", "https://")):
+            return match.group(0)
+        host = (urlparse(href).hostname or "").lower()
+        if host == "mp.weixin.qq.com" or host.endswith(".mp.weixin.qq.com"):
+            return match.group(0)
+        return text
 
-        # 跳过锚点链接和非 http 链接
-        if not href.startswith("http"):
-            return full
-
-        counter[0] += 1
-        idx = counter[0]
-        footnotes.append((idx, text, href))
-        # 正文中加上标注
-        return f'{text}<sup style="{ph_sup}">[{idx}]</sup>'
-
-    processed = re.sub(r'<a[^>]*href="([^"]*)"[^>]*>(.*?)</a>', replace_link, html)
-
-    if not footnotes:
-        return processed, ""
-
-    # 生成脚注区
-    fn_html = f'<section style="{ph_section}">\n'
-    fn_html += f'<p style="{ph_title}">参考链接</p>\n'
-    for idx, text, href in footnotes:
-        fn_html += f'<p style="{ph_item}">[{idx}] {text}: {href}</p>\n'
-    fn_html += "</section>"
-
-    return processed, fn_html
+    return _ANCHOR_RE.sub(replace_link, html)
 
 
 def process_callouts(text: str) -> str:
@@ -1472,23 +1457,18 @@ def convert_callouts(html: str, style_map: dict) -> str:
 
 
 # ── 预览 HTML 生成 ──────────────────────────────────────────────────────
-def generate_preview(article_html: str, footnote_html: str, theme: dict,
+def generate_preview(article_html: str, theme: dict,
                      title: str, word_count: int, output_path: Path):
     """生成浏览器预览 HTML 文件"""
     template_path = TEMPLATE_DIR / "preview.html"
     template = template_path.read_text(encoding="utf-8")
-
-    # 合并文章和脚注
-    full_html = article_html
-    if footnote_html:
-        full_html += "\n" + footnote_html
 
     preview_html = (
         template
         .replace("{{TITLE}}", title)
         .replace("{{THEME_NAME}}", theme.get("name", ""))
         .replace("{{WORD_COUNT}}", f"{word_count:,}")
-        .replace("{{ARTICLE_HTML}}", full_html)
+        .replace("{{ARTICLE_HTML}}", article_html)
     )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -1535,13 +1515,10 @@ def truncate_html_preview(html: str, max_p_tags: int = 12) -> str:
     return html[:2000]
 
 
-def _render_single_theme(tid, theme_data, gallery_html, gallery_footnote):
+def _render_single_theme(tid, theme_data, gallery_html):
     """渲染单个主题（用于并行 gallery）"""
     rendered = inject_inline_styles(gallery_html, theme_data)
     rendered = convert_image_captions(rendered)
-    if gallery_footnote:
-        fn_rendered = inject_inline_styles(gallery_footnote, theme_data, skip_wrapper=True)
-        rendered += "\n" + fn_rendered
     return tid, rendered
 
 
@@ -1621,13 +1598,13 @@ def format_for_output(content: str, input_path: Path, theme: dict,
     """统一格式化入口，支持多种输出格式
 
     Args:
-        output_format: "wechat" (默认，预处理 + 脚注转换，不含样式注入)
-                      "html" (标准 HTML，保留 class，不内联样式)
-                      "plain" (纯文本 + 基本 HTML 结构)
+        output_format: "wechat"（默认，预处理 + 外链降级，不含样式注入）
+                      "html"（标准 HTML，保留原始 <a>，不内联样式）
+                      "plain"（纯文本 + 基本 HTML 结构）
 
     Returns:
-        dict with keys: html, footnote_html, title, word_count
-        (html/footnote_html 均未样式化，由调用方注入)
+        dict with keys: html, title, word_count
+        (html 未样式化，由调用方注入)
     """
     title = extract_title(content, input_path)
     word_count = count_words(content)
@@ -1648,34 +1625,17 @@ def format_for_output(content: str, input_path: Path, theme: dict,
     html = md_to_html(content)
 
     if output_format == "plain":
-        # 纯 HTML，不做脚注转换和样式注入
-        return {
-            "html": html,
-            "footnote_html": "",
-            "title": title,
-            "word_count": word_count,
-        }
-
-    # 外链 → 脚注
-    html, footnote_html = extract_links_as_footnotes(html)
+        # 纯 HTML，不做外链降级和样式注入
+        return {"html": html, "title": title, "word_count": word_count}
 
     if output_format == "html":
-        # 标准 HTML，脚注转换但不内联样式
-        return {
-            "html": html,
-            "footnote_html": footnote_html,
-            "title": title,
-            "word_count": word_count,
-        }
+        # 标准 HTML：保留原始 <a>
+        return {"html": html, "title": title, "word_count": word_count}
 
-    # 返回未样式化的 HTML（html/wechat 通用）
+    # wechat：外链降级为纯文本
     # 样式注入由调用方（main() / _render_single_theme()）统一处理
-    return {
-        "html": html,
-        "footnote_html": footnote_html,
-        "title": title,
-        "word_count": word_count,
-    }
+    html = unwrap_external_links(html)
+    return {"html": html, "title": title, "word_count": word_count}
 
 
 # ── 主流程 ──────────────────────────────────────────────────────────────
@@ -1723,26 +1683,21 @@ def main():
     # （返回未样式化的 HTML，样式注入由下方各分支统一处理）
     result = format_for_output(content, input_path, theme, output_dir, vault_root, args.format)
     html = result["html"]
-    footnote_html = result["footnote_html"]
 
     # 非微信格式：直接写入后返回
     if args.format != "wechat":
         out_path = output_dir / f"article.{args.format}.html"
         out_path.parent.mkdir(parents=True, exist_ok=True)
-        out_html = html
-        if footnote_html:
-            out_html += "\n" + footnote_html
-        out_path.write_text(out_html, encoding="utf-8")
+        out_path.write_text(html, encoding="utf-8")
         print(f"\n输出: {out_path}")
         return
 
     # 微信格式：继续样式注入处理（仅一次注入 — format_for_output 不再注入）
-    # 注: 下方 gallery 和单主题代码保持不变，html/footnote_html 均为未样式化
+    # 注: 下方 gallery 和单主题代码保持不变，html 均为未样式化
 
     # ── Gallery 模式：并行渲染多主题 ──
     if args.gallery:
         gallery_html = html
-        gallery_footnote = footnote_html
 
         theme_map = {}
         for tid in GALLERY_THEMES:
@@ -1765,7 +1720,7 @@ def main():
             futures = {
                 executor.submit(
                     _render_single_theme, tid, theme_map[tid],
-                    gallery_html, gallery_footnote
+                    gallery_html
                 ): tid
                 for tid in gallery_theme_ids
             }
@@ -1791,23 +1746,15 @@ def main():
 
     # ── 单主题模式 ──
     html = inject_inline_styles(html, theme)
-    if footnote_html:
-        footnote_html = inject_inline_styles(footnote_html, theme, skip_wrapper=True)
-
     html = convert_image_captions(html)
-    if footnote_html:
-        footnote_html = convert_image_captions(footnote_html)
 
     # 保存纯文章 HTML
-    full_article = html
-    if footnote_html:
-        full_article += "\n" + footnote_html
     article_path = output_dir / "article.html"
-    article_path.write_text(full_article, encoding="utf-8")
+    article_path.write_text(html, encoding="utf-8")
 
     # 保存预览 HTML
     preview_path = output_dir / "preview.html"
-    generate_preview(html, footnote_html, theme, title, word_count, preview_path)
+    generate_preview(html, theme, title, word_count, preview_path)
     print(f"\n排版成品: {preview_path}")
 
     if AUTO_OPEN and not args.no_open:

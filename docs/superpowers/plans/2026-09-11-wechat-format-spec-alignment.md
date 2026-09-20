@@ -280,7 +280,7 @@ python3 .opencode/skills/wechat-format/scripts/format.py --input content/article
 python3 .opencode/skills/wechat-format/scripts/format.py --input content/article/20260910-Transformer架构原理.md --theme newspaper --output /tmp/t1-plain --no-open --format plain
 python3 .opencode/skills/wechat-format/scripts/format.py --input content/article/20260910-Transformer架构原理.md --theme newspaper --output /tmp/t1-gallery --no-open --gallery
 grep -c "<sup" /tmp/t1-wechat/*/article.html
-grep -o "<a href" /tmp/t1-html/*/article.html | wc -l
+grep -o "<a href" /tmp/t1-html/*/article.html.html | wc -l
 ```
 Expected: 四分支均输出文件；wechat `article.html` 的 `<sup>` 计数为 0（该文无手写脚注）；html 分支保留 `<a href>`（>0）。
 
