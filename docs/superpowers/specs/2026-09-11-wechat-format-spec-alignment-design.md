@@ -132,7 +132,7 @@ return {...}
 |----|------|
 | `strong` | `background_color = rgba(accent_rgb, 0.12)`，删 `background` / `background_image` |
 | `h1/h2/h3/h4`、`th`、`blockquote`、`code_header`、`callout`、`code`、`ol_item_bullet` 的 `background` / `background_image` | 转实色 `background_color` = 解析出的实色；**但末 stop alpha=0 时改走算法第 4 步**（删除属性/ transparent），不落入「转实色」 |
-| `h2/h3/blockquote/callout` 的 `border_image` | 转实色 `border_color`（保留原 `border` 宽度/样式），删 `border_image`——**不得**转成 `background_color`（否则竖边框变整块底色） |
+| `h2/h3/blockquote/callout` 的 `border_image` | **直接删除** `border_image`，保留既有 `border_left` 实色（实测 9 处均已有 `border_left`；`sports` 的 `border_left` 无显式色 → 继承 `currentColor`，可接受）。**不得**把渐变转成 `background_color`（否则竖边框变整块底色） |
 | `hr` | 保留渐变（无文字承载，§4.1.3 允许） |
 
 **实色解析算法**（`migrate_themes_spec.py` 必须实现，覆盖真实数据）：
@@ -236,7 +236,7 @@ Fixture 覆盖：http 外链、`mp.weixin` 内链、`#` 锚点链接、`mailto:`
 | 文件 | 改动 |
 |------|------|
 | `.opencode/skills/wechat-format/scripts/format.py` | 删 `extract_links_as_footnotes`、`_auto_dark_mode`、`inject_dark_mode_attrs`；新增 `unwrap_external_links` + `urllib.parse` import；清 `footnote_html` 管道（含 :1810 与 docstring）；`style_pre` 标签替换；gallery 加豁免 |
-| `.opencode/skills/wechat-format/scripts/migrate_themes_spec.py` | 新增：批量删 `dark_mode` + 渐变/border_image 转实色（幂等） |
+| `.opencode/skills/wechat-format/scripts/migrate_themes_spec.py` | 新增：批量删 `dark_mode` + 文字渐变转实色 + 删 `border_image`（幂等） |
 | `.opencode/skills/wechat-format/scripts/test_spec_compliance.py` | 新增：规范回归测试 |
 | `.opencode/skills/wechat-format/themes/*.json` | 30 个：删 `dark_mode` + 渐变转实色 + 删 `pre.overflow_x` |
 | `.opencode/skills/wechat-format/templates/preview.html` | 新增深色模式提示行 |
@@ -254,7 +254,7 @@ Fixture 覆盖：http 外链、`mp.weixin` 内链、`#` 锚点链接、`mailto:`
 python3 .opencode/skills/wechat-format/scripts/test_spec_compliance.py
 
 # 2. 迁移脚本幂等性：约定脚本无变化不写盘，且固定序列化
-#    json.dumps(d, ensure_ascii=False, indent=2) + 文件末尾单个换行
+#    json.dumps(d, ensure_ascii=False, indent=2)，不加末尾换行（实测字节级复原）
 python3 .opencode/skills/wechat-format/scripts/migrate_themes_spec.py
 git diff --stat .opencode/skills/wechat-format/themes/   # 第二次应为空
 
@@ -325,6 +325,7 @@ Wave 1 内 T1-T3 相互独立；T4 依赖 T2；T5/T6 依赖 Wave 1+2。
 | Sisyphus（自审） | 2026-09-11 | 坏验收管道 | ✅ 已修 |
 | design-critic 兜底（general） | 2026-09-11 | B1-B4 阻断；H1-H5 高优先；Y1-Y6 建议 | ✅ 全部整合进本版 |
 | design-critic 兜底（general）·复核 | 2026-09-11 | B1-B4/H2-H5/Y1-Y6 全部落地；新发现 radial/conic 未覆盖 + alpha=0 分级衔接 + strong 几何变化 | ✅ 已补（算法扩为 `*-gradient`、表格衔接第4步、§5 加 strong 复核项与退路） |
+| plan-reviewer | 2026-09-11 | 无阻断；H1 border_image 规则与 spec 不一致（实为 spec 被回退）、Y1 换行注不一致（同上）；plan 侧死代码/断言窗口/定位描述 | ✅ spec 回改 border_image=直接删除、末尾不换行；plan 删 `BACKGROUND_KEYS`、窗口 120→200、定位改 :1262-1267 |
 
 ---
 
