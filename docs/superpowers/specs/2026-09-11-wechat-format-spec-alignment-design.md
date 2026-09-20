@@ -326,6 +326,9 @@ Wave 1 内 T1-T3 相互独立；T4 依赖 T2；T5/T6 依赖 Wave 1+2。
 | design-critic 兜底（general） | 2026-09-11 | B1-B4 阻断；H1-H5 高优先；Y1-Y6 建议 | ✅ 全部整合进本版 |
 | design-critic 兜底（general）·复核 | 2026-09-11 | B1-B4/H2-H5/Y1-Y6 全部落地；新发现 radial/conic 未覆盖 + alpha=0 分级衔接 + strong 几何变化 | ✅ 已补（算法扩为 `*-gradient`、表格衔接第4步、§5 加 strong 复核项与退路） |
 | plan-reviewer | 2026-09-11 | 无阻断；H1 border_image 规则与 spec 不一致（实为 spec 被回退）、Y1 换行注不一致（同上）；plan 侧死代码/断言窗口/定位描述 | ✅ spec 回改 border_image=直接删除、末尾不换行；plan 删 `BACKGROUND_KEYS`、窗口 120→200、定位改 :1262-1267 |
+| 实施（executing-plans） | 2026-09-11 | 发现既有 bug：`fix_cjk_spacing` 多链接同行占位符残留 | ✅ 已修（保护顺序改为 代码→图片→链接→裸URL），加回归测试 |
+| 实施验收（自动化） | 2026-09-11 | 34 项单测 PASS；newspaper/bytedance/midnight 三主题产物：无 data-darkmode-、无 `<pre>`、无 gradient(、无 border-image、无 !important；真实文章外链 0 残留、0 占位符 | ✅ 自动化通过 |
+| 实施验收（人工深色模式） | 2026-09-11 | 待用户在公众号编辑器「深色模式预览」+ 真机确认 | ⏳ 待办 |
 
 ---
 
