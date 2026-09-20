@@ -418,6 +418,9 @@ def unwrap_external_links(html: str) -> str:
 
     - 仅处理 http(s)；# 锚点、mailto:、相对路径原样保留
     - host 为 mp.weixin.qq.com 或 *.mp.weixin.qq.com 时保留 anchor
+
+    假设：输入来自 `md_to_html`，anchor 的 href 恒为双引号、标签闭合。
+    若更换渲染器需同步放宽正则（单引号 href / 无 href 的 <a> 不在范围内）。
     """
 
     def replace_link(match):

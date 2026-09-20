@@ -921,10 +921,10 @@ git commit -m "test: 增加微信规范端到端不变量回归"
 
 Run:
 ```bash
-grep -rn "外链转脚注\|data-darkmode-" .opencode/skills/wechat-format/SKILL.md .opencode/commands/to-wechat.md
+grep -rn "外链转脚注\|data-darkmode-\(color\|bgcolor\)" .opencode/skills/wechat-format/SKILL.md .opencode/commands/to-wechat.md
 ```
 Expected: 无输出（若出现，说明旧描述未清理）。
-（`<pre>` 仅允许出现在「不用 `<pre>`」这类新说明中，不参与本 grep。）
+（`<pre>` 与「不手写 `data-darkmode-*`」属新说明，不参与本 grep。）
 
 - [ ] **Step 6: 提交**
 

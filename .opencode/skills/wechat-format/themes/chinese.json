@@ -29,7 +29,8 @@
       "margin_top": "24px",
       "margin_bottom": "24px",
       "margin_left": "auto",
-      "margin_right": "auto"
+      "margin_right": "auto",
+      "background_color": "rgba(139,30,34,0.03)"
     },
     "h2": {
       "font_size": "20px",

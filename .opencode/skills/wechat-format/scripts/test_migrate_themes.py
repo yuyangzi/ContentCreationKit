@@ -31,13 +31,30 @@ class TestGradientParsing(unittest.TestCase):
         v = "repeating-linear-gradient(90deg, transparent 0, transparent 8px)"
         self.assertEqual(self.m.solid_from_gradient(v), (None, True))
 
-    def test_opaque_alpha_zero_is_delete(self):
-        v = "linear-gradient(#ffffff 0%, rgba(255,255,255,0) 100%)"
-        self.assertEqual(self.m.solid_from_gradient(v), (None, True))
+    def test_fade_out_uses_first_stop(self):
+        # 淡出型渐变（0.94 → 透明）：有意义的颜色在首 stop
+        v = ("linear-gradient(90deg, rgba(236,228,255,0.94) 0%, "
+             "rgba(236,228,255,0.2) 74%, rgba(236,228,255,0) 100%)")
+        self.assertEqual(self.m.solid_from_gradient(v), ("rgba(236,228,255,0.94)", False))
+
+    def test_radial_fade_out_uses_first_stop(self):
+        v = ("radial-gradient(80.23% 80.23% at 50% 88.37%, "
+             "rgba(174,78,245,0.22) 0%, rgba(174,78,245,0) 100%)")
+        self.assertEqual(self.m.solid_from_gradient(v), ("rgba(174,78,245,0.22)", False))
 
     def test_radial_gradient_supported(self):
         v = "radial-gradient(circle, #ff0 0%, #f00 100%)"
         self.assertEqual(self.m.solid_from_gradient(v), ("#f00", False))
+
+    def test_uniform_gradient_uses_stop_color(self):
+        v = "linear-gradient(rgba(75,110,245,0.35), rgba(75,110,245,0.35))"
+        self.assertEqual(self.m.solid_from_gradient(v), ("rgba(75,110,245,0.35)", False))
+
+    def test_borders_from_position_top_bottom(self):
+        self.assertEqual(
+            self.m.borders_from_position("center top, center bottom", "#111"),
+            {"border_top": "1px solid #111", "border_bottom": "1px solid #111"},
+        )
 
 
 class TestMigratedThemeInvariants(unittest.TestCase):
@@ -69,6 +86,32 @@ class TestMigratedThemeInvariants(unittest.TestCase):
         )
         hr_blob = json.dumps(newspaper["styles"]["hr"], ensure_ascii=False)
         self.assertIn("gradient", hr_blob)
+
+    def test_focus_titles_use_borders_not_background_color(self):
+        # 装饰细线不得被转成整块底色
+        for name in ("focus-blue", "focus-gold", "focus-red"):
+            d = json.loads((THEMES_DIR / f"{name}.json").read_text(encoding="utf-8"))
+            for key in ("h1", "h2", "h3"):
+                props = d["styles"][key]
+                self.assertNotIn("background_color", props, f"{name}.{key}")
+                self.assertNotIn("background_image", props, f"{name}.{key}")
+                self.assertIn("border_top", props, f"{name}.{key}")
+                self.assertIn("border_bottom", props, f"{name}.{key}")
+
+    def test_fade_out_gradients_keep_first_stop(self):
+        # 淡出型渐变应保留首 stop 实色，而非整段删除
+        expectations = {
+            ("lavender-dream", "h2"): "rgba(236,228,255,0.94)",
+            ("midnight", "h2"): "rgba(174,78,245,0.22)",
+            ("midnight", "h3"): "rgba(139,92,246,0.18)",
+            ("sunset-amber", "h2"): "rgba(236,191,132,0.24)",
+            ("wechat-native", "h2"): "rgba(7,193,96,0.12)",
+        }
+        for (name, key), expected in expectations.items():
+            d = json.loads((THEMES_DIR / f"{name}.json").read_text(encoding="utf-8"))
+            self.assertEqual(
+                d["styles"][key].get("background_color"), expected, f"{name}.{key}"
+            )
 
 
 if __name__ == "__main__":

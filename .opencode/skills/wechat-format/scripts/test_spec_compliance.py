@@ -122,6 +122,7 @@ class TestSpecInvariants(unittest.TestCase):
         "**重点** 与 `代码`。\n\n"
         "> 引用\n\n"
         "```python\nprint(1)\n```\n\n"
+        "---\n\n"
         ":::gallery[图]\n![a](a.png)\n:::\n\n"
         "手写脚注[^1]。\n\n[^1]: 注释内容\n"
     )
@@ -150,6 +151,11 @@ class TestSpecInvariants(unittest.TestCase):
         no_hr = re.sub(r"<hr[^>]*>", "", self.html)
         self.assertIsNone(re.search(r"[a-z-]*gradient\(", no_hr))
         self.assertNotIn("border-image", no_hr)
+
+    def test_hr_keeps_gradient(self):
+        m = re.search(r"<hr[^>]*>", self.html)
+        self.assertIsNotNone(m, "fixture 应产出 hr")
+        self.assertIn("gradient(", m.group(0))
 
     def test_no_important(self):
         self.assertNotIn("!important", self.html)

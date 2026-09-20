@@ -39,7 +39,8 @@
       "margin_bottom": "18px",
       "padding": "10px 14px",
       "border_left": "3px solid #d78a54",
-      "border_radius": "12px"
+      "border_radius": "12px",
+      "background_color": "rgba(236,191,132,0.24)"
     },
     "h3": {
       "font_size": "21px",

@@ -131,17 +131,19 @@ return {...}
 | 键 | 处理 |
 |----|------|
 | `strong` | `background_color = rgba(accent_rgb, 0.12)`，删 `background` / `background_image` |
-| `h1/h2/h3/h4`、`th`、`blockquote`、`code_header`、`callout`、`code`、`ol_item_bullet` 的 `background` / `background_image` | 转实色 `background_color` = 解析出的实色；**但末 stop alpha=0 时改走算法第 4 步**（删除属性/ transparent），不落入「转实色」 |
+| `h1/h2/h3/h4`、`th`、`blockquote`、`code_header`、`callout`、`code`、`ol_item_bullet` 的 `background` / `background_image` | 转实色 `background_color` = 解析出的实色；**但末 stop alpha=0 时回退首 stop**（淡出型渐变），全部透明才删除 |
+| 装饰型背景（伴随 `background_size`/`background_position`/`background_repeat`，如 `focus-*` 的上下 1px 细线） | 删除 `background_image` 及装饰属性，用实色 `border_top`/`border_bottom`（1px solid）还原；**绝不**铺 `background_color`（否则细线变整块底色） |
 | `h2/h3/blockquote/callout` 的 `border_image` | **直接删除** `border_image`，保留既有 `border_left` 实色（实测 9 处均已有 `border_left`；`sports` 的 `border_left` 无显式色 → 继承 `currentColor`，可接受）。**不得**把渐变转成 `background_color`（否则竖边框变整块底色） |
 | `hr` | 保留渐变（无文字承载，§4.1.3 允许） |
 
 **实色解析算法**（`migrate_themes_spec.py` 必须实现，覆盖真实数据）：
-1. 取属性值中**最后一个** `(linear|radial|conic)-gradient(...)` 函数（含 `repeating-` 与 `-webkit-` 前缀，如 `repeating-linear-gradient`）：用括号配对定位，**不能按逗号 split**（`focus-*` 的 `background_image` 是双逗号分隔渐变）。`radial-gradient` 真实存在于 `midnight.h2/h3`、部分 `th`，必须一并覆盖。
-2. 在该函数体内按**顶层逗号**切分 color stop，取**最后一个 stop**。
+1. 取属性值中**最后一个** `(linear|radial|conic)-gradient(...)` 函数（含 `repeating-` 与 `-webkit-` 前缀）：用括号配对定位，**不能按逗号 split**（`focus-*` 的 `background_image` 是双逗号分隔渐变）。`radial-gradient` 真实存在于 `midnight.h2/h3`、部分 `th`，必须一并覆盖。
+2. 在该函数体内按**顶层逗号**切分 token，只保留颜色 stop（忽略 `180deg`/`to bottom`/`circle` 等方向 token）。
 3. 剥离位置后缀（如 ` 100%`、` 0`、` 8px`），仅留颜色 token。
-4. alpha 归一：
-   - `rgba(r,g,b,0)` / `transparent`（含 `repeating-linear-gradient` 的透明末段，如 `chinese` h1）→ 视为「无可见底」：若该键渐变纯装饰，**删除整个属性**；否则 `background_color: transparent`。
+4. 颜色/alpha 归一：
+   - 取**末个彩色 stop**；末 stop 透明（alpha=0）时**回退到首 stop**（淡出型渐变的有意义颜色在首端，如 `lavender-dream.h2` 的 `0.94→0`）；首末均透明才**删除整个属性**（如 `chinese.h1` 的 repeating 透明条纹）。
    - 其余保留原 alpha（如 `rgba(50,104,145,0.1)` 保持 0.1）。
+5. 装饰型背景判定：属性含 `background_size`/`background_position`/`background_repeat` 时视为装饰线，走表格第 2 行规则（边框还原），不进 `background_color` 分支。
 
 **实施分级（可回滚）**：
 - **提交 1**：删引擎注入函数 + 调用（format.py）。此步后产物不再带 `data-darkmode-*`，但主题仍保留 `dark_mode`（无消费方，无副作用）。
@@ -329,6 +331,7 @@ Wave 1 内 T1-T3 相互独立；T4 依赖 T2；T5/T6 依赖 Wave 1+2。
 | 实施（executing-plans） | 2026-09-11 | 发现既有 bug：`fix_cjk_spacing` 多链接同行占位符残留 | ✅ 已修（保护顺序改为 代码→图片→链接→裸URL），加回归测试 |
 | 实施验收（自动化） | 2026-09-11 | 34 项单测 PASS；newspaper/bytedance/midnight 三主题产物：无 data-darkmode-、无 `<pre>`、无 gradient(、无 border-image、无 !important；真实文章外链 0 残留、0 占位符 | ✅ 自动化通过 |
 | 实施验收（人工深色模式） | 2026-09-11 | 待用户在公众号编辑器「深色模式预览」+ 真机确认 | ⏳ 待办 |
+| code-review（general，b85c156..fe50c02） | 2026-09-11 | C1 focus-* 标题装饰细线被误转为整块底色；I1 淡出型渐变被整段删除（应取首 stop）；I3 测试盲区（无 hr fixture、无 focus 断言） | ✅ 已修：算法加首-stop 回退 + 装饰线转边框；补 focus/lavender/hr 断言；spec §2 算法同步 |
 
 ---
 

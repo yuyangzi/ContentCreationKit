@@ -39,7 +39,8 @@
       "border_radius": "4px",
       "box_shadow": "0 0 15px rgba(174,78,245,0.15), inset 3px 0 0 0 #F472B6, inset 2px 0 0 0 #8B5CF6, inset 1px 0 0 0 #60A5FA",
       "margin_top": "32px",
-      "margin_bottom": "12px"
+      "margin_bottom": "12px",
+      "background_color": "rgba(174,78,245,0.22)"
     },
     "h3": {
       "font_size": "18px",
@@ -50,7 +51,8 @@
       "border_radius": "3px",
       "box_shadow": "0 0 12px rgba(139,92,246,0.12), inset 2.5px 0 0 0 #8B5CF6, inset 1.5px 0 0 0 #60A5FA",
       "margin_top": "28px",
-      "margin_bottom": "12px"
+      "margin_bottom": "12px",
+      "background_color": "rgba(139,92,246,0.18)"
     },
     "p": {
       "font_size": "15px",
