@@ -251,9 +251,9 @@ def fix_cjk_spacing(text: str) -> str:
             return f"\x00P{len(protected)-1}\x00"
 
         line = re.sub(r"`[^`]+`", _protect, line)            # 行内代码
-        line = re.sub(r"https?://\S+", _protect, line)       # URL
-        line = re.sub(r"!\[[^\]]*\]\([^)]*\)", _protect, line)  # 图片
-        line = re.sub(r"\[[^\]]*\]\([^)]*\)", _protect, line)   # 链接
+        line = re.sub(r"!\[[^\]]*\]\([^)]*\)", _protect, line)  # 图片（须先于 URL）
+        line = re.sub(r"\[[^\]]*\]\([^)]*\)", _protect, line)   # 链接（须先于 URL）
+        line = re.sub(r"https?://\S+", _protect, line)       # 裸 URL
 
         cjk = r"[\u4e00-\u9fff\u3400-\u4dbf\uf900-\ufaff]"
         latin = r"[a-zA-Z0-9]"

@@ -1,3 +1,5 @@
+import re
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -94,6 +96,87 @@ class TestGalleryWidthExemption(unittest.TestCase):
         idx = html.find('data-container="gallery-scroll"')
         self.assertNotEqual(idx, -1)
         self.assertIn("data-ignore-width", html[idx:idx + 200])
+
+
+REPO_ROOT = SCRIPT_DIR.parents[3]
+
+
+class TestCjkSpacingPreservesLinks(unittest.TestCase):
+    def test_multiple_links_on_one_line_intact(self):
+        line = ("正文 [外链](https://example.com/x) 与 "
+                "[内链](https://mp.weixin.qq.com/s/a)，还有 [锚点](#sec)。")
+        out = fmt.fix_cjk_spacing(line)
+        self.assertEqual(out, line)
+        self.assertNotIn("\x00P", out)
+
+    def test_bare_url_and_image_intact(self):
+        line = "裸链接 https://example.com/y 与 ![图](a.png)。"
+        self.assertEqual(fmt.fix_cjk_spacing(line), line)
+
+
+class TestSpecInvariants(unittest.TestCase):
+    FIXTURE = (
+        "# 标题\n\n"
+        "正文 [外链](https://example.com/x) 与 [内链](https://mp.weixin.qq.com/s/a)，"
+        "还有 [锚点](#sec) 与 [邮件](mailto:a@b.com)。\n\n"
+        "**重点** 与 `代码`。\n\n"
+        "> 引用\n\n"
+        "```python\nprint(1)\n```\n\n"
+        ":::gallery[图]\n![a](a.png)\n:::\n\n"
+        "手写脚注[^1]。\n\n[^1]: 注释内容\n"
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = Path(tempfile.mkdtemp())
+        cls.md = cls.tmp / "fixture.md"
+        cls.md.write_text(cls.FIXTURE, encoding="utf-8")
+        out = cls.tmp / "out"
+        subprocess.run(
+            [sys.executable, str(SCRIPT_DIR / "format.py"),
+             "--input", str(cls.md), "--theme", "newspaper",
+             "--output", str(out), "--no-open"],
+            check=True, cwd=str(REPO_ROOT),
+        )
+        cls.html = next(out.glob("*/article.html")).read_text(encoding="utf-8")
+
+    def test_no_darkmode(self):
+        self.assertNotIn("data-darkmode-", self.html)
+
+    def test_no_pre(self):
+        self.assertNotIn("<pre", self.html)
+
+    def test_no_gradient_except_hr(self):
+        no_hr = re.sub(r"<hr[^>]*>", "", self.html)
+        self.assertIsNone(re.search(r"[a-z-]*gradient\(", no_hr))
+        self.assertNotIn("border-image", no_hr)
+
+    def test_no_important(self):
+        self.assertNotIn("!important", self.html)
+
+    def test_gallery_has_ignore_width(self):
+        self.assertIn("data-ignore-width", self.html)
+
+    def test_external_unwrapped_internal_kept(self):
+        self.assertIn('href="https://mp.weixin.qq.com/s/a"', self.html)
+        self.assertIn('href="#sec"', self.html)
+        self.assertIn('href="mailto:a@b.com"', self.html)
+        self.assertNotIn('href="https://example.com/x"', self.html)
+
+    def test_manual_footnote_still_renders_sup(self):
+        self.assertIn("<sup", self.html)
+
+    def test_section_nesting_depth(self):
+        depth = 0
+        max_depth = 0
+        for m in re.finditer(r"<section\b|</section>", self.html):
+            if m.group(0).startswith("</"):
+                depth -= 1
+            else:
+                depth += 1
+                max_depth = max(max_depth, depth)
+        self.assertEqual(depth, 0, "section 标签不平衡")
+        self.assertLessEqual(max_depth, 10)
 
 
 if __name__ == "__main__":
