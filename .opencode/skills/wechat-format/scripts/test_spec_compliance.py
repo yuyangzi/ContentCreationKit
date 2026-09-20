@@ -59,5 +59,16 @@ class TestFootnotePipelineRemoval(unittest.TestCase):
         self.assertEqual(set(result.keys()), {"html", "title", "word_count"})
 
 
+class TestNoHandwrittenDarkmode(unittest.TestCase):
+    def test_no_darkmode_attrs_in_output(self):
+        theme = fmt.load_theme("newspaper")
+        html = fmt.inject_inline_styles(fmt.md_to_html("<p>正文</p>"), theme)
+        self.assertNotIn("data-darkmode-", html)
+
+    def test_darkmode_helper_functions_removed(self):
+        self.assertFalse(hasattr(fmt, "_auto_dark_mode"))
+        self.assertFalse(hasattr(fmt, "inject_dark_mode_attrs"))
+
+
 if __name__ == "__main__":
     unittest.main()

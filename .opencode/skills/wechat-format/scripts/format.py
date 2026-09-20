@@ -775,71 +775,6 @@ def build_style_string(props: dict) -> str:
     return ";".join(parts)
 
 
-def _auto_dark_mode(theme: dict) -> dict:
-    """自动补全深色模式配置
-
-    对于主题 dark_mode 中未声明的常见标签，根据其亮色样式自动生成深色模式颜色。
-    """
-    dark_mode = dict(theme.get("dark_mode", {}))
-    styles = theme.get("styles", {})
-
-    # 需要自动补全的标签及其深色模式默认色
-    auto_tags = {
-        "p":              {"color": "#c8c8c8"},
-        "strong":         {"color": "#e0a060"},  # 保持强调感
-        "em":             {"color": "#a0a0a0"},
-        "h3":             {"color": "#d0d0d0"},
-        "h4":             {"color": "#c8c8c8"},
-        "h5":             {"color": "#b0b0b0"},
-        "h6":             {"color": "#999999"},
-        "td":             {"color": "#c0c0c0", "bgcolor": "#1e1e1e"},
-        "list_item_text": {"color": "#c8c8c8"},
-        "footnote_item":  {"color": "#888888"},
-        "footnote_title": {"color": "#888888"},
-        "callout_content": {"color": "#c0c0c0"},
-    }
-
-    for tag, defaults in auto_tags.items():
-        if tag in dark_mode:
-            continue  # 主题已显式声明，不覆盖
-        if tag not in styles:
-            continue  # 主题不使用此标签
-        # 检查亮色模式的颜色，只在有明确浅色系颜色时才添加深色覆盖
-        tag_styles = styles[tag]
-        has_color = any(k in tag_styles for k in ("color", "background", "background_color"))
-        if has_color:
-            dark_mode[tag] = defaults
-
-    return dark_mode
-
-
-def inject_dark_mode_attrs(html: str, dark_mode: dict, style_map: dict) -> str:
-    """为微信深色模式添加 data-darkmode-* 属性
-
-    通过匹配元素的 style 字符串来定位目标元素，
-    然后添加对应的深色模式颜色覆盖。
-    """
-    for tag_key, dark_cfg in dark_mode.items():
-        if tag_key not in style_map:
-            continue
-        style_str = style_map[tag_key]
-        if not style_str:
-            continue
-        attrs = []
-        if "bgcolor" in dark_cfg:
-            attrs.append(f'data-darkmode-bgcolor="{dark_cfg["bgcolor"]}"')
-        if "color" in dark_cfg:
-            attrs.append(f'data-darkmode-color="{dark_cfg["color"]}"')
-        if not attrs:
-            continue
-        dark_attr_str = " ".join(attrs)
-        html = html.replace(
-            f'style="{style_str}"',
-            f'style="{style_str}" {dark_attr_str}',
-        )
-    return html
-
-
 _SH_KEYWORDS = set([
     'function', 'const', 'let', 'var', 'return', 'if', 'else', 'for', 'while',
     'import', 'from', 'export', 'class', 'def', 'print', 'async', 'await',
@@ -1329,11 +1264,6 @@ def inject_inline_styles(html: str, theme: dict, skip_wrapper: bool = False) -> 
     # === 8. 处理 wrapper（整体背景色，用于 dark/retro 等主题）===
     if "wrapper" in style_map and not skip_wrapper:
         html = f'<section style="{style_map["wrapper"]}">{html}</section>'
-
-    # === 9. 注入微信深色模式属性（自动补全缺失标签）===
-    dark_mode = _auto_dark_mode(theme)
-    if dark_mode:
-        html = inject_dark_mode_attrs(html, dark_mode, style_map)
 
     return html
 
