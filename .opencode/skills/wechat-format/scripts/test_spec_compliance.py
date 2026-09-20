@@ -85,5 +85,16 @@ class TestCodeBlockNoPre(unittest.TestCase):
         self.assertIn("white-space:pre-wrap", html)
 
 
+class TestGalleryWidthExemption(unittest.TestCase):
+    def test_gallery_scroll_has_data_ignore_width(self):
+        theme = fmt.load_theme("newspaper")
+        md = ":::gallery[截图]\n![a](a.png)\n![](b.png)\n:::\n"
+        content = fmt.process_fenced_containers(md)
+        html = fmt.inject_inline_styles(fmt.md_to_html(content), theme)
+        idx = html.find('data-container="gallery-scroll"')
+        self.assertNotEqual(idx, -1)
+        self.assertIn("data-ignore-width", html[idx:idx + 200])
+
+
 if __name__ == "__main__":
     unittest.main()

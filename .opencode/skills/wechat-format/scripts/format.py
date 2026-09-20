@@ -567,7 +567,7 @@ def process_fenced_containers(text: str) -> str:
                 result.append(
                     f'<section data-container="gallery">'
                     f'<p data-container="gallery-title">{container_title}</p>'
-                    f'<section data-container="gallery-scroll">'
+                    f'<section data-container="gallery-scroll" data-ignore-width>'
                     f'{inner_html}'
                     f'</section></section>'
                 )
@@ -921,8 +921,8 @@ def _inject_container_styles(html: str, theme: dict) -> str:
         f'<p data-container="gallery-title" style="{gallery_title}">'
     )
     html = html.replace(
-        '<section data-container="gallery-scroll">',
-        f'<section data-container="gallery-scroll" style="{gallery_scroll}">'
+        '<section data-container="gallery-scroll" data-ignore-width>',
+        f'<section data-container="gallery-scroll" data-ignore-width style="{gallery_scroll}">'
     )
     # gallery 内部图片需要特殊样式（覆盖默认 img 样式）
     html = re.sub(
