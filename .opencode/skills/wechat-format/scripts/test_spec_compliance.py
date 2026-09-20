@@ -70,5 +70,20 @@ class TestNoHandwrittenDarkmode(unittest.TestCase):
         self.assertFalse(hasattr(fmt, "inject_dark_mode_attrs"))
 
 
+class TestCodeBlockNoPre(unittest.TestCase):
+    def test_code_block_uses_section_not_pre(self):
+        theme = fmt.load_theme("newspaper")
+        md = "```python\ndef f():\n    return 1\n```\n"
+        html = fmt.inject_inline_styles(fmt.md_to_html(md), theme)
+        self.assertNotIn("<pre", html)
+        self.assertIn("return", html)
+
+    def test_code_block_has_wrap_styles(self):
+        theme = fmt.load_theme("newspaper")
+        md = "```python\nprint(1)\n```\n"
+        html = fmt.inject_inline_styles(fmt.md_to_html(md), theme)
+        self.assertIn("white-space:pre-wrap", html)
+
+
 if __name__ == "__main__":
     unittest.main()

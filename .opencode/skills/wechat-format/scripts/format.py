@@ -1179,10 +1179,12 @@ def inject_inline_styles(html: str, theme: dict, skip_wrapper: bool = False) -> 
             f'<span style="{dot_base};background:#27C93F"></span>'
             f'</section>'
         )
+        if "white-space" not in pre_style:
+            pre_style += ";white-space:pre-wrap;word-break:break-all"
         return (
             f'<section style="{code_block_style}">'
             f'{mac_header}'
-            f'<pre style="{pre_style}">{pre_content}</pre>'
+            f'<section style="{pre_style}">{pre_content}</section>'
             f'</section>'
         )
 
