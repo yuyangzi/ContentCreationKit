@@ -181,9 +181,9 @@ python3 {baseDir}/scripts/format.py \
 - **加粗标点修复**：`**文字，**` → `**文字**，`
 - **纯内联样式**：所有 CSS 写在 `style="..."` 上
 - **列表模拟**：`<ul>/<ol>` → `<section>` + flexbox
-- **外链转脚注**：正文标注 + 文末脚注
-- **语法高亮**：代码块着色 + Mac 风格工具栏
-- **深色模式**：自动生成 data-darkmode-* 属性
+- **外链降级**：http(s) 外链拆为纯文本（URL 不保留），`mp.weixin.qq.com` 内链保留为 `<a>`；`#` 锚点与 `mailto:` 不受影响
+- **语法高亮**：代码块着色 + Mac 风格工具栏（用 `<section>` 承载，非 `<pre>`）
+- **深色模式**：遵循微信平台自动转换算法，不手写 `data-darkmode-*`
 - **多类型 callout**：tip/note/important/warning/caution
 - **图说识别**：图片后斜体变居中灰色图说
 - **对话气泡**：`:::dialogue` 左右交替聊天气泡
@@ -193,3 +193,16 @@ python3 {baseDir}/scripts/format.py \
 - **对比卡片**：`:::compare[A vs B]` 两列对比
 - **人物引言**：`:::quote[人名]` 引言卡片
 - **表格斑马纹**：自动奇偶行背景色
+
+## 微信官方规范对齐
+
+对齐《微信公众平台编辑器插件开发规范》（developers.weixin.qq.com/doc/service/guide/product/plugin_spec.html）：
+
+| 官方条款 | 本 skill 做法 |
+|----------|---------------|
+| §1.4.4 横向滚动需宽度豁免 | `:::gallery` 滚动容器带 `data-ignore-width` |
+| §1.8 不用 `<pre>` 承载内容 | 代码块用 `<section>` + `white-space:pre-wrap` |
+| §2.1 嵌套 ≤10 层 | 结构最深层级 ≤4，回归测试锁定 |
+| §3 不设字体族 | 仅 code/pre 用等宽字体（合理例外） |
+| §4.1.2 文字背景不用渐变 | 30 主题文字渐变已迁移为实色；`hr` 无文字，保留渐变 |
+| §4.5.2 不用 `!important` | 全文不使用 |

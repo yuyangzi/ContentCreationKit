@@ -50,6 +50,7 @@ model: opencode-go/deepseek-v4.1-flash
   - 文章中的本地图片会自动复制到输出目录的 `images/` 子目录
   - 支持标准 Markdown 图片语法 `![alt](path)` 和 Obsidian wikilink 语法 `![[image.jpg]]`
   - 推荐将图片放在 `content/article/images/` 目录下
+- **外链处理**：正文 http(s) 外链会降级为纯文本、不保留 URL；`mp.weixin.qq.com` 内链保留可点击；`#` 锚点与 `mailto:` 不受影响；手写 `[^N]` 脚注仍支持
 
 ## 约束
 
