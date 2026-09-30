@@ -1,6 +1,6 @@
 ---
 description: 文章内容审核
-model: opencode-go/deepseek-v4.1-flash
+model: opencode-go/longcat-2.5-preview-free
 ---
 
 # 文章内容审查

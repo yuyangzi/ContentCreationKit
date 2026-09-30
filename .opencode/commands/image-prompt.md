@@ -1,6 +1,6 @@
 ---
 description: 文章图片生成提示词
-model: opencode-go/mimo-v2.5
+model: opencode-go/longcat-2.5-preview-free
 ---
 
 # 生图提示词
