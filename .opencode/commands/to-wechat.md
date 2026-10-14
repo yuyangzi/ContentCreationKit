@@ -1,6 +1,6 @@
 ---
 description: 文章转公众号排版
-model: opencode-go/deepseek-v4.1-flash
+model: opencode-go/mimo-v2.6-flash
 ---
 
 # 转公众号排版
