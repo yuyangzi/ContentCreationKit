@@ -1,6 +1,6 @@
 ---
 description: 审核文章草稿
-model: opencode-go/longcat-2.5-preview-free
+model: opencode-go/mimo-v2.6-flash
 ---
 
 # 审核草稿

@@ -1,6 +1,6 @@
 ---
 description: 文章内容审核
-model: opencode-go/longcat-2.5-preview-free
+model: opencode-go/mimo-v2.6-flash
 ---
 
 # 文章内容审查
