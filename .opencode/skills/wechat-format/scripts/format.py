@@ -756,6 +756,215 @@ def _build_dialogue_html(title: str, lines: list[str]) -> str:
     )
 
 
+# ── LaTeX 公式 → 微信兼容 HTML ──────────────────────────────────────────
+# 公众号不允许 <script>，MathJax/KaTeX 无法运行，因此把 $$...$$ 预渲染成
+# Unicode 数学字符 + 少量 sub/sup 标签（微信对 sub/sup 的降级是保留文字）。
+
+MATH_BLOCK_STYLE = (
+    "text-align:center;margin:22px 0;font-size:16px;color:#1a1a1a;"
+    "line-height:1.9;letter-spacing:1px;word-break:break-word"
+)
+
+_LATEX_SYMBOLS = {
+    # 希腊字母
+    "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε",
+    "zeta": "ζ", "eta": "η", "theta": "θ", "iota": "ι", "kappa": "κ",
+    "lambda": "λ", "mu": "μ", "nu": "ν", "xi": "ξ", "pi": "π", "rho": "ρ",
+    "sigma": "σ", "tau": "τ", "upsilon": "υ", "phi": "φ", "chi": "χ",
+    "psi": "ψ", "omega": "ω", "varepsilon": "ε", "varphi": "φ",
+    "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ", "Lambda": "Λ", "Xi": "Ξ",
+    "Pi": "Π", "Sigma": "Σ", "Phi": "Φ", "Psi": "Ψ", "Omega": "Ω",
+    # 运算符与关系
+    "cdot": "·", "times": "×", "div": "÷", "pm": "±", "mp": "∓",
+    "leq": "≤", "le": "≤", "geq": "≥", "ge": "≥", "neq": "≠", "ne": "≠",
+    "approx": "≈", "equiv": "≡", "sim": "∼", "propto": "∝", "ll": "≪",
+    "gg": "≫", "in": "∈", "notin": "∉", "ni": "∋", "subset": "⊂",
+    "supset": "⊃", "subseteq": "⊆", "cup": "∪", "cap": "∩",
+    "forall": "∀", "exists": "∃", "neg": "¬", "wedge": "∧", "vee": "∨",
+    "oplus": "⊕", "otimes": "⊗", "to": "→", "rightarrow": "→",
+    "leftarrow": "←", "Rightarrow": "⇒", "Leftrightarrow": "⇔",
+    "mapsto": "↦", "infty": "∞", "partial": "∂", "nabla": "∇",
+    "sum": "∑", "prod": "∏", "int": "∫", "oint": "∮", "ldots": "…",
+    "cdots": "⋯", "vdots": "⋮", "prime": "′", "angle": "∠", "perp": "⊥",
+    "parallel": "∥", "degree": "°", "hbar": "ℏ", "ell": "ℓ",
+    # 常用函数名（保持正体）
+    "log": "log", "ln": "ln", "exp": "exp", "max": "max", "min": "min",
+    "arg": "arg", "lim": "lim", "sup": "sup", "inf": "inf", "det": "det",
+    "sin": "sin", "cos": "cos", "tan": "tan", "mod": "mod",
+    # 结构性命令（吞掉）
+    "left": "", "right": "", "big": "", "Big": "", "bigg": "", "Bigg": "",
+    "bigl": "", "bigr": "", "Bigl": "", "Bigr": "", "displaystyle": "",
+    "textstyle": "", "limits": "", "nolimits": "", "mathrm": "", "begin": "",
+    "end": "", "quad": " ", "qquad": "  ", ",": "", ";": "", "!": "",
+    ":": "", "~": " ", "|": "‖", "mid": "|", "land": "∧", "lor": "∨",
+    "setminus": "∖", "cdotp": "·",
+}
+
+# 重音/上划线命令：读一个基底，再追加组合符号
+_LATEX_ACCENTS = {
+    "tilde": "\u0303", "widetilde": "\u0303", "hat": "\u0302",
+    "widehat": "\u0302", "bar": "\u0304", "overline": "\u0304",
+    "dot": "\u0307", "ddot": "\u0308", "vec": "\u20d7",
+    "underline": "\u0331", "check": "\u030c", "breve": "\u0306",
+}
+
+# 数学字体：能映射到 Unicode 就映射，映射不了则保留内层文字
+_LATEX_BB = {"E": "𝔼", "R": "ℝ", "N": "ℕ", "Z": "ℤ", "Q": "ℚ", "C": "ℂ",
+             "D": "𝔻", "P": "ℙ", "F": "𝔽", "B": "𝔹"}
+_LATEX_SCRIPT_EXC = {"E": "ℰ", "F": "ℱ", "H": "ℋ", "I": "ℐ", "L": "ℒ",
+                     "M": "ℳ", "R": "ℛ"}
+
+_SUB_SCRIPTS = {
+    "0": "₀", "1": "₁", "2": "₂", "3": "₃", "4": "₄", "5": "₅", "6": "₆",
+    "7": "₇", "8": "₈", "9": "₉", "a": "ₐ", "e": "ₑ", "h": "ₕ", "i": "ᵢ",
+    "j": "ⱼ", "k": "ₖ", "l": "ₗ", "m": "ₘ", "n": "ₙ", "o": "ₒ", "p": "ₚ",
+    "r": "ᵣ", "s": "ₛ", "t": "ₜ", "u": "ᵤ", "v": "ᵥ", "x": "ₓ", "+": "₊",
+    "-": "₋", "=": "₌", "(": "₍", ")": "₎",
+}
+_SUPER_SCRIPTS = {
+    "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶",
+    "7": "⁷", "8": "⁸", "9": "⁹", "a": "ᵃ", "b": "ᵇ", "c": "ᶜ", "d": "ᵈ",
+    "e": "ᵉ", "f": "ᶠ", "g": "ᵍ", "h": "ʰ", "i": "ⁱ", "j": "ʲ", "k": "ᵏ",
+    "l": "ˡ", "m": "ᵐ", "n": "ⁿ", "o": "ᵒ", "p": "ᵖ", "r": "ʳ", "s": "ˢ",
+    "t": "ᵗ", "u": "ᵘ", "v": "ᵛ", "w": "ʷ", "x": "ˣ", "y": "ʸ", "z": "ᶻ",
+    "+": "⁺", "-": "⁻", "=": "⁼", "(": "⁽", ")": "⁾", "n": "ⁿ",
+}
+
+
+def _skip_ws(s: str, i: int) -> int:
+    while i < len(s) and s[i] in " \t\n\r":
+        i += 1
+    return i
+
+
+def _read_group(s: str, i: int):
+    """读取 LaTeX 的 {..} 组（支持嵌套），无花括号时读单个 token。"""
+    i = _skip_ws(s, i)
+    if i >= len(s):
+        return "", i
+    if s[i] == "{":
+        depth, j = 0, i
+        while j < len(s):
+            if s[j] == "\\":
+                j += 2
+                continue
+            if s[j] == "{":
+                depth += 1
+            elif s[j] == "}":
+                depth -= 1
+                if depth == 0:
+                    return s[i + 1:j], j + 1
+            j += 1
+        return s[i + 1:], len(s)
+    if s[i] == "\\":
+        m = re.match(r"\\[a-zA-Z]+", s[i:])
+        if m:
+            return m.group(0), i + m.end()
+        return s[i:i + 2], i + 2
+    return s[i], i + 1
+
+
+def _style_map(text: str, offset: int) -> str:
+    """按 codepoint 映射加粗/双线/手写体字符，映射失败原样返回。"""
+    out = []
+    for ch in text:
+        if "A" <= ch <= "Z":
+            out.append(chr(offset + (ord(ch) - ord("A"))))
+        elif "a" <= ch <= "z":
+            out.append(chr(offset + 26 + (ord(ch) - ord("a"))))
+        elif "0" <= ch <= "9":
+            out.append(chr(offset + 52 + (ord(ch) - ord("0"))))
+        else:
+            out.append(ch)
+    return "".join(out)
+
+
+def _latex_to_text(tex: str) -> str:
+    """把 LaTeX 片段转成微信可显示的 Unicode 文本（含少量 sub/sup）。"""
+    out, i, n = [], 0, len(tex)
+    while i < n:
+        c = tex[i]
+        if c == "\\":
+            m = re.match(r"\\([a-zA-Z]+|.)", tex[i:])
+            if not m:
+                out.append(c)
+                i += 1
+                continue
+            name, i = m.group(1), i + m.end()
+            if name in ("frac", "dfrac", "tfrac", "cfrac"):
+                num, i = _read_group(tex, i)
+                den, i = _read_group(tex, i)
+                out.append(f"({_latex_to_text(num)})/({_latex_to_text(den)})")
+            elif name == "sqrt":
+                rad, i = _read_group(tex, i)
+                out.append(f"√({_latex_to_text(rad)})")
+            elif name in ("text", "textrm", "operatorname", "mathsf", "mbox",
+                          "textnormal", "bm", "boldsymbol", "mathbf"):
+                inner, i = _read_group(tex, i)
+                if name in ("boldsymbol", "mathbf"):
+                    inner = _style_map(inner.strip(), 0x1D400)
+                out.append(inner.strip())
+            elif name == "mathbb":
+                inner, i = _read_group(tex, i)
+                out.append("".join(_LATEX_BB.get(ch, ch) for ch in inner.strip()))
+            elif name in ("mathcal", "mathscr"):
+                inner, i = _read_group(tex, i)
+                inner = inner.strip()
+                mapped = []
+                for ch in inner:
+                    if ch in _LATEX_SCRIPT_EXC:
+                        mapped.append(_LATEX_SCRIPT_EXC[ch])
+                    elif "A" <= ch <= "Z":
+                        mapped.append(chr(0x1D49C + (ord(ch) - ord("A"))))
+                    else:
+                        mapped.append(ch)
+                out.append("".join(mapped))
+            elif name == "\\":
+                out.append("<br>")
+            elif name in _LATEX_ACCENTS:
+                base, i = _read_group(tex, i)
+                out.append(_latex_to_text(base) + _LATEX_ACCENTS[name])
+            elif name in _LATEX_SYMBOLS:
+                out.append(_LATEX_SYMBOLS[name])
+            # 未知命令静默丢弃，避免把 \command 暴露给读者
+            continue
+        if c in "{}":
+            i += 1
+            continue
+        if c in "^_":
+            i += 1
+            arg, i = _read_group(tex, i)
+            rendered = _latex_to_text(arg)
+            # 先剥掉内层 <sub>/<sup>，避免出现 sub 套 sub 的非法嵌套
+            plain = re.sub(r"<[^>]+>", "", rendered)
+            table = _SUPER_SCRIPTS if c == "^" else _SUB_SCRIPTS
+            tag = "sup" if c == "^" else "sub"
+            if plain and all(ch in table for ch in plain):
+                out.append("".join(table[ch] for ch in plain))
+            elif plain:
+                out.append(f"<{tag}>{plain}</{tag}>")
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def convert_latex_math(content: str) -> str:
+    """$$...$$ 显示公式 → 居中 HTML 块；跳过代码块内的 $ 符号。"""
+    def convert(chunk: str) -> str:
+        def repl(m):
+            tex = re.sub(r"\s*\n\s*", " ", m.group(1)).strip()
+            rendered = _latex_to_text(tex)
+            if not rendered:
+                return ""
+            return f'\n\n<p style="{MATH_BLOCK_STYLE}">{rendered}</p>\n\n'
+        return re.sub(r"\$\$([\s\S]+?)\$\$", repl, chunk)
+
+    parts = re.split(r"(```[\s\S]*?```)", content)
+    return "".join(convert(p) if not p.startswith("```") else p
+                   for p in parts)
+
+
 def md_to_html(content: str) -> str:
     """Markdown 转 HTML"""
     html = markdown.markdown(
@@ -1556,6 +1765,7 @@ def format_for_output(content: str, input_path: Path, theme: dict,
     output_dir.mkdir(parents=True, exist_ok=True)
     content = convert_wikilinks(content, vault_root, output_dir)
     content = copy_markdown_images(content, input_path.parent, output_dir)
+    content = convert_latex_math(content)
 
     html = md_to_html(content)
 
