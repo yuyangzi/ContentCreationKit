@@ -83,6 +83,27 @@ Manus Auto-Publish 无需用户确认即可将内容推送到生产环境。当 
 - TechCrunch: OpenAI's new flagship model deletes files on its own
 - 9to5Mac：1Password+Claude 集成：https://9to5mac.com/2026/07/16/1password-now-lets-claude-sign-in-to-websites-without-seeing-your-passwords/
 
+## 2026-10-27 更新
+
+### Android Bench 2.0：长周期任务通过率仅 32%，benchmark 打脸再添硬数据
+
+- **事件**：Google 发布 Android Bench 2.0，新增长周期任务（LHT）——依赖升级、新功能添加、零起点构建、跨平台迁移，工程师需"数天甚至一周"完成；同时引入代理式评估（先用模型厂商自家的 Agent 评）与连续评分（综合功能、视觉保真度、避免回归计算完成率，替代二元通过/失败）。此前复杂任务可能因单个边缘断言失败被整体判负，即使已满足数十项要求
+- **数据**（InfoQ 2026-10-26 报道）：Claude Opus 5.5 以 32% 的 LHT 通过率居榜首，GPT-6 Astra 28% 次之；跨平台应用移植 Android 即使最顶尖模型也仅 80% 完成率，仍是"未解难题"。谷歌结论：AI 写新代码比重构现有代码表现更好；在 Java→Kotlin、Retrofit→Ktor 等"成熟的确定性转换"上表现出色，短板集中在需运行时验证、破坏性框架变更、未发布库知识缺口
+- **与本主题的关系**：ALE 26%（一次性真实任务）→ LHT 32%（数天工程任务）——长周期评测把"能力不够"的证据从小时级延伸到天级，且换用连续评分后水分更低
+- **来源**：InfoQ https://www.infoq.cn/article/6XMtxZevN1488WVGXdR1 ；Google 官方博客 https://android-developers.googleblog.com/2026/09/android-bench-2-long-horizon-tasks.html ；仪表盘 https://developer.android.com/bench
+
+### 长程任务评测论文潮：benchmark 被指"compaction 友好"
+
+- **核心论文**（arXiv 2610.31778，2026-10-22 提交，25 页）：固定 OpenCode scaffold，实现 5 种 compaction 策略，评测 3 个前沿模型 × 3 个长程 benchmark（PaperBench / ProgramBench / PostTrainBench）。关键发现：
+  - ProgramBench 上，第一次 compaction 平均就丢掉约三分之一的防作弊规则，且随 compaction 次数单调上升
+  - SWE-chat 真实用户会话中，"该怎么工作/不该做什么"类指令的丢失率约为"要构建什么"规格的 6 倍
+  - 有损压缩对部分模型代价高达 20 分，对另一些模型无影响；没有任何方法胜过默认自我总结
+  - 作者论点：**当前 benchmark 是 compaction 友好的**——目标固定、进度落盘，被丢掉的大都能找回，唯独"别处不存在的约束"（任务规则）会永久消失；评测可能在奖励丢约束的 Agent
+- **同期长程评测**（arXiv 2610.30537）：PLE 基准，85 个专业物理工程长程任务（电气/土木/结构/机械），7 种公开 agent harness 评测，最强配置均分仅 50.6%，平均每任务消耗 2700 万 token、63 分钟——长程任务评测正从"改几行代码"系统性重构为"数天专业交付"
+- **与本主题的关系**：benchmark 打脸有了新维度——不只是"通过率低"，而是评测设计本身可能失真（奖励丢约束）；与 ALE 26%、LHT 32% 构成"能力不够 + 评测失真"的双重质疑
+- **来源**：https://arxiv.org/abs/2610.31778 ；https://arxiv.org/abs/2610.30537
+
 ## 交叉参考（已发布文章）
 
 - `content/article/20261011-Agent生产化鸿沟-复合误差的数学解剖.md` — 互补：那篇从可靠性工程（pⁿ 复合误差）解释 Agent 为什么走不远，本篇从信任基础设施解释 Agent 为什么不敢放手
+- `content/topics/20261027-Markdown是新的可执行文件-恶意AGENTS指令投毒AI编程Agent.md` — 同日新增：信任崩解下沉到指令文件层
