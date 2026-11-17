@@ -1,6 +1,6 @@
 ---
 description: 文章内容审核
-model: opencode-go/mimo-v2.6-flash
+model: opencode-go/glm-5.3-flash
 ---
 
 # 文章内容审查
